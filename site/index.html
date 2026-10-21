@@ -553,7 +553,7 @@ var head = out.shift() || [];
 return out.filter(function (r) { return r.length === head.length; }).map(function (r) { var o = {}; head.forEach(function (h, i) { o[h] = r[i]; }); return o; });
 }
 function loadRows() {
-fetch('messages.csv').then(function (r) { return r.text(); }).then(function (t) {
+fetch('messages.csv').then(function (r) { if (!r.ok) throw new Error('csv'); return r.text(); })['catch'](function () { return fetch('https://raw.githubusercontent.com/AvnishR4j/ML-Project-/6c594ac7ffe19212b851f176a752302cd858eb91/site/messages.csv').then(function (r) { return r.text(); }); }).then(function (t) {
 rows = parseCsv(t); langCount = {};
 rows.forEach(function (r) { langCount[r.language] = (langCount[r.language] || 0) + 1; });
 order = Object.keys(langCount).sort(function (a, b) { return langCount[b] - langCount[a]; });
