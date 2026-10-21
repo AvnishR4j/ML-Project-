@@ -19,6 +19,8 @@ Clustering and Dimensionality Reduction, and the KNN / SVM / Naive Bayes compari
 | Spam, Hinglish scams | recall **53%** at about 1% false alarms (the weakest part, see below) |
 | Hand-labelled set (250 messages, machine-assigned labels) | language 97.5% when answered, spam F1 0.70 (precision 1.00, recall 0.54) |
 | Sentiment, Hinglish (3 classes) | macro-F1 **0.694** (95% CI 0.658 to 0.729); majority baseline 0.223 |
+
+> **Update.** The deployed Hinglish sentiment model is now retrained with 120 hand-written everyday sentences (`data/hinglish_sentiment_seed.csv`, `src/final_sentiment_hi.py`, results in `results/sentiment_hinglish_seed.json`) because the IIIT-H comments are mostly about films and missed everyday feeling words (e.g. "dil bekar hai" was predicted positive). IIIT-H test macro-F1 moves 0.694 to 0.675 (inside the CI); 20 fresh everyday sentences go from 70% to 95% (small, author-written, so optimistic). The tables below describe the IIIT-H-only models; the end-to-end numbers were not re-run.
 | Themes | word2vec + K-Means is the most stable representation on both corpora |
 | Full pipeline | 3,921 real held-out messages, 63 messages per second on one CPU core |
 
