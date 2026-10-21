@@ -263,3 +263,6 @@ Genuine-vs-spam labels for the large stream above (tweets and comments) are assu
 ## Repository
 `src/` pipeline and experiments (`final_*.py` train the deployed models, `exp_*.py` are the comparisons), `app/` Streamlit app, `tests/`, `results/` all outputs,
 `notebooks/` Colab transformer track, `docs/` plan and research notes, `legacy` folders hold earlier prototype files kept for traceability.
+
+## Live demo box (in-browser models)
+The website's "Try it on a message" box runs the real trained models in the browser: `scripts/export_web_models.py` exports the weights, `web/engine.js` re-implements `src/pipeline.py` in JavaScript, and `scripts/web_parity.py` checks the two agree (348 messages: 0 label differences, probabilities within 0.00004). `scripts/pack_web_models.py` compresses the files for upload.
