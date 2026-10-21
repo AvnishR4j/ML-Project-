@@ -1,7 +1,26 @@
 {
-  "tweets": 0.7653337035252615,
-  "short reviews": 0.7832332008503559,
-  "movie reviews": 0.7854899256875814,
-  "negation_challenge_acc": 0.8222222222222222,
-  "synthetic_examples": 1200
+  "before": {
+    "NLTK tweets": 0.7653,
+    "short reviews": 0.7832,
+    "movie reviews (cross-domain)": 0.7855,
+    "TweetEval test (SemEval-2017)": 0.6295,
+    "fresh everyday (32)": 0.873,
+    "negation challenge": 0.7926,
+    "fresh everyday #2 (24)": 0.8286
+  },
+  "after": {
+    "NLTK tweets": 0.76,
+    "short reviews": 0.772,
+    "movie reviews (cross-domain)": 0.8127,
+    "TweetEval test (SemEval-2017)": 0.7874,
+    "fresh everyday (32)": 1.0,
+    "negation challenge": 0.8918,
+    "fresh everyday #2 (24)": 0.9583
+  },
+  "train_texts": 40841,
+  "negation_templates": 1200,
+  "lexicon_sentences": 40060,
+  "lexicon_weight": 0.1,
+  "tweeteval_val_F1": 0.8338,
+  "vocab": 90436
 }

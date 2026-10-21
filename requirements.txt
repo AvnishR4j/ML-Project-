@@ -8,3 +8,4 @@ gensim>=4.3
 streamlit>=1.30
 tabulate>=0.9
 pytest>=7.0
+vaderSentiment>=3.3   # word list used to train the English sentiment model (training only)

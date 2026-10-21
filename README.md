@@ -155,6 +155,22 @@ Character n-grams beat word features because romanized Hindi has no fixed spelli
 ### 3c. Negation handling (English sentiment)
 A plain bag-of-words model read "the food is not tasty" as positive. The deployed English model now rewrites words after a negation ("not tasty" becomes `not_tasty`) and adds a flag saying a positive or negative word was negated; word polarity is learned from the training data, and 1,200 template sentences with and without "not" are added to training. On a 45-sentence hand-written negation set (written by the author after seeing the failure, so optimistic) accuracy rose from 56% to 82%; on the normal held-out sets macro-F1 did not drop (tweets 0.759 to 0.765, short reviews 0.780 to 0.783, movie reviews 0.744 to 0.785). The same idea did not help Hinglish (challenge accuracy fell), so the Hinglish model is unchanged. Remaining misses include "not boring", "not disappointed" and some plain positives. Details: `results/sentiment_negation.csv`, `src/negation.py`, `src/final_sentiment_en.py`.
 
+
+### 3d. More training data for English sentiment
+A user typed "I am handsome" and the English model said negative. Cause: the model had only ~16,000 training texts, and "handsome" appeared 14 times, mostly in movie reviews where it is used as faint praise ("handsome but dull"). The model is now retrained with (a) the SemEval-2017 TweetEval training tweets (positive/negative only, 24,897 added texts) and (b) generated sentences from the VADER word list (7.5k human-rated words; 4,026 with |valence| >= 1.5, 10 short frames each, weight 0.1 chosen on the TweetEval validation split). The official TweetEval test split (6,339 tweets) was never used to choose anything. Macro-F1, before to after:
+
+| Held-out set | Before | After |
+|---|---|---|
+| TweetEval test (SemEval-2017, 6,339 tweets) | 0.630 | **0.787** |
+| NLTK tweets | 0.765 | 0.760 |
+| Short reviews | 0.783 | 0.772 |
+| Movie reviews (other domain) | 0.786 | 0.813 |
+| Negation challenge (author-written) | 0.793 | 0.892 |
+| 32 everyday sentences (I saw "I am handsome" in this set, so treat as a dev set) | 0.873 | 1.000 |
+| 24 everyday sentences written after the settings were fixed | 0.829 | 0.958 |
+
+The two old in-domain sets drop by about 0.005 to 0.011 (small); the other sets improve. Limits: the everyday sets are tiny and written by the author, so they are optimistic; the model has only two classes, so plain statements such as "I am a student" still get a weak positive or negative; it still gets some sentences wrong. Scripts: `src/exp_sentiment_en_big.py`, `src/exp_sentiment_en_lex.py`, `src/final_sentiment_en.py`; numbers in `results/sentiment_en_bigdata.csv`, `results/sentiment_en_lexicon_weight.csv`, `results/sentiment_en_final.json`.
+
 ### 3b. Transformer track (Colab, T4 GPU)
 Five pretrained encoders fine-tuned on the same IIIT-H training split and scored on the same 776-message test set (3 seeds each, 4 epochs, best epoch chosen on a validation split taken from the training data). Classical reference: linear SVM 0.694 (95% CI 0.658 to 0.729).
 
