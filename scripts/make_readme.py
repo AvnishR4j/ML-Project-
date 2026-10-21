@@ -31,6 +31,10 @@ sp_rows = pd.DataFrame([{"setting": k.replace("_", " "), "spam": v["n_spam"], "g
                          "precision": round(v["precision"], 3), "genuine flagged": v["genuine_flagged"]} for k, v in e2e["spam"].items()])
 se_rows = pd.DataFrame([{"language": l, "routing": r.replace("_", " "), "answered": round(s["coverage"], 3), "accuracy": round(s["accuracy"], 3), "macro-F1": round(s["macro_F1"], 3)}
                         for l, v in e2e["sentiment"].items() for r, s in v.items()])
+syn = csv("spam_synthetic_augmentation.csv")
+syn["training data"] = ["English SMS only", "+ 100 synthetic per class", "+ 300 synthetic per class", "+ all synthetic (deployed)"]
+syn = syn[["training data", "en_F1", "hi_challenge_recall", "hi_challenge_AUC", "hi_challenge_genuine_flagged", "real_genuine_hi_flag_rate"]]
+lab = js("e2e_labelled.json")
 th_en = csv("themes_en.csv")[["cluster", "size", "top_terms"]]; th_hi = csv("themes_hinglish.csv")[["cluster", "size", "top_terms"]]
 
 (R / "README.md").write_text(f"""# Multilingual Message Intelligence
@@ -52,6 +56,7 @@ Clustering and Dimensionality Reduction, and the KNN / SVM / Naive Bayes compari
 | Language ID, real Hinglish tweets | **{lsel.loc[lsel.test_set.str.startswith('real'), 'accuracy_all'].iloc[0]:.1%}** accuracy |
 | Spam, English SMS | **F1 {en['F1']:.3f}**, recall {en['recall']:.1%}, {en['genuine_flagged']} of {en['genuine_total']} genuine messages flagged |
 | Spam, Hinglish scams | recall **{hi['recall']:.0%}** at about 1% false alarms (the weakest part, see below) |
+| Hand-labelled set (250 messages, machine-assigned labels) | language {lab['language']['accuracy_when_answered']:.1%} when answered, spam F1 {lab['spam']['F1']:.2f} (precision {lab['spam']['precision']:.2f}, recall {lab['spam']['recall']:.2f}) |
 | Sentiment, Hinglish (3 classes) | macro-F1 **{H['test_macro_F1']:.3f}** (95% CI {H['ci'][0]:.3f} to {H['ci'][1]:.3f}); majority baseline {H['majority_baseline_macroF1']:.3f} |
 | Themes | word2vec + K-Means is the most stable representation on both corpora |
 | Full pipeline | {e2e['n']:,} real held-out messages, {e2e['messages_per_second']:.0f} messages per second on one CPU core |
@@ -88,6 +93,12 @@ Three-model comparison on English SMS (UCI, near-duplicates removed before split
 Deployed: TF-IDF + language-agnostic structural cues (URL, phone number, money, digits, capitals, exclamation marks) + a small scam-vocabulary list, calibrated.
 English test: precision {en['precision']:.3f}, recall {en['recall']:.3f}, F1 {en['F1']:.3f}, AUC {en['AUC']:.3f}, expected calibration error {en['ECE']:.3f}, Brier {en['Brier']:.4f}.
 Thresholds use one method for both languages: the score above which at most 0.5% (English) or 1% (Hinglish) of **genuine** messages fall. The Hinglish threshold is set from real genuine Hinglish text, so it needs no Hinglish spam labels.
+
+**Synthetic Hinglish augmentation.** No real Hinglish scam dataset exists, so `scripts/make_synthetic_hinglish.py` generates template-based Hinglish scams and everyday messages (clearly synthetic, training only) that are added to the English SMS data together with real genuine Hinglish tweets. The only test is the third-party Hinglish challenge set, which is never trained on. Thresholds are still set from real genuine text.
+
+{md(syn)}
+
+Caveat: the synthetic templates and the scam word list were written after the challenge lines had been read, so that set is no longer a fully independent test. The honest conclusion is that augmentation helps and that real labelled messages are still needed.
 
 **Does an English spam filter transfer to Hinglish and Hindi?** (third-party hand-written challenge sets, 101 unique messages each; indicative only)
 
@@ -137,7 +148,16 @@ Sentiment, same comparison:
 
 {md(se_rows)}
 
-Genuine-vs-spam labels for tweets and comments are assumed (public social posts treated as genuine). The IIIT-H comments and the Hindi challenge set have no reliable language ground truth, so they are excluded from the language accuracy.
+**Labelled set.** 250 real held-out messages (English and Hinglish messages, 11 other languages, scams) were labelled for language, spam and sentiment, and the whole pipeline was scored on them. The labels were assigned by Claude reading each message, not by independent human annotators, so call this set machine-labelled until two people verify it (`data/eval/e2e_labelled_machine.csv`, `src/eval_labelled.py`). One chain message with no clear language was excluded from the language score.
+
+| | Result |
+|---|---|
+| Language | answered {lab['language']['coverage']:.1%}, correct {lab['language']['accuracy_when_answered']:.1%} when answered |
+| Spam (English and Hinglish) | precision {lab['spam']['precision']:.2f}, recall {lab['spam']['recall']:.2f}, F1 {lab['spam']['F1']:.2f}; {lab['spam']['genuine_flagged']} genuine messages flagged out of {lab['spam']['n_ham']} |
+| Spam recall by language | English {lab['spam']['en']['recall']:.0%} ({lab['spam']['en']['n_spam']} scams), Hinglish {lab['spam']['hinglish']['recall']:.0%} ({lab['spam']['hinglish']['n_spam']} scams) |
+| Sentiment | English accuracy {lab['sentiment']['en']['accuracy']:.0%} (n={lab['sentiment']['en']['n']}), Hinglish accuracy {lab['sentiment']['hinglish']['accuracy']:.0%} (n={lab['sentiment']['hinglish']['n']}) |
+
+Genuine-vs-spam labels for the large stream above (tweets and comments) are assumed (public social posts treated as genuine). The IIIT-H comments and the Hindi challenge set have no reliable language ground truth, so they are excluded from the language accuracy.
 
 ## Data
 | Used for | Dataset | Licence / note |
@@ -150,13 +170,14 @@ Genuine-vs-spam labels for tweets and comments are assumed (public social posts 
 | Spam transfer test | github.com/gupta7050/multilingual-phishing-detection | 5,000 rows per file but only ~101 unique lines, de-duplicated; used for testing only |
 
 ## Limitations (read before quoting numbers)
-- **Hinglish spam is the weakest part.** No public dataset of real Hinglish scams exists (the repositories checked either hand-write or template-generate them). About a third of Hinglish scams are caught at about 1% false alarms; the transfer experiment suggests roughly 50 real labelled examples would fix most of it.
+- **Hinglish spam is the weakest part.** No public dataset of real Hinglish scams exists (the repositories checked either hand-write or template-generate them). About half of Hinglish scams are caught at about 1% false alarms (up from a third before the synthetic augmentation); real labelled examples would still help most.
 - The scam vocabulary list is hand-written domain knowledge and was shaped while looking at the challenge set, so its gain is indicative.
 - Hindi in Devanagari is detected but not spam-checked, scored for sentiment or grouped into themes.
 - Hinglish sentiment labels are noisy and from one domain (mostly comments on videos and political posts); expect lower scores elsewhere.
 - Themes are unsupervised: cluster names are read from top terms and examples, not ground truth.
 - The language model covers 17 classes; other languages are forced into the nearest class or rejected.
-- No transformer results yet.
+- No transformer results yet (the Colab run needs a Google sign-in).
+- The 250-message labelled set has machine-assigned labels; independent human verification is still pending.
 
 ## Repository
 `src/` pipeline and experiments (`final_*.py` train the deployed models, `exp_*.py` are the comparisons), `app/` Streamlit app, `tests/`, `results/` all outputs,

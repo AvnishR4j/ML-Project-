@@ -37,13 +37,18 @@ I tried to download every candidate dataset from the build environment and looke
 5. **Language-ID errors cost coverage more than accuracy**: with predicted routing, 7% of English and 8% of Hinglish messages are held back for review (coverage 93% and 92%, against 99% with perfect routing) instead of being mis-routed.
 6. **No public dataset has language, spam and sentiment labels on the same message**, so the end-to-end evaluation uses held-out test data from separate sources with labels known per task (assumptions listed in the README).
 
+## 3b. Added after the first plan (2026-10-21, afternoon)
+- **Synthetic Hinglish augmentation** (`scripts/make_synthetic_hinglish.py`, `src/exp_spam_synth.py`): Hinglish scam recall at about 1% false alarms rose from 35% to 53%; English F1 unchanged (0.96). Synthetic data is training-only. The challenge set is no longer fully independent because the templates and word list were written after reading it.
+- **250-message labelled end-to-end set** (`data/eval/e2e_labelled_machine.csv`, `src/eval_labelled.py`): labels assigned by Claude, not by human annotators. Language 97.5% when answered (94.8% answered), spam precision 1.00 / recall 0.54 (0 of 193 genuine flagged), sentiment 71% English / 64% Hinglish accuracy on small subsets.
+- **Colab transformer run**: blocked on a Google sign-in in the browser pane; still to be done.
+
 ## 4. Remaining work (ordered by value for the grade)
 
 | # | Task | Why | Who / effort |
 |---|---|---|---|
 | 1 | Run `notebooks/transformer_finetune_colab.ipynb` on a free Colab GPU, save `transformer_results.csv` into `results/` | The only missing "complex model" result; compares transformers against the 0.694 classical baseline on identical data | You, about 30 min |
 | 2 | Collect and label 50-100 **real** Hinglish scam and genuine messages (your own inbox, forwarded scams, friends' permission) | The main data gap; the transfer experiment predicts large gains | You and team, 1-2 hours |
-| 3 | Hand-label a 200-300 message end-to-end test set (language, spam, sentiment on the same messages) | Replaces the assumed labels in the end-to-end evaluation | Team, 2-3 hours |
+| 3 | Have two classmates check the machine-assigned labels in `data/eval/e2e_labelled_machine.csv` (about 30 minutes), fix any mistakes, rerun `python src/eval_labelled.py` | Turns "machine-labelled" into "human-verified" | Team, 30 min |
 | 4 | Optional: download SemEval-2020 Task 9 and run `python src/semeval.py` | A second, larger Hinglish sentiment benchmark | You, 15 min |
 | 5 | Write the report (use the README sections as the skeleton) and rehearse the demo | Marks | Team |
 
