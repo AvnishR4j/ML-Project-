@@ -152,65 +152,36 @@ clip-path:polygon(0 8%,2% 0,5% 14%,8% 2%,11% 12%,14% 0,100% 0,98% 18%,100% 36%,9
 /* ---------- pipeline cards (index cards) */
 .cells{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:28px}
 .cells{align-items:start}
-.cell{position:relative;--h:0px;--ez:cubic-bezier(.55,.05,.22,1);--dur:.8s;cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none}
+.cell{position:relative}
 .cell:nth-child(odd){transform:rotate(-1deg)}.cell:nth-child(even){transform:rotate(1.2deg)}
-.cell:focus-visible .stage{outline:2px dashed var(--red);outline-offset:6px}
-.cpaper{position:absolute;left:0;right:0;top:0;min-height:calc(var(--h,0px)*3);padding:26px 22px 14px;background:#fffdf3;border-radius:2px;display:flex;flex-direction:column;gap:0;
-background-image:linear-gradient(180deg,transparent 0 80px,rgba(205,60,60,.5) 80px 82px,transparent 82px),repeating-linear-gradient(180deg,transparent 0 27px,rgba(74,112,186,.25) 27px 28px);background-position:0 0,0 27px;background-repeat:no-repeat,repeat;
-}
-
-/* ---------- letter-fold: three panels, the outer two fold over the middle */
-.stage{position:relative;height:var(--h);perspective:1400px;transition:height 1.25s var(--ez)}
-.cell.open .stage{height:calc(var(--h)*3)}
-.fwrap{position:absolute;left:0;right:0;top:0;height:calc(var(--h)*3);transform-style:preserve-3d;transform:translateY(calc(var(--h)*-1));transition:transform var(--dur) var(--ez) .38s}
-.cell.open .fwrap{transform:none;transition-delay:0s}
-.pan{position:absolute;left:0;right:0;height:var(--h);transform-style:preserve-3d;pointer-events:none}.fwrap{pointer-events:none}.cell:not(.open) .pan.pm,.cell:not(.open) .pan.pt .bk{pointer-events:auto}.cell.open .face.fr{pointer-events:auto}
-.pan.pt{top:0;transform-origin:50% 100%;transform:translateZ(2px) rotateX(-180deg);transition:transform var(--dur) var(--ez) .38s;z-index:3}
-.pan.pm{top:var(--h);z-index:1}
-.pan.pb{top:calc(var(--h)*2);transform-origin:50% 0;transform:translateZ(1px) rotateX(180deg);transition:transform var(--dur) var(--ez) 0s;z-index:2}
-.cell.open .pan.pt{transform:translateZ(0) rotateX(0);transition-delay:0s}
-.cell.open .pan.pb{transform:translateZ(0) rotateX(0);transition-delay:.42s}
-.face{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.face.bk{transform:rotateX(180deg)}
-.face::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0}
-/* light: a flap's inner side is darker while it is still steep, its outer side darkens as it turns away */
-.pan.pt .fr::after{background:linear-gradient(0deg,rgba(60,40,10,.28),rgba(60,40,10,.06));opacity:1;transition:opacity calc(var(--dur)*.6) ease .38s}
-.cell.open .pan.pt .fr::after{opacity:0;transition-delay:calc(var(--dur)*.35)}
-.pan.pb .fr::after{background:linear-gradient(180deg,rgba(60,40,10,.3),rgba(60,40,10,.06));opacity:1;transition:opacity calc(var(--dur)*.6) ease 0s}
-.cell.open .pan.pb .fr::after{opacity:0;transition-delay:calc(.42s + var(--dur)*.35)}
-.pan.pt .bk::after{background:linear-gradient(180deg,rgba(40,25,5,.05),rgba(40,25,5,.32));transition:opacity calc(var(--dur)*.5) ease calc(.38s + var(--dur)*.5)}
-.cell.open .pan.pt .bk::after{opacity:1;transition-delay:0s}
-.pan.pb .bk::after{background:linear-gradient(0deg,rgba(40,25,5,.05),rgba(40,25,5,.32));transition:opacity calc(var(--dur)*.5) ease calc(var(--dur)*.5)}
-.cell.open .pan.pb .bk::after{opacity:1;transition-delay:.42s}
-/* the flap casts a soft shadow on the panel underneath while it is close to it */
-.pan.pm .fr::after{opacity:1;background:linear-gradient(180deg,rgba(50,30,5,.22),transparent 45%),linear-gradient(0deg,rgba(50,30,5,.22),transparent 45%);transition:opacity 1s ease .2s}
-.cell.open .pan.pm .fr::after{opacity:0;transition-delay:0s}
-/* creases that stay after unfolding */
-.pan.pt .fr{box-shadow:inset 0 -1px 0 rgba(90,70,30,.16)}
-.pan.pm .fr{box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(90,70,30,.16)}
-.pan.pb .fr{box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
-.face .cpaper{pointer-events:none}.cell.open .face .cpaper{pointer-events:auto}
-.pan.pm .cpaper{top:calc(var(--h)*-1)}.pan.pb .cpaper{top:calc(var(--h)*-2)}
-/* outside of the folded sheet: back of notebook paper, faint lines showing through, title written on it */
-.bk{background-color:#f7f0dc;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .3 0 0 0 0 .12 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),repeating-linear-gradient(180deg,transparent 0 27px,rgba(74,112,186,.1) 27px 28px)}
-.pan.pt .bk{box-shadow:inset 0 2px 0 rgba(255,255,255,.7),inset 0 -2px 3px rgba(90,70,30,.12)}
-.lbl{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:18px 24px 18px 26px}
-.lbl .no{font-family:'Permanent Marker',cursive;font-size:30px;color:var(--red);width:52px;height:52px;display:flex;align-items:center;justify-content:center;border:2.5px solid var(--red);border-radius:52% 46% 55% 44%/48% 55% 45% 52%;transform:rotate(-8deg);margin-bottom:12px}
-.lbl .tt{font-family:'Permanent Marker',cursive;font-size:21px;line-height:1.2;color:#1d1d22}
-.lbl .hint2{margin-top:10px;font-family:'Caveat',cursive;font-size:20px;color:var(--blue);display:flex;align-items:center;gap:6px}
-.lbl .hint2 svg{transition:transform .3s}
-/* folded stack: paper thickness + lift on hover */
-.stage::before{content:"";position:absolute;left:3px;right:-3px;top:4px;height:var(--h);background:#efe5c8;border-radius:1px;box-shadow:2px 5px 12px rgba(60,40,10,.25);transition:opacity .4s;z-index:-1}
-.cell.open .stage::before{opacity:0}
-.stage::after{content:"";position:absolute;left:0;right:0;top:0;height:calc(var(--h)*3);box-shadow:2px 4px 10px rgba(60,40,10,.18);opacity:0;transition:opacity .5s ease .7s;pointer-events:none}
-.cell.open .stage::after{opacity:1}
-.cell:not(.open):hover .fwrap{transform:translateY(calc(var(--h)*-1)) translateZ(14px) rotateX(4deg);transition:transform .35s ease}
-.cell:not(.open):hover .lbl .hint2 svg{transform:translateY(3px)}
-.cell::before{content:"";position:absolute;top:-10px;left:22px;width:70px;height:20px;background:rgba(255,140,180,.5);transform:rotate(-6deg);z-index:5;opacity:0;transition:opacity .4s ease}
-.cell.open::before{opacity:1;transition-delay:1.1s}
-.foldbk{position:absolute;right:6px;bottom:-34px;background:none;border:0;cursor:pointer;font-family:'Caveat',cursive;font-size:19px;color:var(--faint);opacity:0;pointer-events:none;transition:opacity .3s}
-.cell.open .foldbk{opacity:1;pointer-events:auto;transition-delay:1s}.foldbk:hover{color:var(--red)}
-.cells.folds{row-gap:52px}
+.cpaper{position:relative;padding:26px 22px 14px;background:#fffdf3;border-radius:2px;display:flex;flex-direction:column;gap:0;
+background-image:linear-gradient(180deg,transparent 0 80px,rgba(205,60,60,.5) 80px 82px,transparent 82px),linear-gradient(180deg,transparent 0 27px,rgba(74,112,186,.25) 27px 28px);background-size:100% 100%,100% 28px;background-position:0 0,0 -1px;background-repeat:no-repeat,repeat-y;
+;box-shadow:2px 4px 10px rgba(60,40,10,.18);transition:opacity .5s ease}
+/* creases left behind after a crumpled sheet is smoothed out */
+.cpaper::after{content:"";position:absolute;inset:0;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.011' numOctaves='5' seed='7'/%3E%3CfeDiffuseLighting lighting-color='%23fff' surfaceScale='2.2'%3E%3CfeDistantLight azimuth='225' elevation='58'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E") center/cover;mix-blend-mode:soft-light;opacity:0;transition:opacity .6s ease}
+.cell.used .cpaper::after{opacity:.6}
+.cell::before{content:"";position:absolute;top:-10px;left:22px;width:70px;height:20px;background:rgba(255,140,180,.5);transform:rotate(-6deg);z-index:5;transition:opacity .4s ease}
+/* crumpled state: the HTML card is invisible (but keeps its size) and a WebGL paper ball is drawn instead */
+.cell.crum{cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none}
+.cell.crum .cpaper,.cell.anim .cpaper{opacity:0;pointer-events:none;transition:none}
+.cell.crum::before,.cell.anim::before{opacity:0}
+.cell .ball{position:absolute;left:-70px;top:-70px;pointer-events:none;z-index:4;opacity:0;transition:opacity .45s ease}
+.cells.balls .cpaper{position:absolute;left:0;right:0;top:0;z-index:1}
+.cell.crum .ball,.cell.anim .ball{opacity:1}
+.cell .shad{position:absolute;left:0;top:0;width:0;height:0;border-radius:50%;pointer-events:none;z-index:0;opacity:0;background:rgba(45,28,8,.34)}
+.cell.crum .shad{opacity:1}
+.blab,.bhint{position:absolute;left:0;right:0;top:0;text-align:center;pointer-events:none;z-index:5;transition:opacity .35s ease,transform .35s ease}
+.blab{top:6px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 14px}
+.blab .no{font-family:'Permanent Marker',cursive;font-size:24px;color:var(--red);width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:2.5px solid var(--red);border-radius:52% 46% 55% 44%/48% 55% 45% 52%;transform:rotate(-8deg)}
+.blab .tt{font-family:'Permanent Marker',cursive;font-size:19px;line-height:1.2;color:#1d1d22}
+.bhint{font-family:'Caveat',cursive;font-size:20px;color:var(--blue)}
+.cell:not(.crum) .blab,.cell:not(.crum) .bhint,.cell.anim .blab,.cell.anim .bhint{opacity:0}
+.cell.crum:hover .bhint{transform:translateY(3px)}
+.cell.crum:focus-visible .bhint{outline:2px dashed var(--red);outline-offset:4px}
+.recrum{position:absolute;right:6px;bottom:-32px;background:none;border:0;cursor:pointer;font-family:'Caveat',cursive;font-size:19px;color:var(--faint);opacity:0;pointer-events:none;transition:opacity .3s}
+.cell.used:not(.crum):not(.anim) .recrum{opacity:1;pointer-events:auto}.recrum:hover{color:var(--red)}
+.cells.balls{row-gap:52px}
+.book{overflow-x:clip}
 .unf{display:block;margin-top:6px}
 .cell .big{position:absolute;top:10px;right:16px;font-size:34px;line-height:1;color:var(--red);opacity:.85}
 .cell h3{font-size:20px;line-height:28px;height:56px;padding-right:34px;display:flex;align-items:flex-end;margin-top:0;overflow:visible}
@@ -358,7 +329,7 @@ footer::before{content:"sources \2014";display:block;color:var(--red);font-size:
 </section>
 
 <section id="s2" class="rv sec">
-<div class="sh"><p class="m no">02 — Pipeline</p><div class="t"><h2 class="d h2d">How it works</h2><p class="intro">Every message passes through four models, one question each. Tap a folded note to open it.</p><button class="m lk unf" id="unfold-all" type="button">unfold all notes</button></div></div>
+<div class="sh"><p class="m no">02 — Pipeline</p><div class="t"><h2 class="d h2d">How it works</h2><p class="intro">Every message passes through four models, one question each. Tap a crumpled note to smooth it out.</p><button class="m lk unf" id="unfold-all" type="button">smooth out all notes</button></div></div>
 <div class="cells">
 <div class="cell"><span class="d big">1</span><h3 class="d">Which language is this?</h3>
 <div class="bd"><div><div class="m">How</div>Cuts the text into 1 to 4 letter chunks, weights rare chunks higher (TF-IDF), and a classifier picks the language. If it is not confident enough, the message goes to review.</div><div><div class="m">Learned from</div>UN texts in 15 languages, English SMS and tweets, and real Hinglish tweets (L3Cube).</div><div><div class="m">CodeChef idea</div>Language Detection System</div></div>
@@ -752,49 +723,211 @@ loadRows();
 </script>
 
 <script>
-(function(){
+/* Crumpled-paper notes for the pipeline section.
+   Each card is photographed (html2canvas) onto a WebGL sheet that is crumpled into a ball by a vertex shader.
+   Tapping smooths it out: ball -> loosened, wrinkled sheet -> flat. At t = 0 the sheet maps pixel-for-pixel onto the
+   real HTML card, so the hand-over to the live text is seamless. Falls back to the plain cards if anything is missing. */
+(function () {
 'use strict';
-var cells=[].slice.call(document.querySelectorAll('.cells .cell')); if(!cells.length) return;
-var box=document.querySelector('.cells'); box.classList.add('folds');
-var ARROW='<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2 C 8 7, 10 10, 9 15 M4 10 L9 15.5 L14 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-cells.forEach(function(c,k){
-  var html=c.innerHTML, title=(c.querySelector('h3')||{}).textContent||'', no=(c.querySelector('.big')||{}).textContent||String(k+1);
-  var paper='<div class="cpaper">'+html+'</div>';
-  c.innerHTML='<div class="stage"><div class="fwrap">'+
-    '<div class="pan pt"><div class="face fr" aria-hidden="true">'+paper+'</div><div class="face bk"><div class="lbl"><span class="no">'+no+'</span><span class="tt">'+title+'</span><span class="hint2">'+ARROW+'tap to unfold</span></div></div></div>'+
-    '<div class="pan pm"><div class="face fr">'+paper+'</div></div>'+
-    '<div class="pan pb"><div class="face fr" aria-hidden="true">'+paper+'</div><div class="face bk"></div></div>'+
-  '</div></div><button class="foldbk" type="button" tabindex="-1">fold it back ↑</button>';
-  c.setAttribute('role','button'); c.setAttribute('tabindex','0'); c.setAttribute('aria-expanded','false'); c.setAttribute('aria-label',title+' (folded note, press to open)');
-  // only the middle copy is read by screen readers; the flap copies are visual
-  c.querySelectorAll('.pan.pt .cpaper, .pan.pb .cpaper').forEach(function(x){x.setAttribute('aria-hidden','true');});
+var cells = [].slice.call(document.querySelectorAll('.cells .cell')); if (!cells.length) return;
+var box = document.querySelector('.cells'), all = document.getElementById('unfold-all');
+var reduce = false; try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+cells.forEach(function (c, k) {
+  var title = (c.querySelector('h3') || {}).textContent || '', no = (c.querySelector('.big') || {}).textContent || String(k + 1);
+  c.innerHTML = '<div class="cpaper">' + c.innerHTML + '</div><div class="shad"></div><canvas class="ball" aria-hidden="true"></canvas>' +
+    '<div class="blab" aria-hidden="true"><span class="no">' + no + '</span><span class="tt">' + title + '</span></div>' +
+    '<div class="bhint" aria-hidden="true">tap to smooth it out</div><button class="recrum" type="button">crumple it again</button>';
+  c.dataset.title = title;
 });
-function measure(){
-  cells.forEach(function(c){c.style.setProperty('--h','0px');});
-  var H=0; cells.forEach(function(c){var p=c.querySelector('.pan.pm .cpaper'); H=Math.max(H,p.offsetHeight);});
-  var h=Math.ceil(H/3/28)*28; // whole ruled lines per panel keeps the lines continuous across the folds
-  cells.forEach(function(c){c.style.setProperty('--h',h+'px');});
+function flatAll() { box.classList.remove('balls'); cells.forEach(function (c) { c.style.height = ''; c.classList.remove('crum', 'anim'); c.removeAttribute('role'); c.removeAttribute('tabindex'); }); if (all) all.style.display = 'none'; }
+if (reduce || !window.WebGLRenderingContext) { flatAll(); return; }
+box.classList.add('balls');
+cells.forEach(function (c) { c.classList.add('crum'); c.setAttribute('role', 'button'); c.setAttribute('tabindex', '0'); c.setAttribute('aria-label', c.dataset.title + ' (crumpled note, press to smooth it out)'); });
+
+function load(src) { return new Promise(function (res, rej) { var s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); }
+
+var NOISE = [
+'vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}',
+'vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}',
+'float snoise(vec3 v){const vec2 C=vec2(1.0/6.0,1.0/3.0);const vec4 D=vec4(0.0,0.5,1.0,2.0);vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);',
+'vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.0-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;',
+'i=mod289(i);vec4 p=permute(permute(permute(i.z+vec4(0.0,i1.z,i2.z,1.0))+i.y+vec4(0.0,i1.y,i2.y,1.0))+i.x+vec4(0.0,i1.x,i2.x,1.0));',
+'float n_=0.142857142857;vec3 ns=n_*D.wyz-D.xzx;vec4 j=p-49.0*floor(p*ns.z*ns.z);vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.0*x_);',
+'vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.0-abs(x)-abs(y);vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);',
+'vec4 s0=floor(b0)*2.0+1.0;vec4 s1=floor(b1)*2.0+1.0;vec4 sh=-step(h,vec4(0.0));vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;',
+'vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);',
+'vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;',
+'vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0);m=m*m;',
+'return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}'].join('\n');
+
+// t = 1: tight ball, t ~ 0.5: loosened wrinkled sheet with raised crumpled edges, t = 0: flat
+var CRUMPLE = [
+'vec2 q = position.xy / uSz; float asp = uSz.y / uSz.x;',
+'vec3 sp = vec3(position.xy / uSz.x * 2.6, uSeed);',
+'float rs = length(q * vec2(1.0, asp)) / length(vec2(0.5, 0.5 * asp));',
+'float n1 = snoise(sp); float n2 = snoise(sp * 2.1 + 7.1); float n3 = snoise(sp * 4.7 + 3.3);',
+'float ridge = 1.0 - abs(n1); ridge *= ridge; float crease = abs(n2) * 0.65 + abs(n3) * 0.3;',
+'vec3 bowl = vec3(position.xy * (1.0 - 0.30 * rs * rs), 0.0);',
+'bowl.xy += vec2(snoise(sp * 1.3 + 11.0), snoise(sp * 1.3 + 23.0)) * uSz.x * 0.045 * (0.25 + rs);',
+'bowl.z = uSz.x * (0.20 * rs * rs * rs + 0.085 * crease * (0.25 + rs) + 0.03 * ridge);',
+'float R = uSz.x * 0.27;',
+'float az = atan(q.y * asp, q.x) + 1.6 * n1 + 0.7 * n2;',
+'float ph = 3.14159 * 1.18 * rs + 0.45 * n2 + 0.2 * n3;',
+'float rr = R * (0.82 + 0.17 * ridge + 0.12 * crease - 0.05 * rs);',
+'vec3 bl = vec3(sin(ph) * cos(az), sin(ph) * sin(az), -cos(ph)) * rr;',
+'float ca = cos(1.05), sa = sin(1.05), cb = cos(0.6 + uSeed), sb = sin(0.6 + uSeed);',
+'bl = vec3(bl.x, ca * bl.y - sa * bl.z, sa * bl.y + ca * bl.z);',
+'bl = vec3(cb * bl.x + sb * bl.z, bl.y, -sb * bl.x + cb * bl.z);',
+'float cr = cos(uRot), sr = sin(uRot); bl.xy = vec2(cr * bl.x - sr * bl.y, sr * bl.x + cr * bl.y);',
+'vec3 ball = bl + vec3(0.0, uOff, R * 0.95);',
+'float rb = uRot * 0.5; bowl.xy = vec2(cos(rb) * bowl.x - sin(rb) * bowl.y, sin(rb) * bowl.x + cos(rb) * bowl.y);',
+'float ta = smoothstep(0.0, 0.62, uT); float tb = smoothstep(0.40, 1.0, uT);',
+'vec3 p = mix(vec3(position.xy, 0.0), bowl, ta);',
+'vec3 transformed = mix(p, ball, tb);'].join('\n');
+
+function smoothstep(a, b, x) { var u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); }
+function bez(p1x, p1y, p2x, p2y) { // same maths as CSS cubic-bezier()
+  function cx(t) { return 3 * p1x * t * (1 - t) * (1 - t) + 3 * p2x * t * t * (1 - t) + t * t * t; }
+  function cy(t) { return 3 * p1y * t * (1 - t) * (1 - t) + 3 * p2y * t * t * (1 - t) + t * t * t; }
+  return function (x) { var lo = 0, hi = 1, t = x; for (var i = 0; i < 24; i++) { t = (lo + hi) / 2; if (cx(t) < x) lo = t; else hi = t; } return cy(t); };
 }
-function set(c,open){
-  c.classList.toggle('open',open); c.setAttribute('aria-expanded',open?'true':'false');
-  c.setAttribute('aria-label',((c.querySelector('.lbl .tt')||{}).textContent||'')+(open?' (open note)':' (folded note, press to open)'));
+var easeOpen = bez(0.42, 0.0, 0.18, 1.0), easeClose = bez(0.5, 0.0, 0.35, 1.0);
+
+function paintPaper(ctx, w, h, s) {
+  ctx.fillStyle = '#fffdf3'; ctx.fillRect(0, 0, w * s, h * s);
+  ctx.fillStyle = 'rgba(74,112,186,.25)'; for (var y = 26; y < h; y += 28) ctx.fillRect(0, y * s, w * s, s);
+  ctx.fillStyle = 'rgba(205,60,60,.5)'; ctx.fillRect(0, 80 * s, w * s, 2 * s);
 }
-cells.forEach(function(c){
-  c.addEventListener('click',function(e){
-    if(e.target.closest('.foldbk')){ e.stopPropagation(); set(c,false); return; }
-    if(!c.classList.contains('open')) set(c,true);
+
+function capture(c) {
+  var el = c.querySelector('.cpaper'), w = el.offsetWidth, h = el.offsetHeight, S = Math.min(2, (window.devicePixelRatio || 1) * 1.25);
+  c.setAttribute('data-cap', '1');
+  return window.html2canvas(el, {
+    backgroundColor: null, scale: S, logging: false, useCORS: true, width: w, height: h,
+    ignoreElements: function (n) { return n.tagName === 'CANVAS' || (n.classList && (n.classList.contains('shad') || n.classList.contains('blab') || n.classList.contains('bhint'))); },
+    onclone: function (doc) {
+      var st = doc.createElement('style');
+      st.textContent = '.rv{opacity:1!important;transform:none!important}.cell[data-cap]{transform:none!important}.cell[data-cap] .cpaper{opacity:1!important;background:none!important;box-shadow:none!important}.cpaper::after{display:none!important}';
+      doc.head.appendChild(st);
+    }
+  }).then(function (shot) {
+    c.removeAttribute('data-cap');
+    var cv = document.createElement('canvas'); cv.width = Math.round(w * S); cv.height = Math.round(h * S);
+    var ctx = cv.getContext('2d'); paintPaper(ctx, w, h, S); ctx.drawImage(shot, 0, 0, cv.width, cv.height);
+    return { cv: cv, w: w, h: h };
   });
-  c.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); set(c,!c.classList.contains('open')); } });
-});
-var all=document.getElementById('unfold-all');
-if(all) all.addEventListener('click',function(){
-  var anyClosed=cells.some(function(c){return !c.classList.contains('open');});
-  cells.forEach(function(c,i){ setTimeout(function(){ set(c,anyClosed); }, i*180); });
-  all.textContent=anyClosed?'fold them back':'unfold all notes';
-});
-measure();
-if(document.fonts&&document.fonts.ready) document.fonts.ready.then(measure);
-var rt; window.addEventListener('resize',function(){clearTimeout(rt); rt=setTimeout(measure,150);});
+}
+
+function setup(c, k) {
+  return capture(c).then(function (tex) {
+    var T = window.THREE, cv = c.querySelector('.ball'), PAD = 70;
+    var W = tex.w + PAD * 2, H = tex.h + PAD * 2; cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    if (c._gl) { c._gl.dispose(); }
+    var r = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, premultipliedAlpha: true });
+    r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); r.setSize(W, H, false); r.setClearColor(0x000000, 0);
+    var fov = 30, d = (H / 2) / Math.tan(fov * Math.PI / 360);
+    var cam = new T.PerspectiveCamera(fov, W / H, 1, d * 4); cam.position.set(0, 0, d);
+    var scene = new T.Scene();
+    scene.add(new T.AmbientLight(0xfffaf0, 0.62));
+    var L = new T.DirectionalLight(0xfff1dc, 0.46); L.position.set(-0.42, 0.62, 1.0); scene.add(L);
+    var map = new T.CanvasTexture(tex.cv); map.anisotropy = r.capabilities.getMaxAnisotropy(); map.minFilter = T.LinearMipmapLinearFilter;
+    var segX = 22, segY = Math.max(22, Math.round(segX * tex.h / tex.w));
+    var geo = new T.PlaneGeometry(tex.w, tex.h, segX, segY);
+    var R = tex.w * 0.27, TOP = 112, cy = TOP + R;
+    var U = { uT: { value: 1 }, uSz: { value: new T.Vector2(tex.w, tex.h) }, uSeed: { value: 0.7 + k * 1.9 }, uOff: { value: tex.h / 2 - cy }, uRot: { value: 0 } };
+    var mat = new T.MeshStandardMaterial({ map: map, side: T.DoubleSide, flatShading: true, roughness: 1.0, metalness: 0 });
+    mat.onBeforeCompile = function (sh) {
+      sh.uniforms.uT = U.uT; sh.uniforms.uSz = U.uSz; sh.uniforms.uSeed = U.uSeed; sh.uniforms.uOff = U.uOff; sh.uniforms.uRot = U.uRot;
+      sh.vertexShader = 'uniform float uT;\nuniform vec2 uSz;\nuniform float uSeed;\nuniform float uOff;\nuniform float uRot;\n' + NOISE + '\n' + sh.vertexShader.replace('#include <begin_vertex>', CRUMPLE);
+      sh.fragmentShader = 'uniform float uT;\n' + sh.fragmentShader
+        .replace('#include <map_fragment>', 'vec4 texelColor = texture2D( map, vUv ); texelColor = mapTexelToLinear( texelColor );\nif ( !gl_FrontFacing ) texelColor = vec4( 0.95, 0.92, 0.84, 1.0 );\ndiffuseColor *= texelColor;')
+        .replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.rgb = mix( texelColor.rgb, gl_FragColor.rgb, smoothstep( 0.0, 0.16, uT ) );');
+    };
+    var mesh = new T.Mesh(geo, mat); mesh.frustumCulled = false; scene.add(mesh);
+    c.querySelector('.bhint').style.top = (cy + R + 14) + 'px';
+    var g = { r: r, scene: scene, cam: cam, mesh: mesh, U: U, t: c.classList.contains('crum') ? 1 : 0, rot0: (k % 2 ? -0.55 : 0.5), w: tex.w, h: tex.h, R: R, cy: cy, H0: cy + R + 56,
+      dispose: function () { geo.dispose(); mat.dispose(); map.dispose(); r.dispose(); } };
+    c._gl = g; pose(c, g.t, 0); return g;
+  });
+}
+
+function pose(c, t, wob) {
+  var g = c._gl; if (!g) return;
+  g.U.uT.value = t;
+  g.U.uRot.value = g.rot0 * Math.pow(t, 1.5) + (wob || 0);
+  // the note's footprint grows from ball-size to the full card while it opens
+  var grow = 1 - smoothstep(0.12, 0.92, t);
+  c.style.height = Math.round(g.H0 + (g.h - g.H0) * grow) + 'px';
+  // desk shadow: round under the ball, card-shaped once flat
+  var sh = c.querySelector('.shad'), a = smoothstep(0.35, 1.0, t), bw = g.R * 2.05, bh = g.R * 1.9;
+  var bx = g.w / 2 - bw / 2 + 9, by = g.cy - bh / 2 + 12, fw = g.w * (1 - 0.2 * (1 - grow) * (1 - a)), fh = Math.max(g.H0, g.h * grow);
+  var L = bx * a + ((g.w - fw) / 2 + 3) * (1 - a), Tp = by * a + 5 * (1 - a), Wd = bw * a + fw * (1 - a), Ht = bh * a + (fh - 6) * (1 - a);
+  sh.style.left = L + 'px'; sh.style.top = Tp + 'px'; sh.style.width = Wd + 'px'; sh.style.height = Ht + 'px';
+  sh.style.borderRadius = (50 * a) + '%'; sh.style.filter = 'blur(' + (5 + 7 * (1 - a)) + 'px)';
+  sh.style.opacity = (c.classList.contains('anim') || c.classList.contains('crum')) ? String(0.9 - 0.45 * (1 - a)) : '0';
+  g.r.render(g.scene, g.cam);
+}
+
+function play(c, to) {
+  var g = c._gl; if (!g || c._busy) return; c._busy = true;
+  var from = g.t, dur = to === 0 ? 2100 : 1500, t0 = performance.now();
+  c.classList.add('anim');
+  if (to === 1) { c.classList.add('crum'); }
+  else { c.classList.remove('crum'); }
+  function step(now) {
+    var x = Math.min(1, (now - t0) / dur), e = (to === 0 ? easeOpen : easeClose)(x);
+    g.t = from + (to - from) * e; pose(c, g.t, 0);
+    if (x < 1) requestAnimationFrame(step);
+    else {
+      c._busy = false; c.classList.remove('anim'); if (to === 0) c.querySelector('.shad').style.opacity = '0';
+      if (to === 0) { c.style.height = c._gl.h + 'px'; c.classList.add('used'); c.removeAttribute('role'); c.removeAttribute('tabindex'); c.removeAttribute('aria-label'); }
+      else { c.setAttribute('role', 'button'); c.setAttribute('tabindex', '0'); c.setAttribute('aria-label', c.dataset.title + ' (crumpled note, press to smooth it out)'); }
+      syncAll();
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+function wobble(c, on) {
+  var g = c._gl; if (!g) return;
+  if (!on) { c._hov = false; return; }
+  if (c._hov) return; c._hov = true; var t0 = performance.now();
+  (function loop(now) {
+    if (!c._hov || c._busy || !c.classList.contains('crum')) { if (!c._busy && c.classList.contains('crum')) pose(c, 1, 0); return; }
+    var s = (now - t0) / 1000; pose(c, 1 - 0.035 * (0.5 - 0.5 * Math.cos(s * 3.2)), 0.06 * Math.sin(s * 2.1)); requestAnimationFrame(loop);
+  })(t0);
+}
+
+function syncAll() { if (!all) return; var anyC = cells.some(function (c) { return c.classList.contains('crum'); }); all.textContent = anyC ? 'smooth out all notes' : 'crumple them again'; }
+
+function wire() {
+  cells.forEach(function (c) {
+    c.addEventListener('click', function (e) {
+      if (e.target.closest('.recrum')) { e.stopPropagation(); play(c, 1); return; }
+      if (c.classList.contains('crum')) play(c, 0);
+    });
+    c.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && c.classList.contains('crum')) { e.preventDefault(); play(c, 0); } });
+    c.addEventListener('mouseenter', function () { if (c.classList.contains('crum')) wobble(c, true); });
+    c.addEventListener('mouseleave', function () { wobble(c, false); });
+  });
+  if (all) all.addEventListener('click', function () {
+    var anyC = cells.some(function (c) { return c.classList.contains('crum'); });
+    cells.forEach(function (c, i) { setTimeout(function () { play(c, anyC ? 0 : 1); }, i * 220); });
+  });
+  var rt, lastW = window.innerWidth;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt); rt = setTimeout(function () {
+      if (Math.abs(window.innerWidth - lastW) < 2) return; lastW = window.innerWidth;
+      cells.reduce(function (pr, c, k) { return pr.then(function () { return setup(c, k); }); }, Promise.resolve());
+    }, 250);
+  });
+}
+
+var ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+Promise.all([load('vendor/three-r128.min.js'), load('vendor/html2canvas-1.4.1.min.js'), ready])
+  .then(function () { return cells.reduce(function (pr, c, k) { return pr.then(function () { return setup(c, k); }); }, Promise.resolve()); })
+  .then(wire)
+  .catch(function (err) { if (window.console) console.warn('crumple effect unavailable', err); flatAll(); });
 })();
 </script>
 </body>
