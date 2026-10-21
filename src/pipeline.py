@@ -6,6 +6,7 @@
   3. sentiment  : English model (tweets + short reviews, 2 classes) | Hinglish model (IIIT-H, 3 classes)
   4. theme      : word2vec + K-Means, one model per language (English, Hinglish)
 """
+import json
 from functools import lru_cache
 import joblib
 from data import ROOT, LANG_NAMES
@@ -42,6 +43,13 @@ def spam_score(text, lang, M=None):
     p = float(S["model"].predict_proba([clean_text(text)])[0, 1])
     thr = S["thresholds"]["hinglish" if lang == "hinglish" else "en"]
     return p, thr, p >= thr
+
+
+def theme_label(lang, cid):
+    f = ROOT / "results" / "theme_labels.json"
+    if f.exists():
+        return json.loads(f.read_text()).get("hinglish" if lang == "hinglish" else "en", {}).get(str(cid))
+    return None
 
 
 def theme(text, lang, M=None):
@@ -97,5 +105,6 @@ def analyze(text: str, force_language: str = None) -> dict:
     cid, names = theme(text, lang, M)
     out["cluster"] = cid
     out["cluster_terms"] = names
-    out["steps"].append(("Theme", f"#{cid}", f"Top terms: {names}"))
+    out["cluster_label"] = theme_label(lang, cid)
+    out["steps"].append(("Theme", out["cluster_label"] or f"#{cid}", f"Top terms: {names}"))
     return out

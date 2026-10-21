@@ -1,0 +1,3 @@
+{"note": "Names assigned by a person reading each cluster's top terms and example messages; the clusters themselves are unsupervised.",
+ "en": {"0": "Casual chat (Singapore-style)", "1": "Everyday plans and catching up", "2": "Opinions and advice", "3": "Requests and calls", "4": "Greetings and affection", "5": "Money, places and times"},
+ "hinglish": {"0": "Patriotic messages", "1": "Waiting for a reply", "2": "General fan comments", "3": "Fan love and praise", "4": "Requests for a reply", "5": "Film and festival buzz"}}
