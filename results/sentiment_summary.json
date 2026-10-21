@@ -1,0 +1,51 @@
+{
+  "hinglish": {
+    "train": 3100,
+    "test": 776,
+    "majority_baseline_macroF1": 0.22336475292773494,
+    "chosen": [
+      "word+char",
+      "Linear SVM"
+    ],
+    "test_macro_F1": 0.6944695170764504,
+    "ci": [
+      0.6581208993301243,
+      0.7292262219398339
+    ],
+    "published_reference": "SemEval-2020 Task 9 winner 75.0 weighted-F1 (different dataset)"
+  },
+  "english": {
+    "final_training_set": "tweets + short reviews",
+    "matrix": {
+      "movie reviews": {
+        "movie reviews": 0.875,
+        "short reviews": 0.7143,
+        "tweets": 0.5621,
+        "tweets + short reviews": 0.744
+      },
+      "short reviews": {
+        "movie reviews": 0.7434,
+        "short reviews": 0.7932,
+        "tweets": 0.5761,
+        "tweets + short reviews": 0.7804
+      },
+      "tweets": {
+        "movie reviews": 0.6042,
+        "short reviews": 0.6255,
+        "tweets": 0.7594,
+        "tweets + short reviews": 0.7593
+      },
+      "mean_over_domains": {
+        "movie reviews": 0.7409,
+        "short reviews": 0.711,
+        "tweets": 0.6325,
+        "tweets + short reviews": 0.7612
+      }
+    },
+    "old_movie_only_on_tweets": 0.6042260384166934
+  },
+  "cross_lingual": {
+    "hinglish_model_on_english_tweets_accuracy_(neutral_predictions_dropped)": 0.5493601462522852,
+    "share_dropped": 0.4099244875943905
+  }
+}

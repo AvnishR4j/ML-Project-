@@ -1,7 +1,7 @@
 {
   "language": {
-    "best": "Naive Bayes",
-    "train": 4189,
+    "best": "Linear SVM",
+    "train": 10189,
     "classes": [
       "de",
       "el",
@@ -23,7 +23,8 @@
     ],
     "test_sets": {
       "udhr (other languages)": 518,
-      "informal English (SMS incl. spam)": 1034,
+      "informal English (SMS incl. spam)": 1025,
+      "English tweets (unfiltered; some are not English)": 400,
       "real Hinglish (HingLID test)": 400,
       "hand-written Hinglish (OOD)": 78
     },
@@ -31,29 +32,9 @@
   },
   "spam": {
     "best": "Naive Bayes",
-    "duplicates_removed": 403,
-    "train": 4135,
-    "test": 1034,
-    "spam_share_test": 0.12669245647969052
-  },
-  "sentiment": {
-    "best": "Linear SVM",
-    "train": 1600,
-    "test": 400
-  },
-  "clustering": {
-    "k_best": 8,
-    "silhouette_by_k": {
-      "4": 0.04657256780784943,
-      "5": 0.05646785264291926,
-      "6": 0.060495203768871415,
-      "7": 0.06782231425649439,
-      "8": 0.07701623705937305,
-      "9": 0.07924783693568005,
-      "10": 0.08913298798918669,
-      "11": 0.08926630568028472,
-      "12": 0.09827284282941959
-    },
-    "n_messages": 4516
+    "duplicates_removed": 447,
+    "train": 4100,
+    "test": 1025,
+    "spam_share_test": 0.12195121951219512
   }
 }

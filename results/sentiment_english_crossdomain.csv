@@ -1,0 +1,13 @@
+trained_on,tested_on,macro_F1,n_test
+tweets,tweets,0.7593987812897798,1854
+tweets,short reviews,0.5760813246540128,2132
+tweets,movie reviews,0.5621052631578947,400
+short reviews,tweets,0.6254928803421446,1854
+short reviews,short reviews,0.7931519244743559,2132
+short reviews,movie reviews,0.7142838069680038,400
+movie reviews,tweets,0.6042260384166934,1854
+movie reviews,short reviews,0.7434027131374656,2132
+movie reviews,movie reviews,0.8749718686704508,400
+tweets + short reviews,tweets,0.7593465665545895,1854
+tweets + short reviews,short reviews,0.7804251992901609,2132
+tweets + short reviews,movie reviews,0.7439726904203114,400

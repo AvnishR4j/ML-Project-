@@ -1,80 +1,101 @@
-"""End-to-end message pipeline: language -> spam -> sentiment -> theme cluster.
+"""End-to-end message pipeline (final): language -> spam -> sentiment -> theme.
 
-Prototype limits (shown to the user by the app, not hidden):
-  * spam model is trained on English SMS only; for Hinglish it is run but flagged unreliable
-  * sentiment model is English movie reviews only
-  * cluster model is trained on English SMS only
+  1. language   : calibrated char-n-gram SVM with a reject option ("uncertain" -> manual review)
+  2. spam       : TF-IDF + structural cues + scam lexicon, calibrated; separate threshold per language
+                  (English and Hinglish; other languages are not routed to the spam model)
+  3. sentiment  : English model (tweets + short reviews, 2 classes) | Hinglish model (IIIT-H, 3 classes)
+  4. theme      : word2vec + K-Means, one model per language (English, Hinglish)
 """
 from functools import lru_cache
 import joblib
-from sklearn.preprocessing import normalize as l2norm
 from data import ROOT, LANG_NAMES
 from text_norm import normalize as clean_text, fix_spacing
+
+SENT_EN = {"positive": "positive", "negative": "negative"}
 
 
 @lru_cache(maxsize=1)
 def _models():
     m = ROOT / "models"
-    d = {k: joblib.load(m / f"{k}.joblib") for k in ("language", "sentiment", "cluster")}
-    d["hing_sent"] = joblib.load(m / "hinglish_sentiment.joblib") if (m / "hinglish_sentiment.joblib").exists() else None
-    if (m / "spam_deploy.joblib").exists():          # calibrated model + low-false-positive threshold
-        d["spam"] = joblib.load(m / "spam_deploy.joblib")
-    else:                                              # fallback: plain best model
-        d["spam"] = {"model": joblib.load(m / "spam.joblib"), "threshold": None, "name": "plain"}
-    return d
+    return {
+        "language": joblib.load(m / "language_final.joblib"),
+        "spam": joblib.load(m / "spam_final.joblib"),
+        "sent_en": joblib.load(m / "sentiment.joblib"),
+        "sent_hi": joblib.load(m / "hinglish_sentiment.joblib"),
+        "theme_en": joblib.load(m / "theme_en.joblib"),
+        "theme_hi": joblib.load(m / "theme_hinglish.joblib"),
+    }
 
 
-def _spam(M, text):
-    s = M["spam"]; x = clean_text(text)                # defend against spaced / look-alike-letter evasion
-    if s["threshold"] is None:
-        return str(s["model"].predict([x])[0]), None
-    p = float(s["model"].predict_proba([x])[0, 1])
-    return ("spam" if p >= s["threshold"] else "ham"), p
+def detect_language(text, M=None):
+    M = M or _models()
+    L = M["language"]
+    x = fix_spacing(text)
+    p = L["model"].predict_proba([x])[0]
+    i = int(p.argmax())
+    return str(L["model"].classes_[i]), float(p[i]), bool(p[i] >= L["threshold"])
+
+
+def spam_score(text, lang, M=None):
+    M = M or _models()
+    S = M["spam"]
+    p = float(S["model"].predict_proba([clean_text(text)])[0, 1])
+    thr = S["thresholds"]["hinglish" if lang == "hinglish" else "en"]
+    return p, thr, p >= thr
+
+
+def theme(text, lang, M=None):
+    M = M or _models()
+    T = M["theme_hi" if lang == "hinglish" else "theme_en"]
+    c = int(T["km"].predict(T["emb"]([text]))[0])
+    return c, T["names"][c]
 
 
 def analyze(text: str, force_language: str = None) -> dict:
     """force_language lets experiments route with the TRUE language (oracle) to measure error propagation."""
     M = _models()
-    out = {"text": text, "steps": []}
-    lang = force_language or str(M["language"].predict([fix_spacing(text)])[0])
+    out = {"text": text, "steps": [], "needs_review": False}
+    if force_language:
+        lang, conf, ok = force_language, 1.0, True
+    else:
+        lang, conf, ok = detect_language(text, M)
+    out["language_confidence"] = conf
+    if not ok:
+        out["language"] = "uncertain"
+        out["language_name"] = f"Uncertain (best guess: {LANG_NAMES.get(lang, lang)}, {conf:.0%})"
+        out["needs_review"] = True
+        out["steps"].append(("Language", out["language_name"], "Confidence below the threshold, so the message is sent for manual review instead of guessed."))
+        out["spam"] = None
+        return out
     out["language"] = lang
     out["language_name"] = LANG_NAMES.get(lang, lang)
-    short = "Very short text (<8 characters): language detection is unreliable." if len(text.strip()) < 8 else None
-    out["steps"].append(("Language", out["language_name"], short))
+    note = f"Confidence {conf:.0%}." + (" Very short text, so treat with care." if len(text.strip()) < 8 else "")
+    out["steps"].append(("Language", out["language_name"], note))
 
     if lang not in ("en", "hinglish"):
         out["spam"] = None
-        out["steps"].append(("Spam filter", "skipped", "Prototype spam model supports English (and experimentally Hinglish) only."))
+        out["steps"].append(("Spam filter", "not applied", "The spam model covers English and Hinglish only."))
         return out
 
-    spam, p = _spam(M, text)
-    note = None if lang == "en" else "Spam model is English-only in the prototype; Hinglish result is unreliable."
-    if p is not None:
-        extra = f"P(spam)={p:.2f}, threshold {M['spam']['threshold']:.2f} (chosen so <=0.5% of genuine messages were flagged on validation data)"
-        note = extra if note is None else note + " " + extra
-    out["spam"] = spam
+    p, thr, is_spam = spam_score(text, lang, M)
+    out["spam"] = "spam" if is_spam else "ham"
     out["spam_prob"] = p
-    out["steps"].append(("Spam filter", spam.upper(), note))
-    if spam == "spam":
+    how = "<=0.5% of genuine English messages flagged on validation" if lang == "en" else "<=1% of real genuine Hinglish text flagged; Hinglish scam recall is limited (see Evaluation)"
+    out["steps"].append(("Spam filter", out["spam"].upper(), f"P(spam)={p:.2f}, threshold {thr:.2f} ({how})."))
+    if is_spam:
         out["steps"].append(("Sentiment", "skipped", "Message filtered as spam."))
         return out
 
     if lang == "en":
-        s = str(M["sentiment"].predict([text])[0])
-        out["sentiment"] = "positive" if s == "pos" else "negative"
-        out["steps"].append(("Sentiment", out["sentiment"], "Trained on movie reviews (domain mismatch with chat/customer text)."))
-        C = M["cluster"]
-        z = l2norm(C["svd"].transform(C["vec"].transform([text])))
-        cid = int(C["km"].predict(z)[0])
-        out["cluster"] = cid
-        out["cluster_terms"] = C["names"][cid]
-        out["steps"].append(("Theme cluster", f"#{cid}", f"Top terms: {C['names'][cid]}"))
+        s = str(M["sent_en"].predict([text])[0])
+        out["sentiment"] = SENT_EN.get(s, s)
+        out["steps"].append(("Sentiment", out["sentiment"], "English model trained on tweets and short reviews (positive / negative)."))
     else:
-        if M["hing_sent"] is not None:
-            hs = str(M["hing_sent"].predict([text])[0])
-            out["sentiment"] = hs
-            out["steps"].append(("Sentiment", hs, "Hinglish model trained on SemEval-2020 Task 9 (3 classes; noisy labels)."))
-        else:
-            out["steps"].append(("Sentiment", "not available", "Hinglish sentiment model planned (SemEval-2020 Task 9)."))
-        out["steps"].append(("Theme cluster", "not available", "Clustering trained on English only in the prototype."))
+        s = str(M["sent_hi"].predict([text])[0])
+        out["sentiment"] = s
+        out["steps"].append(("Sentiment", s, "Hinglish model trained on 3,100 real comments (negative / neutral / positive)."))
+    cid, names = theme(text, lang, M)
+    out["cluster"] = cid
+    out["cluster_terms"] = names
+    out["steps"].append(("Theme", f"#{cid}", f"Top terms: {names}"))
     return out

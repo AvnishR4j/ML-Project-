@@ -1,0 +1,40 @@
+{
+  "english_test": {
+    "precision": 0.9523809523809523,
+    "recall": 0.96,
+    "F1": 0.9561752988047809,
+    "AUC": 0.995262222222222,
+    "genuine_flagged": 6,
+    "genuine_total": 900,
+    "threshold": 0.19029599364660008,
+    "ECE": 0.01080002941944897,
+    "Brier": 0.009267663068592655
+  },
+  "hinglish": {
+    "recall": 0.35294117647058826,
+    "AUC": 0.9952941176470589,
+    "challenge_genuine_flagged": 0,
+    "challenge_genuine_total": 50,
+    "real_genuine_flagged_rate": 0.0125,
+    "threshold": 0.7964873340270987,
+    "n_spam": 51
+  },
+  "robustness": [
+    {
+      "attack": "clean",
+      "recall_no_defence": 0.96,
+      "recall_with_cleanup": 0.96
+    },
+    {
+      "attack": "letters spaced",
+      "recall_no_defence": 0.912,
+      "recall_with_cleanup": 0.96
+    },
+    {
+      "attack": "look-alike letters",
+      "recall_no_defence": 0.936,
+      "recall_with_cleanup": 0.96
+    }
+  ],
+  "model": "TF-IDF(word+char) + structural cues + scam lexicon -> LinearSVC -> Platt calibration"
+}

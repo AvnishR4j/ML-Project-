@@ -8,22 +8,35 @@ sys.path.insert(0, str(ROOT / "src"))
 from pipeline import analyze  # noqa: E402
 
 R = ROOT / "results"
-st.set_page_config(page_title="Multilingual Message Intelligence - Prototype", layout="wide")
-st.title("Multilingual Message Intelligence System")
-st.caption("PROTOTYPE v0.3 - classical models. Language detection -> spam filter -> sentiment -> theme clustering.")
+st.set_page_config(page_title="Multilingual Message Intelligence", layout="wide")
+st.title("Multilingual Message Intelligence")
+st.caption("Reads short English, Hindi and Hinglish messages and decides: language, spam, sentiment and theme.")
 
-tabs = st.tabs(["Try it", "Batch dashboard", "Model comparison", "Evaluation", "Clusters", "Status & limits"])
+tabs = st.tabs(["Try it", "Batch dashboard", "Results", "End-to-end evaluation", "Themes", "Data and limits"])
+
+
+@st.cache_data(show_spinner=False)
+def csv(name):
+    return pd.read_csv(R / name)
+
+
+@st.cache_data(show_spinner=False)
+def js(name):
+    return json.loads((R / name).read_text())
+
 
 EXAMPLES = {
     "English complaint": "My order has not arrived yet and nobody is replying to my emails",
     "English spam": "Congratulations! You have won a free prize, call 09061701461 now to claim",
     "Spam, letters spaced": "F R E E  p r i z e  waiting  c l a i m  n o w  call 09061701461",
     "Hinglish complaint": "mera order abhi tak nahi pahuncha, bahut gussa aa raha hai",
-    "Hinglish spam (known miss)": "aapka KYC update nahi hua hai, account band ho jayega, abhi link par click karein",
+    "Hinglish praise": "yaar ye gana bahut accha hai, mujhe bahut pasand aaya",
+    "Hinglish scam": "aapka KYC update nahi hua hai, account band ho jayega, abhi link par click karein",
     "German": "Der Film war wirklich gut, ich habe ihn sehr genossen",
     "Hindi (Devanagari)": "यह फ़ोन बहुत अच्छा है",
 }
 
+# ------------------------------------------------------------------ Try it
 with tabs[0]:
     if "text" not in st.session_state:
         st.session_state.text = EXAMPLES["Hinglish complaint"]
@@ -34,11 +47,13 @@ with tabs[0]:
     text = st.text_area("Message", key="text", height=100)
     if text.strip():
         r = analyze(text)
-        st.subheader("Pipeline result")
+        st.subheader("What the pipeline decided")
         for step, value, note in r["steps"]:
             a, b = st.columns([1, 3])
             a.markdown(f"**{step}**")
             b.markdown(f"`{value}`" + (f"  \n:grey[{note}]" if note else ""))
+        if r.get("needs_review"):
+            st.info("This message is routed to manual review because the language could not be identified with enough confidence.")
 
 
 @st.cache_data(show_spinner=False)
@@ -47,28 +62,22 @@ def run_batch(texts: tuple):
     for t in texts:
         r = analyze(t)
         rows.append({"message": t, "language": r["language_name"], "spam": r.get("spam") or "not checked",
-                     "sentiment": r.get("sentiment") or "n/a", "theme": (f"#{r['cluster']}: " + r["cluster_terms"]) if "cluster" in r else "n/a"})
+                     "sentiment": r.get("sentiment") or "n/a",
+                     "theme": (f"#{r['cluster']}: " + r["cluster_terms"]) if "cluster" in r else "n/a",
+                     "needs_review": bool(r.get("needs_review"))})
     return pd.DataFrame(rows)
 
 
 def demo_sample():
-    import numpy as np
-    frames = [pd.read_csv(ROOT / "data" / "pipeline_testset_DRAFT.csv").text]
-    raw = ROOT / "data" / "raw"
-    if (raw / "sms.tsv").exists():
-        sms = pd.read_csv(raw / "sms.tsv", sep="\t", header=None, names=["l", "text"]).sample(250, random_state=1).text
-        frames.append(sms)
-    if (raw / "hinglid" / "test.txt").exists():
-        from data import _hing_samples
-        frames.append(pd.Series(_hing_samples(raw / "hinglid" / "test.txt", 80, np.random.default_rng(1))))
-    return pd.concat(frames, ignore_index=True).tolist()
+    d = csv("e2e_detail.csv")
+    return d.sample(500, random_state=3).text.tolist()
 
 
+# ------------------------------------------------------------------ Batch dashboard
 with tabs[1]:
-    st.markdown("What a company would see: upload a CSV with a **text** column, or use the demo sample "
-                "(draft test messages + English SMS + real Hinglish tweets). Everything runs through the same pipeline.")
+    st.markdown("Upload a CSV with a **text** column, or use a sample of held-out real messages.")
     up = st.file_uploader("CSV with a 'text' column", type="csv")
-    use_demo = st.button("Use demo sample")
+    use_demo = st.button("Use sample")
     texts = None
     if up is not None:
         d0 = pd.read_csv(up)
@@ -82,24 +91,19 @@ with tabs[1]:
     if texts:
         with st.spinner(f"Analysing {len(texts)} messages ..."):
             B = run_batch(tuple(texts))
-        n = len(B); checked = B[B.spam != "not checked"]
+        checked = B[B.spam != "not checked"]
         k = st.columns(4)
-        k[0].metric("Messages", n)
-        k[1].metric("Flagged as spam", f"{(checked.spam == 'spam').mean():.0%}" if len(checked) else "n/a", help="Of messages in English/Hinglish (the only languages the spam model covers)")
-        eng = B[B.sentiment.isin(["positive", "negative"])]
-        k[2].metric("Negative (English, non-spam) - UNRELIABLE", f"{(eng.sentiment == 'negative').mean():.0%}" if len(eng) else "n/a",
-                 help="Sentiment model was trained on movie reviews; casual chat/SMS text is mostly labelled negative. Do not quote this number.")
-        k[3].metric("Languages seen", B.language.nunique())
-        st.warning("Sentiment numbers are unreliable for now: the model was trained on movie reviews and reads casual messages as negative. "
-                   "They become meaningful after domain-specific / Hinglish sentiment training. Language, spam and theme counts are the usable parts.")
+        k[0].metric("Messages", len(B))
+        k[1].metric("Flagged as spam", f"{(checked.spam == 'spam').mean():.0%}" if len(checked) else "n/a",
+                    help="Of English and Hinglish messages (the languages the spam model covers)")
+        k[2].metric("Sent to manual review", f"{B.needs_review.mean():.0%}", help="Language not identified with enough confidence")
+        k[3].metric("Languages seen", B.language[~B.language.str.startswith("Uncertain")].nunique())
         c1, c2 = st.columns(2)
-        c1.markdown("**Messages by language**"); c1.bar_chart(B.language.value_counts())
-        c2.markdown("**Sentiment (English, non-spam only)**")
-        c2.bar_chart(B.sentiment.value_counts().drop(["n/a"], errors="ignore"))
-        st.markdown("**Biggest themes among genuine English messages**")
-        th = B[B.theme != "n/a"].theme.value_counts().head(8)
-        st.bar_chart(th)
-        st.markdown("**Filter messages**")
+        c1.markdown("**Messages by language**"); c1.bar_chart(B[~B.language.str.startswith("Uncertain")].language.value_counts())
+        s = B[B.sentiment != "n/a"]
+        c2.markdown("**Sentiment of genuine English and Hinglish messages**"); c2.bar_chart(s.sentiment.value_counts())
+        st.markdown("**Biggest themes among genuine messages**")
+        st.bar_chart(B[B.theme != "n/a"].theme.value_counts().head(10))
         f1, f2 = st.columns(2)
         lang_sel = f1.multiselect("Language", sorted(B.language.unique()))
         spam_sel = f2.multiselect("Spam status", sorted(B.spam.unique()))
@@ -108,80 +112,111 @@ with tabs[1]:
             mask &= B.language.isin(lang_sel)
         if spam_sel:
             mask &= B.spam.isin(spam_sel)
-        V = B[mask]
-        st.dataframe(V, hide_index=True, width="stretch")
+        st.dataframe(B[mask], hide_index=True, width="stretch")
         st.download_button("Download results (CSV)", B.to_csv(index=False).encode("utf-8"), "pipeline_results.csv", "text/csv")
-        st.caption("Demo caveat: Hinglish messages are not checked for sentiment/themes yet, and Hinglish spam is mostly missed (see Status & limits).")
 
+# ------------------------------------------------------------------ Results
 with tabs[2]:
-    st.markdown("Same features for all three models on each task; hyper-parameters tuned with 3-fold CV on the training split only.")
-    df = pd.read_csv(R / "model_comparison.csv").drop(columns=["best_params", "n_test"])
-    st.dataframe(df.round(3), width="stretch", hide_index=True)
-    st.markdown("**Language detection** is scored on four separate test sets because one pooled number hides the hard cases: "
-                "real Hinglish tweets (L3Cube-HingLID), informal English incl. spam (must not be called Hinglish), "
-                "the other 15 languages, and 78 hand-written Hinglish lines the model never trained on.")
-    c1, c2 = st.columns(2)
-    c1.image(str(R / "language_confusion.png"), caption="Language confusion matrix (pooled test sets)")
-    c2.markdown("**Language accuracy by message length (words), hard sets**")
-    c2.dataframe(pd.read_csv(R / "language_accuracy_by_length.csv").rename(columns={"mean": "accuracy", "size": "n"}).round(3), hide_index=True)
-    c2.caption("Very short fragments are the weak spot; many misses are plainly English words inside tweets labelled Hinglish.")
+    task = st.radio("Task", ["Language detection", "Spam detection", "Sentiment", "Themes"], horizontal=True)
+    if task == "Language detection":
+        st.markdown("Character n-gram TF-IDF with three classifiers, scored on separate test sets (one pooled number would hide the hard cases).")
+        mc = csv("model_comparison.csv"); lang = mc[mc.task == "Language detection"]
+        cols_ = ["model"] + [c for c in lang.columns if c.startswith("acc: ")]
+        t = lang[cols_].copy(); t.columns = ["model"] + [c[5:] for c in cols_[1:]]
+        st.dataframe(t.round(3), hide_index=True, width="stretch")
+        st.markdown("**Deployed: calibrated linear SVM with a reject option.** Messages below the confidence threshold are sent to review instead of guessed.")
+        st.dataframe(csv("language_selective.csv").round(3), hide_index=True, width="stretch")
+        c1, c2 = st.columns(2)
+        c1.markdown("**Accuracy by message length (words)**")
+        c1.dataframe(csv("language_by_length_selective.csv").round(3), hide_index=True)
+        c2.image(str(R / "language_confusion.png"), caption="Confusion matrix of the baseline model (pooled test sets)")
+    elif task == "Spam detection":
+        j = js("spam_final_summary.json"); e = j["english_test"]; h = j["hinglish"]
+        mc = csv("model_comparison.csv")
+        st.markdown("**Three-model comparison, English SMS (UCI, duplicates removed)**")
+        st.dataframe(mc[mc.task == "Spam detection"][["model", "accuracy", "spam_precision", "spam_recall", "spam_F1"]].round(3), hide_index=True, width="stretch")
+        st.markdown("**Deployed model**: " + j["model"])
+        m = st.columns(4)
+        m[0].metric("English F1", f"{e['F1']:.3f}"); m[1].metric("English recall", f"{e['recall']:.1%}")
+        m[2].metric("Genuine flagged", f"{e['genuine_flagged']} of {e['genuine_total']}"); m[3].metric("Hinglish scam recall", f"{h['recall']:.0%}",
+                                                                                              help="At about 1% false alarms on real genuine Hinglish text")
+        st.markdown("**Does an English spam filter work on Hinglish and Hindi?** (small, third-party hand-written challenge sets, 101 messages each)")
+        st.dataframe(csv("spam_transfer.csv").round(3), hide_index=True, width="stretch")
+        st.markdown("**What a few real Hinglish examples would add** (trained on English plus N Hinglish examples, tested on the rest, 20 random splits)")
+        st.dataframe(csv("spam_fewshot.csv").round(3), hide_index=True)
+        st.caption("These messages are repetitive and hand-written, so few-shot numbers are optimistic. Real labelled Hinglish spam is the main data gap.")
+        st.markdown("**Evasion tricks (spam recall)**")
+        st.dataframe(csv("spam_final_robustness.csv").round(3), hide_index=True)
+    elif task == "Sentiment":
+        sj = js("sentiment_summary.json")
+        st.markdown(f"**Hinglish** (IIIT-H corpus, real comments, 3 classes). Chosen by cross-validation: {' + '.join(sj['hinglish']['chosen'])}. "
+                    f"Test macro-F1 **{sj['hinglish']['test_macro_F1']:.3f}** (95% CI {sj['hinglish']['ci'][0]:.3f} to {sj['hinglish']['ci'][1]:.3f}); "
+                    f"always predicting the majority class scores {sj['hinglish']['majority_baseline_macroF1']:.3f}. Published SemEval-2020 systems score 65 to 75 (different, noisier dataset).")
+        st.dataframe(csv("sentiment_hinglish.csv").drop(columns=["best_params"]).round(3), hide_index=True, width="stretch")
+        st.markdown("**English**: the same model trained on one domain breaks on another. Macro-F1, rows = training data, columns = test data.")
+        X = csv("sentiment_english_crossdomain.csv").pivot(index="trained_on", columns="tested_on", values="macro_F1").round(3)
+        st.dataframe(X, width="stretch")
+        st.dataframe(csv("sentiment_english_models.csv").round(3), hide_index=True, width="stretch")
+    else:
+        st.markdown("Which message representation gives themes that are stable, coherent and meaningful? "
+                    "Stability = agreement (ARI) between clusterings of overlapping random subsamples. Coherence = NPMI of each cluster's top terms.")
+        ce = csv("cluster_experiment.csv")
+        st.dataframe(ce.round(3), hide_index=True, width="stretch")
+        st.markdown("word2vec trained on in-domain text is the most stable representation on both corpora, so it is the one deployed (k = 6).")
 
+# ------------------------------------------------------------------ End-to-end
 with tabs[3]:
-    ex = json.loads((R / "experiments_summary.json").read_text())
-    st.subheader("1. Calibration and spam threshold")
-    st.markdown(f"Deployed spam model: **{ex['calibration']['deployed']}**, threshold **{ex['calibration']['threshold']}** "
-                "(highest spam recall on validation data with at most 0.5% of genuine messages flagged). "
-                "ECE = expected calibration error (lower is better).")
-    c1, c2 = st.columns([2, 1])
-    c1.dataframe(pd.read_csv(R / "calibration_threshold.csv"), hide_index=True, width="stretch")
-    c2.image(str(R / "spam_reliability.png"))
-    st.subheader("2. Robustness to evasion tricks (spam recall)")
-    st.dataframe(pd.read_csv(R / "robustness.csv"), hide_index=True, width="stretch")
-    st.caption("The normalizer undoes letter-spacing and look-alike letters. It was written to invert these exact attacks, so full recovery "
-               "is expected; real spammers will use other tricks.")
-    st.subheader("3. Error propagation on a small DRAFT end-to-end test set")
-    p = ex["pipeline_eval"]
-    m = st.columns(4)
-    m[0].metric("Messages", p["n"])
-    m[1].metric("Language accuracy", f"{p['language_accuracy']:.0%}")
-    m[2].metric("End-to-end correct (predicted language)", f"{p['end_to_end_exact_match_predicted']:.0%}")
-    m[3].metric("End-to-end correct (true language)", f"{p['end_to_end_exact_match_oracle_language']:.0%}")
-    st.markdown("The gap between the last two is the cost of language-detection mistakes flowing into later steps. "
-                f"{p['messages_where_language_error_changed_outcome']} of {p['n']} messages were affected.")
-    st.warning("This test set is a DRAFT of 47 messages written by the AI assistant, not real data. Replace/extend it with real, team-labelled messages "
-               "before quoting any number. Findings so far: all 4 Hinglish spam messages were missed (spam model is English-only); "
-               "a French message was absorbed by the Hinglish class; 2 of 6 clearly positive English messages were called negative.")
-    st.dataframe(pd.read_csv(R / "pipeline_eval_detail.csv"), hide_index=True, width="stretch")
+    e = js("e2e_summary.json")
+    st.markdown(f"A mixed stream of **{e['n']:,} real held-out messages** (no model saw any of them) from seven sources, run through the full pipeline. "
+                f"Throughput: **{e['messages_per_second']:.0f} messages per second** on one CPU core.")
+    L = e["language"]
+    m = st.columns(3)
+    m[0].metric("Language: answered", f"{L['coverage']:.1%}"); m[1].metric("Language: accuracy when answered", f"{L['accuracy_on_accepted']:.1%}")
+    m[2].metric("Language: overall (uncertain = wrong)", f"{L['accuracy_overall_if_uncertain_counted_wrong']:.1%}")
+    st.markdown("**Spam** (English and Hinglish messages)")
+    rows = []
+    for k_, v in e["spam"].items():
+        rows.append({"setting": k_.replace("_", " "), "spam": v["n_spam"], "genuine": v["n_genuine"], "recall": v["recall"], "precision": v["precision"], "genuine flagged": v["genuine_flagged"]})
+    st.dataframe(pd.DataFrame(rows).round(3), hide_index=True, width="stretch")
+    st.markdown("**Sentiment: cost of language mistakes.** Predicted routing = the pipeline decides the language; oracle = the true language is supplied.")
+    rows = []
+    for lang_, v in e["sentiment"].items():
+        for route, s in v.items():
+            rows.append({"language": lang_, "routing": route.replace("_", " "), "answered": s["coverage"], "accuracy": s["accuracy"], "macro-F1": s["macro_F1"]})
+    st.dataframe(pd.DataFrame(rows).round(3), hide_index=True, width="stretch")
+    st.caption("Genuine-vs-spam labels for tweets and comments are assumed (public social posts treated as genuine). "
+               "The IIIT-H comments and the Hindi challenge set have no reliable language labels, so they are excluded from language accuracy.")
+    st.dataframe(csv("e2e_detail.csv").sample(200, random_state=0), hide_index=True, width="stretch")
 
+# ------------------------------------------------------------------ Themes
 with tabs[4]:
-    summ = json.loads((R / "summary.json").read_text())["clustering"]
-    st.markdown(f"Genuine (non-spam) English SMS, {summ['n_messages']} messages -> TF-IDF -> SVD/PCA (50 dims) -> K-Means, k={summ['k_best']}.")
     c1, c2 = st.columns(2)
-    c1.image(str(R / "clusters.png"))
-    c2.dataframe(pd.read_csv(R / "cluster_summary.csv"), hide_index=True, width="stretch")
-    st.warning("Clusters are weak so far (silhouette about 0.07-0.10, rising with k, no elbow). Next step: multilingual sentence embeddings.")
+    for col, key, title in ((c1, "en", "English (genuine SMS)"), (c2, "hinglish", "Hinglish (real comments)")):
+        col.subheader(title)
+        col.image(str(R / f"themes_{key}.png"))
+        t = csv(f"themes_{key}.csv"); col.dataframe(t[["cluster", "size", "top_terms"]], hide_index=True, width="stretch")
+        with col.expander("Example messages per theme"):
+            for r in t.itertuples():
+                st.markdown(f"**#{r.cluster}** " + " | ".join(r.examples.split(" || ")))
 
+# ------------------------------------------------------------------ Data and limits
 with tabs[5]:
     st.markdown("""
-**Done so far**
-- Language detection on 15 languages + English + **real romanized Hinglish** (L3Cube-HingLID), NB / SVM / KNN
-- Spam detection (UCI SMS, duplicates removed before splitting), probability calibration and a low-false-positive threshold
-- Evasion-robustness test (letter spacing, look-alike letters) and a normalizer defence
-- English sentiment (movie reviews), PCA + K-Means theme clustering
-- End-to-end pipeline, error-propagation experiment on a draft test set, this app
+**Data**
+| Used for | Dataset | Size | Note |
+|---|---|---|---|
+| Language | UN Declaration of Human Rights (NLTK), 15 languages | pieces of 25-120 characters | formal text |
+| Language | L3Cube-HingLID (Nayak and Joshi, 2022), CC BY-NC-SA 4.0 | 5,000 train / 400 test samples used | real romanized Hinglish tweets |
+| Language, spam | UCI SMS Spam Collection | 5,171 unique messages | English |
+| Sentiment (Hinglish) | IIIT-H code-mixed corpus (Prabhu et al., 2016) | 3,876 comments | real Hinglish, 3 classes |
+| Sentiment (English) | NLTK twitter_samples, sentence_polarity, movie_reviews | 10k / 10.6k / 2k | 3 domains |
+| Spam transfer test | third-party hand-written Hinglish and Hindi scam lines | 101 unique each | the source files repeat ~100 lines 50 times each, de-duplicated here |
 
-**Honest limits of this version**
-- Spam, sentiment and clustering models are English only. Hinglish spam is currently missed (0 of 4 on the draft set).
-- Sentiment is trained on movie reviews and transfers poorly to chat/customer text.
-- The Hinglish class acts as a catch-all for unfamiliar Latin-script text (a French message was labelled Hinglish); more informal non-English data is needed.
-- HingLID labels come from tweets, so very short English-looking fragments are labelled Hinglish by source, not by content.
-- The end-to-end test set is a small AI-written draft; the 15 non-English languages come from formal UN text.
-- No transformer results yet (notebook ready: `notebooks/transformer_finetune_colab.ipynb`); Hinglish sentiment waits for the SemEval data (`python src/semeval.py`).
-
-**Next**
-1. Download SemEval-2020 Task 9 -> Hinglish sentiment (classical now, transformers on Colab)
-2. Hinglish spam data (e.g. the Hinglish scam text dataset) and informal French/German/Spanish text
-3. Multilingual embeddings for clustering
-4. Replace the draft end-to-end set with a real team-labelled set (200-300 messages)
-5. Fine-tune XLM-R / HingRoBERTa and compare with the classical baselines
+**Known limits**
+- Spam in Hinglish is the weakest part: about a third of Hinglish scams are caught at about 1% false alarms. The fix is real labelled Hinglish spam.
+- Hindi in Devanagari is detected but not spam-checked, scored for sentiment or grouped into themes.
+- Sentiment labels for English tweets come from emoticons (distant supervision); the Hinglish labels are noisy (typical agreement is low for this task).
+- Themes are unsupervised: the cluster names are read from top terms, not ground truth.
+- Languages outside the 17 trained classes are not covered; very short text (1-3 words) is the hardest case.
+- No transformer results yet: `notebooks/transformer_finetune_colab.ipynb` is ready to run on a free Colab GPU.
 """)

@@ -1,0 +1,4 @@
+vs,best_right_other_wrong,other_right_best_wrong,p_value
+Naive Bayes,48,52,0.7641771556220947
+Logistic Regression,20,12,0.21592493894013678
+KNN,104,64,0.0026218217690905927

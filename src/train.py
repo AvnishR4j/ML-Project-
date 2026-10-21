@@ -1,4 +1,5 @@
-"""Train + compare Naive Bayes / linear SVM / KNN on each task, save best models.
+"""Baseline comparison of Naive Bayes / linear SVM / KNN for language detection and spam (UCI).
+Sentiment and themes: see exp_sentiment.py and exp_cluster.py. Deployed models: final_language.py, final_spam.py, final_themes.py.
 
 Run from the repo root:   python src/train.py
 Outputs: models/*.joblib, results/model_comparison.csv, results/*.png, results/summary.json
@@ -23,7 +24,7 @@ from sklearn.pipeline import FeatureUnion, Pipeline
 from sklearn.preprocessing import Normalizer
 from sklearn.svm import LinearSVC
 
-from data import ROOT, load_language, load_language_v2, load_sentiment, load_spam
+from data import ROOT, load_language, load_language_v2, load_spam
 
 warnings.filterwarnings("ignore")
 (ROOT / "models").mkdir(exist_ok=True)
@@ -91,7 +92,7 @@ if __name__ == "__main__":
         print(f"  [lang] {mname:12s} " + " ".join(f"{k.split(':')[1].strip()[:14]}={v:.3f}" for k, v in row.items() if k.startswith("acc: ")))
     all_rows += lang_rows
     bn, bm = best_lang[0], best_lang[2]
-    joblib.dump(bm, ROOT / "models" / "language.joblib")
+    joblib.dump(bm, ROOT / "models" / "language_baseline.joblib")
     summary["language"] = {"best": bn, "train": len(ltr), "classes": sorted(ltr.label.unique().tolist()),
                            "test_sets": {k: len(v) for k, v in ltests.items()},
                            "selection": "mean accuracy on real Hinglish, hand-written Hinglish (OOD) and informal English"}
@@ -125,50 +126,9 @@ if __name__ == "__main__":
                           ("c", TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 4), sublinear_tf=True, min_df=2))])
     rows, (bn, bs, bm) = run_task("Spam detection", str_, ste, feats, "spam_F1", pos_label="spam")
     all_rows += rows
-    joblib.dump(bm, ROOT / "models" / "spam.joblib")
+    joblib.dump(bm, ROOT / "models" / "spam_baseline.joblib")
     summary["spam"] = {"best": bn, "duplicates_removed": int(dupes), "train": len(str_), "test": len(ste),
                        "spam_share_test": float((ste.label == "spam").mean())}
-
-    # ---------------- 3. sentiment ----------------
-    print("Sentiment ...")
-    sx_tr, sx_te = load_sentiment()
-    feats = TfidfVectorizer(ngram_range=(1, 2), sublinear_tf=True, min_df=2, max_df=0.9, stop_words="english")
-    rows, (bn, bs, bm) = run_task("Sentiment (English)", sx_tr, sx_te, feats, "macro_F1")
-    all_rows += rows
-    joblib.dump(bm, ROOT / "models" / "sentiment.joblib")
-    summary["sentiment"] = {"best": bn, "train": len(sx_tr), "test": len(sx_te)}
-
-    # ---------------- 4. clustering (PCA/SVD + K-Means) on genuine (ham) SMS ----------------
-    print("Clustering ...")
-    full = pd.concat([str_, ste])
-    ham = full[full.label == "ham"].text.reset_index(drop=True)
-    vec = TfidfVectorizer(stop_words="english", min_df=3, max_df=0.5, sublinear_tf=True)
-    X = vec.fit_transform(ham)
-    svd = TruncatedSVD(n_components=50, random_state=SEED)
-    Z = Normalizer(copy=False).fit_transform(svd.fit_transform(X))
-    scan = {}
-    for k in range(4, 13):
-        km = KMeans(n_clusters=k, n_init=10, random_state=SEED).fit(Z)
-        scan[k] = float(silhouette_score(Z, km.labels_))
-    # Silhouette keeps rising with k (no natural elbow), so k is fixed at 8 for interpretability.
-    k_best = 8
-    km = KMeans(n_clusters=k_best, n_init=10, random_state=SEED).fit(Z)
-    terms = np.array(vec.get_feature_names_out())
-    cent = km.cluster_centers_ @ svd.components_ / np.maximum(np.linalg.norm(svd.components_, axis=0), 1e-9)
-    names = {}
-    for c in range(k_best):
-        top = terms[np.argsort(cent[c])[::-1][:6]]
-        names[c] = ", ".join(top)
-    joblib.dump({"vec": vec, "svd": svd, "km": km, "names": names}, ROOT / "models" / "cluster.joblib")
-    sizes = pd.Series(km.labels_).value_counts().sort_index()
-    pd.DataFrame({"cluster": sizes.index, "size": sizes.values, "top_terms": [names[c] for c in sizes.index]}) \
-        .to_csv(ROOT / "results" / "cluster_summary.csv", index=False)
-    fig, ax = plt.subplots(figsize=(7, 5.5))
-    sc = ax.scatter(Z[:, 0], Z[:, 1], c=km.labels_, cmap="tab10", s=8, alpha=0.7)
-    ax.set_title(f"Genuine SMS messages: SVD(50) + K-Means (k={k_best}), first 2 components shown")
-    ax.set_xlabel("component 1"); ax.set_ylabel("component 2")
-    fig.tight_layout(); fig.savefig(ROOT / "results" / "clusters.png", dpi=130); plt.close(fig)
-    summary["clustering"] = {"k_best": int(k_best), "silhouette_by_k": scan, "n_messages": int(len(ham))}
 
     pd.DataFrame(all_rows).to_csv(ROOT / "results" / "model_comparison.csv", index=False)
     (ROOT / "results" / "summary.json").write_text(json.dumps(summary, indent=2))
