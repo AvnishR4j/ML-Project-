@@ -29,7 +29,7 @@ python run_all.py                       # downloads data, trains, evaluates, reb
 streamlit run app/streamlit_app.py      # interactive app
 pytest -q                               # data-leakage checks, normaliser, pipeline behaviour
 ```
-Transformer track (needs a free Colab GPU): `notebooks/transformer_finetune_colab.ipynb` (same data and test split as the classical models; not yet run).
+Transformer track (needs a free Colab GPU, about 90 minutes): `notebooks/transformer_finetune_colab.ipynb` (same data and test split as the classical models). Results are in `results/transformer_*.csv`.
 
 ## Method and evidence
 
@@ -150,6 +150,28 @@ Character n-grams beat word features because romanized Hindi has no fixed spelli
 | tweets                 |           0.562 |           0.576 |    0.759 |
 | tweets + short reviews |           0.744 |           0.78  |    0.759 |
 
+### 3b. Transformer track (Colab, T4 GPU)
+Five pretrained encoders fine-tuned on the same IIIT-H training split and scored on the same 776-message test set (3 seeds each, 4 epochs, best epoch chosen on a validation split taken from the training data). Classical reference: linear SVM 0.694 (95% CI 0.658 to 0.729).
+
+| model                        |   macro-F1 (mean of 3 seeds) |    std |   accuracy |
+|:-----------------------------|-----------------------------:|-------:|-----------:|
+| bert-base-multilingual-cased |                       0.6364 | 0.0065 |     0.6765 |
+| google/muril-base-cased      |                       0.3814 | 0.1517 |     0.5503 |
+| l3cube-pune/hing-bert        |                       0.7159 | 0.0093 |     0.7397 |
+| l3cube-pune/hing-roberta     |                       0.7258 | 0.008  |     0.744  |
+| xlm-roberta-base             |                       0.6449 | 0.0056 |     0.683  |
+
+The two Hinglish-specific models (L3Cube HingBERT / HingRoBERTa) reach 0.716 and 0.726 and are the only ones above the classical baseline, though HingRoBERTa is only just above the top of the SVM's confidence interval, so the gain is small. General multilingual models (mBERT, XLM-R) score below the SVM, and MuRIL failed to train reliably (high variance across seeds, one seed stuck at the majority-class score) with this single learning rate. Transformers cost minutes of GPU time per run against seconds on CPU for the SVM.
+
+Zero-shot spam transfer (XLM-R trained on English SMS only, threshold 0.5, 101-line third-party Hinglish challenge set):
+
+| test_set                       |   AUC |   spam_recall@0.5 |   false_alarm@0.5 |
+|:-------------------------------|------:|------------------:|------------------:|
+| English SMS test               | 0.999 |             0.985 |             0.007 |
+| Hinglish challenge (zero-shot) | 0.977 |             0.157 |             0     |
+
+It ranks Hinglish scams well (AUC 0.977) but at the default threshold catches few (16%), the same calibration problem seen with the classical model; the per-language threshold fix was not applied here. The scores in `results/transformer_*.csv` were copied from the Colab output tables (the per-seed file was not saved).
+
 ### 4. Themes
 Representations compared by silhouette, stability under resampling (ARI), topic coherence (NPMI) and agreement with a label the clustering never saw (mean over k = 4 to 12):
 
@@ -235,7 +257,7 @@ Genuine-vs-spam labels for the large stream above (tweets and comments) are assu
 - Hinglish sentiment labels are noisy and from one domain (mostly comments on videos and political posts); expect lower scores elsewhere.
 - Themes are unsupervised: cluster names are read from top terms and examples, not ground truth.
 - The language model covers 17 classes; other languages are forced into the nearest class or rejected.
-- No transformer results yet (the Colab run needs a Google sign-in).
+- Transformer scores were copied by hand from the Colab output; the transformers are not part of the deployed pipeline (the classical model is within 0.03 macro-F1 and runs on a CPU in seconds).
 - The 250-message labelled set has machine-assigned labels; independent human verification is still pending.
 
 ## Repository

@@ -1,0 +1,6 @@
+model,macro_F1_mean,macro_F1_std,acc_mean
+bert-base-multilingual-cased,0.6364,0.0065,0.6765
+google/muril-base-cased,0.3814,0.1517,0.5503
+l3cube-pune/hing-bert,0.7159,0.0093,0.7397
+l3cube-pune/hing-roberta,0.7258,0.0080,0.7440
+xlm-roberta-base,0.6449,0.0056,0.6830

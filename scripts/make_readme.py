@@ -35,6 +35,8 @@ syn = csv("spam_synthetic_augmentation.csv")
 syn["training data"] = ["English SMS only", "+ 100 synthetic per class", "+ 300 synthetic per class", "+ all synthetic (deployed)"]
 syn = syn[["training data", "en_F1", "hi_challenge_recall", "hi_challenge_AUC", "hi_challenge_genuine_flagged", "real_genuine_hi_flag_rate"]]
 lab = js("e2e_labelled.json")
+tf = csv("transformer_results.csv"); tf.columns = ["model", "macro-F1 (mean of 3 seeds)", "std", "accuracy"]
+tfs = csv("transformer_spam_transfer.csv")
 th_en = csv("themes_en.csv")[["cluster", "size", "top_terms"]]; th_hi = csv("themes_hinglish.csv")[["cluster", "size", "top_terms"]]
 
 (R / "README.md").write_text(f"""# Multilingual Message Intelligence
@@ -68,7 +70,7 @@ python run_all.py                       # downloads data, trains, evaluates, reb
 streamlit run app/streamlit_app.py      # interactive app
 pytest -q                               # data-leakage checks, normaliser, pipeline behaviour
 ```
-Transformer track (needs a free Colab GPU): `notebooks/transformer_finetune_colab.ipynb` (same data and test split as the classical models; not yet run).
+Transformer track (needs a free Colab GPU, about 90 minutes): `notebooks/transformer_finetune_colab.ipynb` (same data and test split as the classical models). Results are in `results/transformer_*.csv`.
 
 ## Method and evidence
 
@@ -121,6 +123,19 @@ Character n-grams beat word features because romanized Hindi has no fixed spelli
 **English**: the same model trained on one domain breaks on another (macro-F1; rows = training data, columns = test data). The deployed model is trained on tweets + short reviews:
 
 {md(xd)}
+
+### 3b. Transformer track (Colab, T4 GPU)
+Five pretrained encoders fine-tuned on the same IIIT-H training split and scored on the same 776-message test set (3 seeds each, 4 epochs, best epoch chosen on a validation split taken from the training data). Classical reference: linear SVM 0.694 (95% CI 0.658 to 0.729).
+
+{md(tf)}
+
+The two Hinglish-specific models (L3Cube HingBERT / HingRoBERTa) reach 0.716 and 0.726 and are the only ones above the classical baseline, though HingRoBERTa is only just above the top of the SVM's confidence interval, so the gain is small. General multilingual models (mBERT, XLM-R) score below the SVM, and MuRIL failed to train reliably (high variance across seeds, one seed stuck at the majority-class score) with this single learning rate. Transformers cost minutes of GPU time per run against seconds on CPU for the SVM.
+
+Zero-shot spam transfer (XLM-R trained on English SMS only, threshold 0.5, 101-line third-party Hinglish challenge set):
+
+{md(tfs)}
+
+It ranks Hinglish scams well (AUC 0.977) but at the default threshold catches few (16%), the same calibration problem seen with the classical model; the per-language threshold fix was not applied here. The scores in `results/transformer_*.csv` were copied from the Colab output tables (the per-seed file was not saved).
 
 ### 4. Themes
 Representations compared by silhouette, stability under resampling (ARI), topic coherence (NPMI) and agreement with a label the clustering never saw (mean over k = 4 to 12):
@@ -176,7 +191,7 @@ Genuine-vs-spam labels for the large stream above (tweets and comments) are assu
 - Hinglish sentiment labels are noisy and from one domain (mostly comments on videos and political posts); expect lower scores elsewhere.
 - Themes are unsupervised: cluster names are read from top terms and examples, not ground truth.
 - The language model covers 17 classes; other languages are forced into the nearest class or rejected.
-- No transformer results yet (the Colab run needs a Google sign-in).
+- Transformer scores were copied by hand from the Colab output; the transformers are not part of the deployed pipeline (the classical model is within 0.03 macro-F1 and runs on a CPU in seconds).
 - The 250-message labelled set has machine-assigned labels; independent human verification is still pending.
 
 ## Repository
