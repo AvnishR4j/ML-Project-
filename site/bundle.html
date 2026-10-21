@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multilingual Message Intelligence</title>
+<meta name="description" content="Language identification, spam detection, sentiment analysis and theme discovery for short English, Hindi and Hinglish messages.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#0a0f1c;color:#e8ecf5;font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.5}
+a{color:#7fdbe6;text-decoration:none}a:hover{color:#bdf0f5}
+button{font-family:inherit}
+h1,h2,h3,p,ol,ul{margin:0}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(127,219,230,.55)}100%{box-shadow:0 0 0 10px rgba(127,219,230,0)}}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(10,15,28,.86);backdrop-filter:blur(12px);border-bottom:1px solid #1d2840}
+.topbar .in-{max-width:1120px;margin:0 auto;padding:8px 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;color:#7fdbe6;white-space:nowrap}
+.nav{display:flex;flex-wrap:wrap;gap:2px;margin-left:auto}
+.nav a{color:#9fabc2;font-size:14px;padding:8px 14px;border-radius:999px;white-space:nowrap;transition:color .2s,background .2s}
+.nav a:hover,.nav a.on{color:#fff;background:#16213a}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px 96px;display:flex;flex-direction:column;gap:112px}
+section{scroll-margin-top:80px}
+.h2{font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:42px;line-height:1.1;letter-spacing:-.01em;color:#e8ecf5}
+.intro{margin-top:14px;max-width:46rem;color:#9fabc2;font-size:17px;line-height:1.6}
+.num{color:#7fdbe6;font-weight:600}
+.h3{font-size:18px;font-weight:600;color:#e8ecf5}
+.hint{margin:6px 0 18px;max-width:46rem;color:#9fabc2;font-size:15px;line-height:1.55}
+.mono{font-family:'IBM Plex Mono',monospace}
+.chip{font-size:14px;color:#b6c0d4;background:#111a2e;border:1px solid #25324d;border-radius:999px;padding:9px 16px;cursor:pointer;min-height:40px;transition:color .2s,border-color .2s,background .25s,transform .2s}
+.chip:hover{color:#fff;border-color:#3a4c72;transform:translateY(-1px)}
+.chip[aria-pressed=true]{color:#0a0f1c;background:#7fdbe6;border-color:#7fdbe6;font-weight:500}
+.chip:focus-visible,.nav a:focus-visible,summary:focus-visible,input:focus-visible,textarea:focus-visible,.th:focus-visible,.go:focus-visible{outline:2px solid #7fdbe6;outline-offset:2px}
+.panel{background:#111a2e;border:1px solid #25324d;border-radius:14px}
+.card{transition:transform .3s cubic-bezier(.2,.7,.2,1),border-color .3s;padding:24px;display:flex;flex-direction:column;gap:14px}
+.card:hover{transform:translateY(-4px);border-color:#3f6f7a}
+.card .k{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#7fdbe6;letter-spacing:.08em}
+.card .ask{font-family:'Newsreader',Georgia,serif;font-size:24px;line-height:1.2;color:#fff}
+.card .body{font-size:14.5px;color:#b6c0d4;display:flex;flex-direction:column;gap:12px}
+.card .lab{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8794ad;margin-bottom:3px}
+.card .score{margin-top:auto;padding-top:14px;border-top:1px dashed #2c3b5c;font-size:14px;color:#9fabc2;line-height:1.7}
+.card .score b{font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:34px;color:#fff;margin-right:8px}
+table{width:100%;border-collapse:collapse;font-size:14.5px;color:#dbe2ef}
+th{position:sticky;top:0;background:#0f1729;text-align:left;font-weight:500;color:#9fabc2;padding:12px 14px;border-bottom:1px solid #25324d;font-size:13px}
+td{padding:12px 14px;border-bottom:1px solid #1d2840;vertical-align:top;line-height:1.45}
+tbody tr{transition:background .15s}tbody tr:hover{background:#16213a}tbody tr:last-child td{border-bottom:0}
+.th{all:unset;cursor:pointer;color:#9fabc2}.th:hover{color:#fff}
+.pill{display:inline-block;padding:2px 11px;border-radius:999px;font-size:12px;white-space:nowrap}
+.pill.spam{color:#ff9d96;background:rgba(255,123,114,.14)}.pill.ham{color:#9fabc2;border:1px solid #2c3b5c}.pill.na{color:#9fabc2;border:1px dashed #2c3b5c}
+.ein{animation:up .9s cubic-bezier(.2,.7,.2,1) both}
+.dotgrid{background-image:radial-gradient(#25324d 1px,transparent 1px);background-size:26px 26px}
+.live{display:inline-block;width:8px;height:8px;border-radius:50%;background:#7fdbe6;animation:pulse 1.8s ease-out infinite}
+.hero{padding:80px 28px 8px;margin:0 -28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:56px;align-items:center}
+.hero h1{margin-top:18px;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:68px;line-height:1.03;letter-spacing:-.02em;color:#fff;max-width:12ch}
+.hero .lede{margin-top:24px;max-width:36rem;font-size:19px;line-height:1.6;color:#b6c0d4}
+.ideas{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.ideas span{font-size:13px;color:#b6c0d4;border:1px solid #2c3b5c;border-radius:999px;padding:6px 14px}
+.heroCard{padding:22px 24px 20px;background:#0f1729}
+.bubble{background:#16213a;border-radius:4px 16px 16px 16px;padding:14px 16px;min-height:66px;font-size:16.5px;line-height:1.45;color:#fff;word-break:break-word}
+.hrow{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #1d2840;transition:opacity .4s,transform .4s}
+.hrow .n{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8794ad;width:82px;flex:none}
+.hrow .r{font-family:'Newsreader',Georgia,serif;font-size:19px}
+.hrow .pill{margin-left:auto}
+.dots{display:flex;gap:6px;margin-top:16px}.dots i{height:4px;border-radius:2px;transition:all .4s;background:#25324d;width:10px}.dots i.on{background:#7fdbe6;width:28px}
+.own{display:flex;flex-direction:column;gap:8px;margin:28px 0 18px}
+.own label{font-size:13px;color:#9fabc2}
+.own textarea{font:inherit;font-size:16px;color:#e8ecf5;background:#111a2e;border:1px solid #25324d;border-radius:12px;padding:12px 14px;min-height:84px;resize:vertical;width:100%}
+.own .row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.go{font:inherit;font-size:14px;font-weight:500;color:#0a0f1c;background:#7fdbe6;border:0;border-radius:999px;padding:10px 22px;cursor:pointer;transition:transform .2s,background .2s}
+.go:hover{background:#a9ecf3;transform:translateY(-1px)}.go[disabled]{opacity:.55;cursor:default;transform:none}
+.own .note{font-size:13px;color:#9fabc2}
+.wk{margin-top:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:40px;align-items:start}
+.wmsg{padding:22px 24px;border-radius:6px 20px 20px 20px}
+.wmsg small{display:block;font-size:13px;color:#9fabc2;margin-bottom:8px}
+.wmsg div{font-size:20px;line-height:1.45;color:#fff;word-break:break-word}
+.tl{list-style:none;padding:0;display:flex;flex-direction:column}
+.tl li{display:grid;grid-template-columns:44px 1fr;gap:16px;position:relative;transition:opacity .45s,transform .45s;opacity:.15;transform:translateX(-8px)}
+.tl li.on{opacity:1;transform:none}
+.tl li:not(:last-child)::before{content:"";position:absolute;left:21px;top:44px;bottom:0;width:1px;background:#25324d}
+.tl .c{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-size:14px;background:#0a0f1c;border:1px solid #7fdbe6;color:#7fdbe6;transition:background .4s,color .4s}
+.tl li.on .c{background:#7fdbe6;color:#0a0f1c;font-weight:600}
+.tl li.skip .c{border:1px dashed #3a4c72;color:#8794ad;background:#0a0f1c}
+.tl .st{padding-bottom:26px}
+.tl .nm{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#9fabc2}
+.tl .res{margin-top:4px;font-family:'Newsreader',Georgia,serif;font-size:24px;line-height:1.25;color:#fff}
+.tl li.skip .res{color:#8794ad}
+.tl .res .pill{font-family:'IBM Plex Sans',system-ui,sans-serif;margin-left:8px;vertical-align:3px}
+.tl .why{margin-top:6px;font-size:14.5px;color:#9fabc2;line-height:1.5}
+.meter{margin-top:10px;max-width:320px;height:6px;border-radius:3px;background:#1d2840;position:relative}
+.meter i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;width:0;transition:width .9s cubic-bezier(.2,.7,.2,1) .15s}
+.grid4{margin-top:32px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:20px}
+.two{margin-top:40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:40px;font-size:15.5px}
+.two p{color:#9fabc2;line-height:1.6;margin-top:6px}
+.seg{display:flex;gap:3px;height:48px}
+.seg span{min-width:0;border-radius:4px;transition:flex-grow .9s cubic-bezier(.2,.7,.2,1),opacity .2s,transform .2s;cursor:pointer;flex:0 1 0}
+.seg span.g{min-width:4px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 26px;margin-top:18px;font-size:13.5px}
+.legend div{display:flex;align-items:center;gap:8px;cursor:pointer;transition:opacity .2s}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%}
+.legend em{font-style:normal;color:#9fabc2}
+.cmprow{padding:18px 0;border-bottom:1px solid #1d2840}.cmprow:last-child{border-bottom:0}
+.cmprow .top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;margin-bottom:12px}
+.cmprow .top span:first-child{font-size:15px}.cmprow .top span:last-child{font-size:12px;color:#8794ad;font-family:'IBM Plex Mono',monospace}
+.bars{display:grid;grid-template-columns:96px 1fr 52px;gap:8px 12px;align-items:center;font-size:13.5px}
+.bars .t{height:10px;border-radius:5px;background:#1d2840;overflow:hidden}
+.bars .t i{display:block;height:100%;border-radius:5px;width:0;transition:width .9s cubic-bezier(.2,.7,.2,1);background:#4a5d82}
+.bars .t i.best{background:#7fdbe6}
+.bars .v{text-align:right;font-variant-numeric:tabular-nums;color:#9fabc2}.bars .v.best{color:#fff;font-weight:600}
+.key{display:flex;flex-wrap:wrap;gap:8px 26px;margin-top:14px;font-size:13px;color:#9fabc2}
+.key i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:7px}
+.tb{display:block;height:10px;border-radius:3px;background:#1d2840;overflow:hidden}.tb i{display:block;height:100%;border-radius:3px;width:0;transition:width .9s cubic-bezier(.2,.7,.2,1)}
+.twocol{margin-top:36px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:48px}
+.lens{display:grid;grid-template-columns:96px 1fr 56px;gap:16px 12px;align-items:center;font-size:14px}
+.lens .t{height:10px;background:#1d2840;border-radius:5px;overflow:hidden}.lens .t i{display:block;height:100%;width:0;border-radius:5px;background:#7fdbe6;transition:width .9s cubic-bezier(.2,.7,.2,1)}
+.lens .v{text-align:right;font-variant-numeric:tabular-nums}
+.dbk{display:flex;flex-wrap:wrap;align-items:center;gap:6px 22px;font-size:13px;color:#9fabc2;margin-bottom:14px}
+.dbk i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px}
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:#b6c0d4;background:none;border:0;padding:6px 0}
+.switch .tr{display:inline-block;width:40px;height:22px;border-radius:11px;position:relative;transition:background .3s;background:#2c3b5c}
+.switch .tr i{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .3s}
+.switch[aria-pressed=true] .tr{background:#7fdbe6}.switch[aria-pressed=true] .tr i{left:21px}
+.db{display:grid;grid-template-columns:150px 1fr 96px;gap:6px 12px;align-items:center;font-size:13px;margin-top:10px}
+.db .ax{position:relative;height:18px;color:#9fabc2}.db .ax span{position:absolute}
+.db .trk{position:relative;height:32px;border-bottom:1px solid #25324d}
+.db .cl{position:absolute;left:73.3%;top:3px;bottom:3px;border-left:1px dashed #8794ad}
+.db .ln{position:absolute;top:50%;height:2px;margin-top:-1px;background:#3a4c72;transition:width .8s cubic-bezier(.2,.7,.2,1)}
+.db .pt{position:absolute;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%}
+.db .red{background:#ff7b72}.db .teal{background:#7fdbe6;transition:left .8s cubic-bezier(.2,.7,.2,1)}
+.db .txt{text-align:right;color:#e8ecf5;font-variant-numeric:tabular-nums}
+details{margin-top:32px;border-top:1px solid #25324d;border-bottom:1px solid #25324d;padding:16px 0}
+summary{cursor:pointer;font-size:18px;font-weight:600;color:#e8ecf5}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:22px 0 14px}
+.bar .chips{display:flex;flex-wrap:wrap;gap:6px}
+.bar input{margin-left:auto;font:inherit;font-size:14px;color:#e8ecf5;background:#111a2e;border:1px solid #25324d;border-radius:10px;padding:10px 14px;min-width:min(100%,260px)}
+.tw{overflow:auto;max-height:560px}
+footer{font-size:13px;color:#8794ad;max-width:48rem;line-height:1.6;border-top:1px solid #25324d;padding-top:24px}
+@media (max-width:640px){.hero h1{font-size:46px}.h2{font-size:34px}.hero{padding-top:48px}.db{grid-template-columns:110px 1fr 84px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="in-">
+<span class="brand">MESSAGE INTELLIGENCE</span>
+<nav class="nav" aria-label="Sections"><a href="#s3" data-s="s3">Demo</a><a href="#s2" data-s="s2">Pipeline</a><a href="#s4" data-s="s4">Performance</a><a href="#s5" data-s="s5">Robustness</a><a href="#s6" data-s="s6">Explorer</a></nav>
+</div></div>
+
+<div class="wrap">
+
+<header class="hero dotgrid">
+<div>
+<div class="mono ein" style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#7fdbe6">Machine Learning Project</div>
+<h1 class="ein" style="animation-delay:.08s">Multilingual Message Intelligence</h1>
+<p class="lede ein" style="animation-delay:.18s">A system that reads short messages in English, Hindi and Hinglish (Hindi typed in English letters) and works out <b style="color:#fff;font-weight:600">what language each one is in, whether it is spam, how the sender feels, and what people are talking about</b>.</p>
+<div class="ideas ein" style="animation-delay:.28s" aria-label="CodeChef project ideas combined">
+<span>Language Detection System</span><span>Email Spam Classifier</span><span>Movie Review Sentiment Analyzer</span><span>Clustering and Dimensionality Reduction</span><span>KNN, SVM and Naive Bayes comparison</span>
+</div>
+</div>
+<div class="panel heroCard ein" style="animation-delay:.3s" aria-label="Automatic demonstration of the pipeline">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><span class="live"></span><span class="mono" style="font-size:12px;letter-spacing:.12em;color:#9fabc2">LIVE PIPELINE</span></div>
+<div class="bubble" id="h-msg"></div>
+<div id="h-rows" style="margin-top:18px"></div>
+<div class="dots" id="h-dots" aria-hidden="true"></div>
+</div>
+</header>
+
+<section id="s3" class="rv">
+<h2 class="h2">Try it on a message</h2>
+<p class="intro">Choose an example, or type your own, to see what each stage decides.</p>
+<div class="own">
+<label for="own-t">Your own message (English, Hinglish or any of 15 languages)</label>
+<textarea id="own-t" maxlength="600" placeholder="For example: Congratulations! You have won a free prize, click the link to claim"></textarea>
+<div class="row"><button class="go" id="own-go" type="button">Analyze my message</button><span class="note" id="own-note">Runs in your browser with the same trained models. Nothing you type is sent anywhere.</span></div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px" role="group" aria-label="Example messages" id="chips"></div>
+<div class="wk">
+<div>
+<div class="panel wmsg"><small id="w-title"></small><div id="w-msg"></div></div>
+<button class="chip" style="margin-top:16px" id="replay" type="button">Replay</button>
+</div>
+<ol class="tl" id="tl"></ol>
+</div>
+</section>
+
+<section id="s2" class="rv">
+<h2 class="h2">How it works</h2>
+<p class="intro">Every message passes through four models, one question each.</p>
+<div class="grid4">
+<div class="panel card"><span class="k">STAGE 1</span><span class="ask">Which language is this?</span>
+<div class="body"><div><div class="lab">How</div>Cuts the text into 1 to 4 letter chunks, weights rare chunks higher (TF-IDF), and a classifier picks the language. If it is not confident enough, the message goes to review.</div><div><div class="lab">Learned from</div>UN texts in 15 languages, English SMS and tweets, and real Hinglish tweets (L3Cube).</div><div><div class="lab">CodeChef idea</div>Language Detection System</div></div>
+<div class="score"><b>97.5%</b>on real Hinglish tweets</div></div>
+<div class="panel card"><span class="k">STAGE 2</span><span class="ask">Is it spam or a scam?</span>
+<div class="body"><div><div class="lab">How</div>Words, letter chunks and scam cues (links, phone numbers, money symbols) feed a classifier. The score is a true probability, and each language has its own cut-off so genuine messages are rarely blocked.</div><div><div class="lab">Learned from</div>The UCI SMS Spam Collection, with duplicate messages removed.</div><div><div class="lab">CodeChef idea</div>Email Spam Classifier</div></div>
+<div class="score"><b>96.3%</b>spam F1 on English SMS</div></div>
+<div class="panel card"><span class="k">STAGE 3</span><span class="ask">Is the sender happy or upset?</span>
+<div class="body"><div><div class="lab">How</div>Word and letter patterns feed a linear classifier. One model for English (positive or negative) and one for Hinglish (negative, neutral or positive).</div><div><div class="lab">Learned from</div>English tweets and short reviews, and real Hinglish comments (IIIT-H).</div><div><div class="lab">CodeChef idea</div>Movie Review Sentiment Analyzer</div></div>
+<div class="score"><b>69.4%</b>Hinglish macro F1 (3 classes)<br><b>75.9%</b>English macro F1 (tweets)</div></div>
+<div class="panel card"><span class="k">STAGE 4</span><span class="ask">What are people talking about?</span>
+<div class="body"><div><div class="lab">How</div>Each message becomes a vector of numbers from word embeddings, and K-Means groups similar messages into 6 themes per language. No labels needed.</div><div><div class="lab">Learned from</div>Genuine English SMS and real Hinglish comments.</div><div><div class="lab">CodeChef idea</div>Clustering and Dimensionality Reduction</div></div>
+<div class="score">Chosen over TF-IDF with PCA for stability</div></div>
+</div>
+<div class="two">
+<div><h3 class="h3">The comparison behind stages 1 to 3</h3><p>For each of these stages we trained three kinds of model on the same data: Naive Bayes, a linear SVM and KNN. Then we compared them fairly. This is the algorithm comparison from the CodeChef Iris project.</p></div>
+<div><h3 class="h3">Smart routing</h3><p>Spam stops the line, so a scam is never scored for sentiment. Messages whose language is unclear are held for review instead of guessed.</p></div>
+</div>
+</section>
+
+<section id="s4" class="rv">
+<h2 class="h2">Results</h2>
+<p class="intro">We ran the pipeline on a demo sample of <span class="num" id="k-m">340</span> real held-out messages in <span class="num" id="k-l">14</span> languages. <span class="num" id="k-h">142</span> were Hinglish, and <span class="num" id="k-s">7%</span> of the English and Hinglish messages were flagged as spam.</p>
+<p class="intro" style="margin-top:8px">On a larger stream of <span class="num">3,921</span> held-out messages, the language stage answered <span class="num">96.3%</span> of them and was right <span class="num">99.1%</span> of the time when it answered. The full pipeline processes <span class="num">63</span> messages per second on one CPU core.</p>
+
+<div style="margin-top:48px">
+<h3 class="h3">Language mix</h3>
+<p class="hint">Each block is one language. Wider means more messages. Point at a block to see its count.</p>
+<div style="min-height:28px;font-size:15px;color:#e8ecf5;margin-bottom:10px" id="mix-read"></div>
+<div class="seg" id="seg"></div>
+<div class="legend" id="legend"></div>
+</div>
+
+<div style="margin-top:60px">
+<h3 class="h3">Which of the three models is best?</h3>
+<p class="hint">Each row is one test. A longer bar is better, and the winner in each row is highlighted. Language detection is tested on five different sets because a single average would hide the hard cases.</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px" role="group" aria-label="Choose a task" id="tabs"></div>
+<div class="panel" style="padding:8px 24px" id="cmp"></div>
+<div class="key"><span><i style="background:#7fdbe6"></i>Best in row</span><span><i style="background:#4a5d82"></i>Other models</span><span>Bars start at 60</span></div>
+</div>
+
+<div style="margin-top:60px">
+<h3 class="h3">Do pretrained transformers do better?</h3>
+<p class="hint">Hinglish sentiment (3 classes), the same 776 test messages as above. Macro F1 in %, mean of 3 runs. Models made for Hinglish gain a little over the classical SVM; general multilingual models score lower, and they need a GPU to train.</p>
+<div class="panel" style="overflow-x:auto"><table style="min-width:560px"><thead><tr><th>Model</th><th></th><th style="text-align:right">Macro F1</th><th>Training cost</th></tr></thead><tbody id="trf"></tbody></table></div>
+</div>
+</section>
+
+<section id="s5" class="rv">
+<h2 class="h2">Robustness</h2>
+<p class="intro">Tested against short texts and against spammers who disguise their wording.</p>
+<div class="twocol">
+<div>
+<h3 class="h3">Short messages are harder to identify</h3>
+<p class="hint">Language detection accuracy by message length. The bars start at 90%.</p>
+<div class="lens" id="lens"></div>
+</div>
+<div>
+<h3 class="h3">Spam that hides its letters</h3>
+<p class="hint">Share of spam still caught when letters are spaced out or swapped for look-alikes, without and with a clean-up step that undoes both tricks.</p>
+<div class="dbk"><span><i style="background:#ff7b72"></i>Without clean-up</span><span><i style="background:#7fdbe6"></i>With clean-up</span><span>Dashed line: untouched spam</span></div>
+<button class="switch" id="clean" type="button" aria-pressed="false"><span class="tr"><i></i></span>Apply the clean-up step</button>
+<div class="db" id="db"></div>
+</div>
+</div>
+</section>
+
+<section id="s6" class="rv">
+<h2 class="h2">Message explorer</h2>
+<p class="intro">Every message in the demo sample with the pipeline's decisions.</p>
+<details>
+<summary>Open the message table</summary>
+<div class="bar"><div class="chips" role="group" aria-label="Filter messages" id="filters"></div><input type="search" id="q" aria-label="Search messages or themes" placeholder="Search messages or themes"></div>
+<div style="font-size:13px;color:#9fabc2;margin-bottom:10px" id="count">Loading messages…</div>
+<div class="panel tw"><table style="min-width:760px"><thead><tr>
+<th><button class="th" data-s="id">ID</button></th><th><button class="th" data-s="message">Message</button></th><th><button class="th" data-s="language">Language</button></th><th><button class="th" data-s="spam">Spam check</button></th><th><button class="th" data-s="sentiment">Sentiment</button></th><th><button class="th" data-s="theme">Theme</button></th>
+</tr></thead><tbody id="rows"></tbody></table></div>
+</details>
+</section>
+
+<footer>Data: UN Declaration of Human Rights and NLTK corpora (tweets, short reviews, movie reviews), UCI SMS Spam Collection, L3Cube-HingLID (Nayak and Joshi, 2022; CC BY-NC-SA 4.0), IIIT-H Hindi-English code-mixed corpus (Prabhu et al., 2016). All messages shown are held-out test data.</footer>
+
+</div>
+
+<script>/* In-browser port of the Python pipeline (src/pipeline.py): language -> spam -> sentiment -> theme.
+ * Weights come from scripts/export_web_models.py. Parity with Python is checked by scripts/web_parity.py.
+ * Works in a browser (global MIEngine) and in Node (module.exports). */
+(function (root) {
+  const WORD = /[\p{L}\p{N}_]{2,}/gu;
+  const W = "[\\p{L}\\p{N}_]";           // Python \w (Unicode)
+  const D = "\\p{Nd}";
+  const REV = { "а": "a", "е": "e", "о": "o", "р": "p", "с": "c", "х": "x", "у": "y", "і": "i" };
+
+  function bytes(b64) {
+    if (typeof Buffer !== "undefined") return new Uint8Array(Buffer.from(b64, "base64"));
+    const s = atob(b64), u = new Uint8Array(s.length);
+    for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i);
+    return u;
+  }
+  const f32 = (b64) => { const u = bytes(b64); return new Float32Array(u.buffer, u.byteOffset, u.byteLength >> 2); };
+  const i8 = (b64) => { const u = bytes(b64); return new Int8Array(u.buffer, u.byteOffset, u.byteLength); };
+  const i16 = (b64) => { const u = bytes(b64); return new Int16Array(u.buffer, u.byteOffset, u.byteLength >> 1); };
+  const cp = (s) => Array.from(s);
+
+  // ---------------------------------------------------------------- text helpers (src/text_norm.py)
+  function fixSpacing(text) {
+    const t = text.normalize("NFKC");
+    const segs = t.split(/ {2,}/);
+    const out = segs.map((seg) => {
+      const toks = seg.split(" ");
+      if (toks.length >= 3 && toks.every((x) => cp(x).length === 1)) return toks.join("");
+      return seg;
+    });
+    return out.join(" ");
+  }
+  function normalize(text) {
+    let t = text.normalize("NFKC");
+    t = cp(t).map((c) => REV[c] || c).join("");
+    return fixSpacing(t);
+  }
+  const squeeze = (t) => t.replace(/(.)\1{2,}/gu, "$1$1");
+  const prepFns = { lower: (t) => t.toLowerCase(), prep: (t) => squeeze(t.toLowerCase()) };
+
+  // ---------------------------------------------------------------- TF-IDF vectoriser (sklearn semantics)
+  // negation-aware preprocessing (mirror of src/negation.py NegPrep)
+  const EN_NEG = new Set("not no never nothing neither nor without cannot hardly barely dont doesnt didnt isnt wasnt arent werent cant wont wouldnt shouldnt couldnt aint nobody".split(" "));
+  const STOP = new Set("the a an is was are were be been am it this that to at all very so too really much any i do does did have has had will would can could should hai tha thi ho hain hota hoti bahut bohot ek ye yeh ki ka ke".split(" "));
+  const CONTR = [[/\bcan'?t\b/g, "can not"], [/\bwon'?t\b/g, "will not"], [/\bain'?t\b/g, "is not"], [/n['\u2019]t\b/g, " not"], [/\bcannot\b/g, "can not"]];
+  const NTOK = /[\p{L}\p{N}]+|[^\p{L}\p{N}_\s]/gu, NWORD = /^[\p{L}\p{N}_]/u;
+  function negPrep(pol, scope) {
+    const P = new Map(Object.entries(pol));
+    return (text) => {
+      let t = squeeze(text.toLowerCase()); for (const [a, b] of CONTR) t = t.replace(a, b);
+      const out = []; let left = 0;
+      for (const w of t.match(NTOK) || []) {
+        if (!NWORD.test(w)) { left = 0; out.push(w); continue; }
+        if (EN_NEG.has(w)) { left = scope; out.push(w); continue; }
+        if (left > 0) {
+          if (STOP.has(w)) { out.push(w); continue; }
+          out.push("not_" + w); const p = P.get(w) || 0; if (p) out.push(p > 0 ? "negflip_pos" : "negflip_neg"); left--;
+        } else out.push(w);
+      }
+      return out.join(" ");
+    };
+  }
+  function loadVec(v) {
+    return { an: v.an, ng: v.ng, prep: v.prep === "neg" ? negPrep(v.pol, v.scope) : prepFns[v.prep], idx: new Map(v.vocab.map((t, i) => [t, i])), idf: f32(v.idf), n: v.vocab.length };
+  }
+  function grams(v, text) {
+    const t = v.prep(text), out = [];
+    if (v.an === "word") {
+      const tokens = t.match(WORD) || [];
+      for (let n = v.ng[0]; n <= v.ng[1]; n++) {
+        if (n === 1) out.push(...tokens);
+        else for (let i = 0; i + n <= tokens.length; i++) out.push(tokens.slice(i, i + n).join(" "));
+      }
+    } else {                                   // char_wb
+      const words = t.replace(/\s\s+/g, " ").trim().split(/\s+/).filter(Boolean);
+      for (const word of words) {
+        const w = cp(" " + word + " "), len = w.length;
+        for (let n = v.ng[0]; n <= v.ng[1]; n++) {
+          let off = 0;
+          out.push(w.slice(off, off + n).join(""));
+          while (off + n < len) { off++; out.push(w.slice(off, off + n).join("")); }
+          if (off === 0) break;
+        }
+      }
+    }
+    return out;
+  }
+  function vectorize(v, text) {                 // -> {idx: Int32Array, val: Float64Array} (L2-normalised, sublinear tf)
+    const counts = new Map();
+    for (const g of grams(v, text)) { const i = v.idx.get(g); if (i !== undefined) counts.set(i, (counts.get(i) || 0) + 1); }
+    const idx = [], val = []; let s = 0;
+    for (const [i, c] of counts) { const x = (1 + Math.log(c)) * v.idf[i]; idx.push(i); val.push(x); s += x * x; }
+    const nrm = Math.sqrt(s) || 1;
+    return { idx, val: val.map((x) => x / nrm) };
+  }
+
+  // ---------------------------------------------------------------- structural spam cues (src/spam_features.py)
+  const R = {
+    url: new RegExp(`https?://|www\\.|(?<!${W})${W}+\\.(?:com|in|co|net|org|link|xyz|top|info)(?!${W})|(?<!${W})bit\\.ly|(?<!${W})tinyurl`, "iu"),
+    phone: new RegExp(`(?<!${D})(?:\\+?91[\\s-]?)?[6-9]${D}{9}(?!${D})|(?<!${W})${D}{5}[\\s-]?${D}{5}(?!${W})|(?<!${W})${D}{4,}(?!${W})`, "u"),
+    money: new RegExp(`[₹$£€]|(?<!${W})rs\\.?\\s?${D}|(?<!${W})inr(?!${W})|(?<!${W})lakh|(?<!${W})crore|(?<!${W})paise|रु`, "iu"),
+    pct: new RegExp(`${D}+\\s?%`, "u"),
+    lex: new RegExp(
+      `(?<!${W})(?:inaam|inam|jeeto|jeet\\s?gaye|jeete|muft|free|lottery|lucky|winner|kyc|otp|pan\\s?card|aadhaar|aadhar|` +
+      `band\\s?ho\\s?jayega|block\\s?ho|turant|jaldi|abhi\\s?click|click\\s?karein|click\\s?kare|link\\s?par|` +
+      `claim|offer|subsidy|yojana|loan|cashback|refund|expire|verify|update\\s?karein|apply\\s?now|register\\s?kar|` +
+      `guaranteed|return|invest|crore|lakh|prize)(?!${W})` +
+      `|इनाम|लॉटरी|मुफ्त|तुरंत|क्लिक|लिंक|केवाईसी|बंद हो|रिटर्न|अभी`, "giu"),
+  };
+  const isAlpha = (c) => /^\p{L}$/u.test(c);
+  const isUpper = (c) => c !== c.toLowerCase() && c === c.toUpperCase();
+  function structural(t) {
+    const chars = cp(t), n = Math.max(chars.length, 1);
+    const letters = chars.filter(isAlpha);
+    const up = letters.filter(isUpper).length / Math.max(letters.length, 1);
+    const digits = chars.filter((c) => /^\p{Nd}$/u.test(c)).length;
+    const bang = (t.match(/!/g) || []).length;
+    const lexN = (t.match(R.lex) || []).length;
+    return [R.url.test(t) ? 1 : 0, R.phone.test(t) ? 1 : 0, R.money.test(t) ? 1 : 0, R.pct.test(t) ? 1 : 0,
+      digits / n, up, Math.min(bang, 5) / 5, Math.log1p(chars.length) / 6, Math.min(lexN, 4) / 4];
+  }
+
+  // ---------------------------------------------------------------- models
+  const sigmoidNeg = (a, b, d) => 1 / (1 + Math.exp(a * d + b));      // sklearn sigmoid calibration: expit(-(a*d + b))
+
+  function Engine(M) {
+    const E = { M };
+    const L = M.language; E.lang = { vec: loadVec(L.vec), classes: L.classes, folds: L.folds, scale: f32(L.scale), q: i16(L.w), b: L.b, a: L.a, c: L.c, thr: L.threshold };
+    E.spam = { folds: M.spam.folds.map((f) => ({ w: loadVec(f.w), c: loadVec(f.c), scale: f.scale, coef: i16(f.coef), b: f.b, a: f.a, cb: f.cb })), thr: M.spam.thresholds };
+    for (const k of ["sent_hi", "sent_en"]) {
+      const S = M[k], vs = Object.values(S.vecs).map(loadVec);
+      E[k] = { vs, classes: S.classes, scale: f32(S.scale), q: i16(S.w), b: S.b, nrow: S.classes.length === 2 ? 1 : S.classes.length };
+    }
+    for (const k of ["theme_en", "theme_hi"]) {
+      const T = M[k]; E[k] = { idx: new Map(T.words.map((w, i) => [w, i])), scale: f32(T.scale), q: i8(T.vecs), dim: T.dim, idf: f32(T.idf), centers: f32(T.centers), kk: T.k, names: T.names, labels: T.labels };
+    }
+    return E;
+  }
+
+  function detectLanguage(E, text) {
+    const m = E.lang, x = vectorize(m.vec, fixSpacing(text)), C = m.classes.length, P = new Float64Array(C);
+    for (let f = 0; f < m.folds; f++) {
+      const p = new Float64Array(C); let s = 0;
+      for (let c = 0; c < C; c++) {
+        const r = f * C + c; let d = m.b[r];
+        const sc = m.scale[r], nr = m.folds * C; let acc = 0;
+        for (let j = 0; j < x.idx.length; j++) acc += x.val[j] * m.q[x.idx[j] * nr + r];
+        d += acc * sc;
+        p[c] = sigmoidNeg(m.a[r], m.c[r], d); s += p[c];
+      }
+      for (let c = 0; c < C; c++) P[c] += (s ? p[c] / s : 1 / C) / m.folds;
+    }
+    let bi = 0; for (let c = 1; c < C; c++) if (P[c] > P[bi]) bi = c;
+    return { lang: m.classes[bi], conf: P[bi], ok: P[bi] >= m.thr };
+  }
+
+  function spamScore(E, text, lang) {
+    const t = normalize(text), st = structural(t), folds = E.spam.folds; let p = 0;
+    for (const f of folds) {
+      const xw = vectorize(f.w, t), xc = vectorize(f.c, t); let acc = 0;
+      for (let j = 0; j < xw.idx.length; j++) acc += xw.val[j] * f.coef[xw.idx[j]];
+      for (let j = 0; j < xc.idx.length; j++) acc += xc.val[j] * f.coef[f.w.n + xc.idx[j]];
+      for (let j = 0; j < st.length; j++) acc += st[j] * f.coef[f.w.n + f.c.n + j];
+      p += sigmoidNeg(f.a, f.cb, acc * f.scale + f.b) / folds.length;
+    }
+    const thr = E.spam.thr[lang === "hinglish" ? "hinglish" : "en"];
+    return { p, thr, isSpam: p >= thr };
+  }
+
+  function sentiment(E, key, text) {
+    const m = E[key], nr = m.nrow, d = new Float64Array(nr);
+    for (let r = 0; r < nr; r++) d[r] = m.b[r];
+    let off = 0;
+    for (const v of m.vs) {
+      const x = vectorize(v, text);
+      for (let r = 0; r < nr; r++) { let acc = 0; for (let j = 0; j < x.idx.length; j++) acc += x.val[j] * m.q[(off + x.idx[j]) * nr + r]; d[r] += acc * m.scale[r]; }
+      off += v.n;
+    }
+    if (nr === 1) return m.classes[d[0] > 0 ? 1 : 0];
+    let bi = 0; for (let r = 1; r < nr; r++) if (d[r] > d[bi]) bi = r;
+    return m.classes[bi];
+  }
+
+  function theme(E, key, text) {
+    const T = E[key], dim = T.dim, v = new Float64Array(dim); let ws = 0;
+    for (const w of (text.toLowerCase().match(/[a-zऀ-ॿ']{2,}/g) || [])) {
+      const i = T.idx.get(w); if (i === undefined) continue;
+      const wt = T.idf[i]; ws += wt;
+      for (let k = 0; k < dim; k++) v[k] += wt * T.q[i * dim + k] * T.scale[i];
+    }
+    let nrm = 0; if (ws) for (let k = 0; k < dim; k++) { v[k] /= ws; nrm += v[k] * v[k]; }
+    nrm = Math.sqrt(nrm) || 1; for (let k = 0; k < dim; k++) v[k] /= nrm;
+    let best = 0, bd = Infinity;
+    for (let c = 0; c < T.kk; c++) { let s = 0; for (let k = 0; k < dim; k++) { const e = v[k] - T.centers[c * dim + k]; s += e * e; } if (s < bd) { bd = s; best = c; } }
+    return { cluster: best, terms: T.names[best], label: T.labels[String(best)] || null };
+  }
+
+  function analyze(E, text) {
+    const out = { text, needs_review: false, steps: [] }, names = E.M.meta.lang_names;
+    const { lang, conf, ok } = detectLanguage(E, text);
+    out.language_confidence = conf;
+    if (!ok) { out.language = "uncertain"; out.language_name = `Uncertain (best guess: ${names[lang] || lang}, ${Math.round(conf * 100)}%)`; out.needs_review = true; out.spam = null; return out; }
+    out.language = lang; out.language_name = names[lang] || lang;
+    if (lang !== "en" && lang !== "hinglish") { out.spam = null; return out; }
+    const s = spamScore(E, text, lang);
+    out.spam = s.isSpam ? "spam" : "ham"; out.spam_prob = s.p; out.spam_threshold = s.thr;
+    if (s.isSpam) return out;
+    out.sentiment = sentiment(E, lang === "en" ? "sent_en" : "sent_hi", text);
+    const t = theme(E, lang === "en" ? "theme_en" : "theme_hi", text);
+    out.cluster = t.cluster; out.cluster_terms = t.terms; out.cluster_label = t.label;
+    return out;
+  }
+
+  const api = { Engine, analyze, detectLanguage, spamScore, sentiment, theme, normalize, fixSpacing, structural, vectorize };
+  if (typeof module !== "undefined" && module.exports) module.exports = api; else root.MIEngine = api;
+})(typeof self !== "undefined" ? self : this);
+</script>
+<script>
+(function () {
+'use strict';
+var MODEL_BASE = 'https://raw.githubusercontent.com/AvnishR4j/ML-Project-/6c594ac7ffe19212b851f176a752302cd858eb91/site/mdl/';
+var MODELS = ['language', 'spam', 'sent_hi', 'sent_en', 'theme_en', 'theme_hi', 'meta'];
+var $ = function (id) { return document.getElementById(id); };
+var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+var fmtN = function (n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); };
+var reduced = false; try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+
+/* ---------- data ---------- */
+var W = [
+{ id: 'W1', title: 'Everyday English complaint', message: 'My order has not arrived yet and nobody is replying to my emails', language: 'English', spam: 'ham', p: '0.02', sentiment: 'negative', theme: 'Requests and calls' },
+{ id: 'W2', title: 'English praise', message: 'Really happy with the service, the delivery was quick and the staff were helpful', language: 'English', spam: 'ham', p: '0.04', sentiment: 'positive', theme: 'Opinions and advice' },
+{ id: 'W3', title: 'English spam', message: 'Congratulations! You have won a free prize, call 09061701461 now to claim', language: 'English', spam: 'spam', p: '1.0' },
+{ id: 'W4', title: 'Spam with spaced-out letters', message: 'Congratulations!  You  h a v e  won  a  f r e e  prize,  c a l l  09061701461  now  to  c l a i m', language: 'English', spam: 'spam', p: '1.0' },
+{ id: 'W5', title: 'Hinglish negative comment', message: 'ye film bilkul bekar thi, paisa barbad ho gaya', language: 'Hinglish', spam: 'ham', p: '0.0', sentiment: 'negative', theme: 'General fan comments' },
+{ id: 'W6', title: 'Hinglish positive comment', message: 'salman bhai ki nayi film ka trailer bahut zabardast hai, eid par dekhne jayenge', language: 'Hinglish', spam: 'ham', p: '0.0', sentiment: 'positive', theme: 'Film and festival buzz' },
+{ id: 'W7', title: 'Hinglish scam', message: 'Dost PM Awas Yojana mein tera naam hai - 2.5 lakh ki subsidy ke liye register kar aaj.', language: 'Hinglish', spam: 'spam', p: '0.56' },
+{ id: 'W8', title: 'Hindi in Devanagari', message: 'यह फ़ोन बहुत अच्छा है', language: 'Hindi', spam: 'none' },
+{ id: 'W9', title: 'German', message: 'Der Film war wirklich gut, ich habe ihn sehr genossen', language: 'German', spam: 'none' },
+{ id: 'W10', title: 'Unclear language, sent to review', message: 'Merci beaucoup pour votre aide, a bientot', language: 'Uncertain', spam: 'none' }
+];
+var CMP = {
+lang: [['UN texts (other languages)', 'accuracy %', 99.8, 98.8, 97.1], ['Informal English (SMS incl. spam)', 'accuracy %', 100.0, 99.8, 98.2], ['English tweets (unfiltered; some are not English)', 'accuracy %', 97.8, 97.5, 94.5], ['Real Hinglish (HingLID test)', 'accuracy %', 97.2, 97.5, 96.8], ['Hand-written Hinglish (OOD)', 'accuracy %', 100.0, 100.0, 93.6]],
+spam: [['Spam detection · UCI SMS test', 'spam F1 %', 96.3, 95.9, 94.2]],
+sent: [['Sentiment (Hinglish) · IIIT-H comments, 3 classes', 'macro F1 %', 69.2, 69.4, 62.6], ['Sentiment (English) · tweets, 2 classes', 'macro F1 %', 75.4, 75.9, 71.6]]
+};
+var TABS = [['lang', 'Language detection'], ['spam', 'Spam detection'], ['sent', 'Sentiment']];
+var TRF = [['Linear SVM (classical, for comparison)', 69.4, 'seconds on a CPU', 0], ['HingRoBERTa (L3Cube)', 72.6, 'GPU', 1], ['HingBERT (L3Cube)', 71.6, 'GPU', 0], ['XLM-RoBERTa base', 64.5, 'GPU', 0], ['Multilingual BERT', 63.6, 'GPU', 0], ['MuRIL', 38.1, 'GPU, unstable', 0]];
+var LENS = [['1-3 words', 95.7], ['4-6 words', 98.6], ['7-10 words', 98.2], ['11-20 words', 100.0], ['21+ words', 100.0]];
+var DB = [['letters spaced', 89.6, 96.0], ['look-alike letters', 92.8, 96.0]];
+var COLORS = ['#5ec9d6', '#f2a65a', '#8fd694', '#b39ddb', '#f28ba8', '#d9d36b', '#6fa8ff', '#9aa6bd'];
+
+var vis = {}, rows = [], colorOf = {}, langCount = {}, order = [];
+
+/* ---------- pipeline stage text ---------- */
+function stagesFor(cur) {
+var unsure = cur.language === 'Uncertain', supported = cur.language === 'English' || cur.language === 'Hinglish', isSpam = cur.spam === 'spam', S = [];
+S.push({ name: 'Language', res: unsure ? 'Not sure' : cur.language, tag: unsure ? 'sent to review' : '', tagCls: 'ham', why: unsure ? 'Confidence is below the threshold, so a person reviews it instead of the system guessing.' : 'Identified from character patterns.' });
+if (!supported) {
+var why = unsure ? 'Waits for the language to be confirmed.' : 'Spam filtering applies to English and Hinglish.', word = unsure ? 'Waiting' : 'Not applied';
+S.push({ name: 'Spam check', res: word, skip: 1, why: why });
+S.push({ name: 'Sentiment', res: word, skip: 1, why: unsure ? why : 'Sentiment applies to English and Hinglish.' });
+S.push({ name: 'Theme', res: word, skip: 1, why: unsure ? why : 'Themes apply to English and Hinglish.' });
+} else {
+S.push({ name: 'Spam check', res: isSpam ? 'Spam' : 'Looks genuine', tag: isSpam ? 'blocked' : 'passed', tagCls: isSpam ? 'spam' : 'ham', meter: Number(cur.p), spam: isSpam, why: 'Spam probability ' + cur.p + '. Compared with a cut-off tuned for ' + cur.language + '.' });
+if (isSpam) {
+S.push({ name: 'Sentiment', res: 'Skipped', skip: 1, why: 'Spam is removed before sentiment.' });
+S.push({ name: 'Theme', res: 'Skipped', skip: 1, why: 'Spam is removed before grouping.' });
+} else {
+S.push({ name: 'Sentiment', res: cur.sentiment, why: cur.language === 'Hinglish' ? 'Hinglish model: negative, neutral or positive.' : 'English model: positive or negative.' });
+S.push({ name: 'Theme', res: cur.theme, why: 'Closest of 6 themes learned for ' + cur.language + ' messages.' });
+}
+}
+return S;
+}
+
+/* ---------- hero live card ---------- */
+var HERO = ['W2', 'W4', 'W6', 'W9'].map(function (id) { return W.filter(function (w) { return w.id === id; })[0]; });
+var hIdx = -1, hTick = 0;
+function heroBuild(i) {
+var cur = HERO[i], S = stagesFor(cur);
+$('h-msg').textContent = cur.message;
+$('h-rows').innerHTML = S.map(function (s) {
+return '<div class="hrow" style="opacity:.12;transform:translateY(6px)"><span class="n">' + s.name + '</span><span class="r" style="color:' + (s.skip ? '#8794ad' : '#fff') + '">' + esc(s.res) + '</span>' + (s.tag ? '<span class="pill ' + s.tagCls + '">' + s.tag + '</span>' : '') + '</div>';
+}).join('');
+$('h-dots').innerHTML = HERO.map(function (h, k) { return '<i class="' + (k === i ? 'on' : '') + '"></i>'; }).join('');
+}
+function heroStep() {
+var cyc = 10, i = Math.floor(hTick / cyc) % HERO.length, t = hTick % cyc;
+if (i !== hIdx) { hIdx = i; heroBuild(i); }
+var rowsEl = $('h-rows').children;
+for (var k = 0; k < rowsEl.length; k++) { var on = k < Math.min(4, t); rowsEl[k].style.opacity = on ? '1' : '.12'; rowsEl[k].style.transform = on ? 'none' : 'translateY(6px)'; }
+hTick++;
+}
+
+/* ---------- demo timeline ---------- */
+var timer = null, cur = W[0];
+function showWalk(r) {
+cur = r;
+$('w-title').textContent = r.title; $('w-msg').textContent = r.message;
+var S = stagesFor(r);
+$('tl').innerHTML = S.map(function (s, i) {
+return '<li class="' + (s.skip ? 'skip' : '') + '"><div class="c">' + (i + 1) + '</div><div class="st"><div class="nm">' + s.name + '</div><div class="res">' + esc(s.res) + (s.tag ? ' <span class="pill ' + s.tagCls + '">' + s.tag + '</span>' : '') + '</div>' +
+(s.meter !== undefined ? '<div class="meter" aria-hidden="true"><i data-w="' + Math.max(2, Math.round(s.meter * 100)) + '" style="background:' + (s.spam ? '#ff7b72' : '#7fdbe6') + '"></i></div>' : '') +
+'<div class="why">' + esc(s.why) + '</div></div></li>';
+}).join('');
+replay();
+}
+function replay() {
+clearInterval(timer);
+var items = $('tl').children, n = 0;
+for (var k = 0; k < items.length; k++) { items[k].classList.remove('on'); var m = items[k].querySelector('.meter i'); if (m) m.style.width = '0'; }
+var step = function () {
+if (n < items.length) { items[n].classList.add('on'); var m2 = items[n].querySelector('.meter i'); if (m2) m2.style.width = m2.dataset.w + '%'; n++; }
+else clearInterval(timer);
+};
+if (reduced) { while (n < items.length) step(); return; }
+timer = setInterval(step, 700); setTimeout(step, 60);
+}
+function renderChips() {
+$('chips').innerHTML = W.map(function (w) { return '<button class="chip" type="button" data-id="' + w.id + '" aria-pressed="' + (w.id === cur.id) + '">' + esc(w.title) + '</button>'; }).join('');
+}
+$('chips').addEventListener('click', function (e) {
+var b = e.target.closest('button'); if (!b) return;
+var r = W.filter(function (w) { return w.id === b.dataset.id; })[0];
+showWalk(r); renderChips();
+});
+$('replay').addEventListener('click', replay);
+
+/* ---------- live analysis of the visitor's own message ---------- */
+var engineP = null;
+function unpack(name) {
+return fetch(MODEL_BASE + name + '.json').then(function (r) { if (!r.ok) throw new Error('download'); return r.json(); }).then(function (j) {
+var bin = Uint8Array.from(atob(j.gz), function (c) { return c.charCodeAt(0); });
+return new Response(new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+}).then(function (t) { return JSON.parse(t); });
+}
+function loadEngine() {
+if (!engineP) engineP = Promise.all(MODELS.map(unpack)).then(function (parts) {
+var M = {}; MODELS.forEach(function (n, i) { M[n] = parts[i]; });
+return window.MIEngine.Engine(M);
+})['catch'](function (e) { engineP = null; throw e; });
+return engineP;
+}
+function toRow(a, text) {
+var cap = function (x) { return x ? x.charAt(0).toUpperCase() + x.slice(1) : x; };
+var lang = a.language === 'uncertain' ? 'Uncertain' : (a.language === 'hinglish' ? 'Hinglish' : a.language_name);
+return { id: '__own', title: 'Your message', message: text, language: lang, spam: a.spam === 'spam' ? 'spam' : (a.spam === 'ham' ? 'ham' : 'none'),
+p: a.spam_prob == null ? '' : a.spam_prob.toFixed(3), sentiment: cap(a.sentiment || ''), theme: a.cluster_label || (a.cluster != null ? '#' + a.cluster : '') };
+}
+var NOTE = 'Runs in your browser with the same trained models. Nothing you type is sent anywhere.';
+function runOwn() {
+var t = $('own-t').value.trim(), note = $('own-note'), go = $('own-go');
+if (!t) { note.textContent = 'Type a message first.'; return; }
+go.disabled = true; note.textContent = 'Loading the models (about 11 MB, first time only)…';
+loadEngine().then(function (E) {
+var a = window.MIEngine.analyze(E, t);
+showWalk(toRow(a, t)); renderChips();
+$('chips').querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+note.textContent = NOTE; go.disabled = false;
+})['catch'](function () { note.textContent = 'Could not load the models. Check your connection and try again.'; go.disabled = false; });
+}
+$('own-go').addEventListener('click', runOwn);
+$('own-t').addEventListener('focus', function () { loadEngine()['catch'](function () {}); }, { once: true });
+$('own-t').addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) runOwn(); });
+
+/* ---------- results visuals ---------- */
+var tab = 'lang', hover = null;
+function renderTabs() {
+$('tabs').innerHTML = TABS.map(function (t) { return '<button class="chip" type="button" data-t="' + t[0] + '" aria-pressed="' + (t[0] === tab) + '">' + t[1] + '</button>'; }).join('');
+}
+function renderCmp() {
+$('cmp').innerHTML = CMP[tab].map(function (r) {
+var b = Math.max(r[2], r[3], r[4]), names = ['Naive Bayes', 'Linear SVM', 'KNN'], out = '';
+for (var i = 0; i < 3; i++) { var v = r[2 + i], best = v === b ? ' best' : '';
+out += '<span style="color:#9fabc2">' + names[i] + '</span><span class="t"><i class="' + best.trim() + '" data-w="' + Math.max(2, (v - 60) / 40 * 100) + '"></i></span><span class="v' + best + '">' + v.toFixed(1) + '</span>'; }
+return '<div class="cmprow"><div class="top"><span>' + esc(r[0]) + '</span><span>' + r[1] + '</span></div><div class="bars">' + out + '</div></div>';
+}).join('');
+if (vis.s4) grow($('cmp'));
+}
+$('tabs').addEventListener('click', function (e) {
+var b = e.target.closest('button'); if (!b) return; tab = b.dataset.t; renderTabs(); renderCmp();
+});
+function grow(root) {
+requestAnimationFrame(function () { requestAnimationFrame(function () {
+root.querySelectorAll('[data-w]').forEach(function (el) { el.style.width = el.dataset.w + '%'; });
+}); });
+}
+function renderTrf() {
+$('trf').innerHTML = TRF.map(function (t, i) {
+return '<tr><td>' + esc(t[0]) + '</td><td style="width:40%"><span class="tb"><i data-w="' + t[1] + '" style="transition-delay:' + (i * 0.07).toFixed(2) + 's;background:' + (t[3] ? '#7fdbe6' : 'rgba(94,201,214,.35)') + '"></i></span></td><td style="text-align:right;font-variant-numeric:tabular-nums;' + (t[3] ? 'font-weight:600;color:#fff' : '') + '">' + t[1].toFixed(1) + '</td><td>' + t[2] + '</td></tr>';
+}).join('');
+}
+function renderLens() {
+$('lens').innerHTML = LENS.map(function (l, i) {
+return '<span>' + l[0] + '</span><span class="t"><i data-w="' + Math.max(2, (l[1] - 90) / 10 * 100) + '" style="transition-delay:' + (i * 0.08).toFixed(2) + 's"></i></span><span class="v">' + l[1].toFixed(1) + '%</span>';
+}).join('');
+}
+var clean = false;
+function pos(x) { return (x - 85) / 15 * 100; }
+function renderDb() {
+var h = '<span></span><span class="ax"><span style="left:0">85%</span><span style="left:50%;transform:translateX(-50%)">92.5%</span><span style="right:0">100%</span></span><span></span>';
+DB.forEach(function (d) {
+var wp = pos(d[1]), cp = pos(d[2]), tp = clean ? cp : wp;
+h += '<span><b style="font-weight:600">Deployed spam model</b> <span style="color:#9fabc2">' + d[0] + '</span></span><span class="trk"><i class="cl"></i><i class="ln" style="left:' + wp + '%;width:' + (tp - wp) + '%"></i><i class="pt red" style="left:' + wp + '%"></i><i class="pt teal" style="left:' + tp + '%"></i></span><span class="txt">' + d[1].toFixed(1) + ' → ' + (clean ? d[2].toFixed(1) : '…') + '</span>';
+});
+$('db').innerHTML = h;
+$('clean').setAttribute('aria-pressed', String(clean));
+}
+function setClean(v) {
+clean = v;
+var d = DB, lines = $('db').querySelectorAll('.ln'), teals = $('db').querySelectorAll('.teal'), txt = $('db').querySelectorAll('.txt');
+d.forEach(function (x, i) {
+var wp = pos(x[1]), cp = pos(x[2]), tp = clean ? cp : wp;
+lines[i].style.width = (tp - wp) + '%'; teals[i].style.left = tp + '%'; txt[i].textContent = x[1].toFixed(1) + ' → ' + (clean ? x[2].toFixed(1) : '…');
+});
+$('clean').setAttribute('aria-pressed', String(clean));
+}
+$('clean').addEventListener('click', function () { setClean(!clean); });
+
+function countUp() {
+var fin = rows.length ? { m: rows.length, l: order.filter(function (k) { return k !== 'Uncertain'; }).length, h: langCount.Hinglish || 0, s: spamShare() } : { m: 340, l: 14, h: 142, s: 7 };
+if (reduced) return;
+var p = 0, iv = setInterval(function () {
+p += 0.04; if (p >= 1) { p = 1; clearInterval(iv); }
+var e = 1 - Math.pow(1 - p, 3);
+$('k-m').textContent = fmtN(Math.round(fin.m * e)); $('k-l').textContent = Math.round(fin.l * e); $('k-h').textContent = fmtN(Math.round(fin.h * e)); $('k-s').textContent = Math.round(fin.s * e) + '%';
+}, 30);
+}
+function spamShare() {
+var c = rows.filter(function (r) { return r.spam !== 'not checked'; });
+return c.length ? Math.round(100 * c.filter(function (r) { return r.spam === 'spam'; }).length / c.length) : 0;
+}
+
+/* ---------- language mix ---------- */
+function renderMix() {
+var total = rows.length || 1;
+$('mix-read').textContent = rows.length ? fmtN(rows.length) + ' messages in ' + order.length + ' groups' : 'Loading…';
+$('seg').innerHTML = order.map(function (k) { return '<span data-k="' + esc(k) + '" data-f="' + langCount[k] + '" style="background:' + colorOf[k] + '"></span>'; }).join('');
+$('legend').innerHTML = order.map(function (k) { return '<div data-k="' + esc(k) + '"><i style="background:' + colorOf[k] + '"></i><span>' + esc(k) + '</span><em>' + fmtN(langCount[k]) + ' · ' + Math.round(100 * langCount[k] / total) + '%</em></div>'; }).join('');
+if (vis.s4) growMix();
+}
+function growMix() {
+requestAnimationFrame(function () { requestAnimationFrame(function () {
+$('seg').querySelectorAll('span').forEach(function (s) { s.style.flexGrow = s.dataset.f; s.classList.add('g'); });
+}); });
+}
+function mixHover(k) {
+var total = rows.length || 1;
+hover = k;
+$('seg').querySelectorAll('span').forEach(function (s) { var on = !k || s.dataset.k === k; s.style.opacity = on ? '1' : '.3'; s.style.transform = k && on ? 'scaleY(1.12)' : 'none'; });
+$('legend').querySelectorAll('div').forEach(function (d) { d.style.opacity = !k || d.dataset.k === k ? '1' : '.4'; });
+$('mix-read').textContent = k ? k + ' · ' + fmtN(langCount[k]) + ' messages (' + Math.round(100 * langCount[k] / total) + '%)' : fmtN(rows.length) + ' messages in ' + order.length + ' groups';
+}
+['seg', 'legend'].forEach(function (id) {
+$(id).addEventListener('mouseover', function (e) { var t = e.target.closest('[data-k]'); if (t) mixHover(t.dataset.k); });
+$(id).addEventListener('mouseleave', function () { mixHover(null); });
+});
+
+/* ---------- explorer ---------- */
+var filter = 'all', query = '', sortKey = null, sortDir = 1;
+var FILTERS = [['all', 'All'], ['English', 'English'], ['Hinglish', 'Hinglish'], ['other', 'Other languages'], ['review', 'Sent to review'], ['spam', 'Flagged spam']];
+function renderFilters() {
+$('filters').innerHTML = FILTERS.map(function (f) { return '<button class="chip" type="button" data-f="' + f[0] + '" aria-pressed="' + (f[0] === filter) + '">' + f[1] + '</button>'; }).join('');
+}
+function renderRows() {
+var isOther = function (l) { return l !== 'English' && l !== 'Hinglish' && l !== 'Uncertain'; }, q = query.trim().toLowerCase();
+var v = rows.filter(function (r) {
+return (filter === 'all' || (filter === 'other' ? isOther(r.language) : filter === 'spam' ? r.spam === 'spam' : filter === 'review' ? r.language === 'Uncertain' : r.language === filter)) && (!q || r.message.toLowerCase().indexOf(q) >= 0 || r.theme.toLowerCase().indexOf(q) >= 0);
+});
+if (sortKey) v = v.slice().sort(function (a, b) { return sortDir * String(a[sortKey]).localeCompare(String(b[sortKey]), 'en', { numeric: true }); });
+$('rows').innerHTML = v.map(function (r) {
+return '<tr><td class="mono" style="color:#8794ad;font-size:12px;white-space:nowrap">' + esc(r.id) + '</td><td style="min-width:240px;max-width:460px">' + esc(r.message) + '</td><td style="white-space:nowrap"><i style="display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;background:' + (colorOf[r.language] || '#9aa6bd') + '"></i>' + esc(r.language) + '</td><td><span class="pill ' + (r.spam === 'spam' ? 'spam' : r.spam === 'ham' ? 'ham' : 'na') + '">' + (r.spam === 'spam' ? 'Spam' : r.spam === 'ham' ? 'Clear' : 'Not checked') + '</span></td><td style="color:#9fabc2;white-space:nowrap">' + esc(r.sentiment === 'n/a' ? '—' : r.sentiment) + '</td><td style="color:#9fabc2;white-space:nowrap">' + esc(r.theme === 'n/a' ? '—' : r.theme) + '</td></tr>';
+}).join('');
+$('count').textContent = rows.length ? 'Showing ' + fmtN(v.length) + ' of ' + fmtN(rows.length) + ' messages' : 'Loading messages…';
+}
+$('filters').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; filter = b.dataset.f; renderFilters(); renderRows(); });
+$('q').addEventListener('input', function (e) { query = e.target.value; renderRows(); });
+document.querySelector('thead').addEventListener('click', function () {});
+document.querySelectorAll('#s6 thead .th').forEach(function (b) { b.addEventListener('click', function () { sortDir = sortKey === b.dataset.s ? -sortDir : 1; sortKey = b.dataset.s; renderRows(); }); });
+
+function parseCsv(text) {
+var out = [], row = [], cell = '', q = false;
+for (var i = 0; i < text.length; i++) {
+var ch = text[i];
+if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; }
+else if (ch === '"') q = true; else if (ch === ',') { row.push(cell); cell = ''; }
+else if (ch === '\n') { row.push(cell); out.push(row); row = []; cell = ''; } else if (ch !== '\r') cell += ch;
+}
+if (cell !== '' || row.length) { row.push(cell); out.push(row); }
+var head = out.shift() || [];
+return out.filter(function (r) { return r.length === head.length; }).map(function (r) { var o = {}; head.forEach(function (h, i) { o[h] = r[i]; }); return o; });
+}
+function loadRows() {
+fetch('messages.csv').then(function (r) { if (!r.ok) throw new Error('csv'); return r.text(); })['catch'](function () { return fetch('https://raw.githubusercontent.com/AvnishR4j/ML-Project-/6c594ac7ffe19212b851f176a752302cd858eb91/site/messages.csv').then(function (r) { return r.text(); }); }).then(function (t) {
+rows = parseCsv(t); langCount = {};
+rows.forEach(function (r) { langCount[r.language] = (langCount[r.language] || 0) + 1; });
+order = Object.keys(langCount).sort(function (a, b) { return langCount[b] - langCount[a]; });
+order.forEach(function (k, i) { colorOf[k] = COLORS[i % COLORS.length]; });
+renderMix(); renderRows();
+if (!vis.s4 || reduced) { $('k-m').textContent = fmtN(rows.length); $('k-l').textContent = order.filter(function (k) { return k !== 'Uncertain'; }).length; $('k-h').textContent = fmtN(langCount.Hinglish || 0); $('k-s').textContent = spamShare() + '%'; }
+})['catch'](function () { $('count').textContent = 'The message table could not be loaded.'; });
+}
+
+/* ---------- reveal on scroll + scroll-spy ---------- */
+var ids = ['s3', 's2', 's4', 's5', 's6'];
+function reveal(id) {
+if (vis[id]) return; vis[id] = true;
+$(id).classList.add('in');
+if (id === 's4') { grow($('cmp')); grow($('trf')); growMix(); countUp(); }
+if (id === 's5') { grow($('lens')); setTimeout(function () { setClean(true); }, 900); }
+}
+if (reduced || !('IntersectionObserver' in window)) { ids.forEach(function (i) { $(i).classList.add('in'); vis[i] = true; }); setTimeout(function () { grow($('cmp')); grow($('trf')); growMix(); grow($('lens')); setClean(true); }, 50); }
+else {
+var io = new IntersectionObserver(function (ents) { ents.forEach(function (en) { if (en.isIntersecting) { reveal(en.target.id); io.unobserve(en.target); } }); }, { threshold: 0.12 });
+var io2 = new IntersectionObserver(function (ents) { ents.forEach(function (en) { if (en.isIntersecting) document.querySelectorAll('.nav a').forEach(function (a) { a.classList.toggle('on', a.dataset.s === en.target.id); }); }); }, { rootMargin: '-40% 0px -55% 0px' });
+ids.forEach(function (i) { io.observe($(i)); io2.observe($(i)); });
+setTimeout(function () { ids.forEach(reveal); }, 9000);
+}
+
+/* ---------- start ---------- */
+renderChips(); showWalk(W[0]); renderTabs(); renderCmp(); renderTrf(); renderLens(); renderDb(); renderFilters();
+heroStep(); if (!reduced) setInterval(heroStep, 650); else { hTick = 6; heroStep(); }
+loadRows();
+})();
+</script>
+</body>
+</html>

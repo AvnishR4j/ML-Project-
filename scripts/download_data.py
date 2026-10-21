@@ -5,6 +5,7 @@ Sources (all public; check each licence before redistributing):
   NLTK corpora (UDHR, movie_reviews, twitter_samples, sentence_polarity)  via github.com/nltk/nltk_data
   L3Cube-HingLID                 github.com/l3cube-pune/code-mixed-nlp   (CC BY-NC-SA 4.0; cite Nayak & Joshi, 2022)
   IIIT-H code-mixed sentiment    github.com/DrImpossible/Sub-word-LSTM   (Prabhu et al., 2016)
+  TweetEval sentiment (SemEval-2017) github.com/cardiffnlp/tweeteval  (English tweets, larger training set; Rosenthal et al., 2017)
   Hinglish / Hindi scam lines    github.com/gupta7050/multilingual-phishing-detection  (small hand-written challenge sets)
 """
 import urllib.request, zipfile
@@ -25,6 +26,7 @@ FILES = {
     "hinglid/validation.txt": HING.format("validation"),
     "hinglid/test.txt": HING.format("test"),
     "iiith_codemixed.txt": GH + "DrImpossible/Sub-word-LSTM/master/Data/IIITH_Codemixed.txt",
+    **{f"tweeteval/{sp}_{k}.txt": GH + f"cardiffnlp/tweeteval/main/datasets/sentiment/{sp}_{k}.txt" for sp in ("train", "val", "test") for k in ("text", "labels")},
     "hinglish_scam_challenge_raw.csv": GH + "gupta7050/multilingual-phishing-detection/main/hinglish_data.csv",
     "hindi_scam_challenge_raw.csv": GH + "gupta7050/multilingual-phishing-detection/main/hindi_data.csv",
 }

@@ -1,0 +1,41 @@
+{
+  "n": 250,
+  "n_language_eval": 249,
+  "language": {
+    "coverage": 0.9477911646586346,
+    "accuracy_when_answered": 0.9745762711864406,
+    "accuracy_all_uncertain_wrong": 0.9236947791164659
+  },
+  "spam": {
+    "n_spam": 26,
+    "n_ham": 193,
+    "precision": 1.0,
+    "recall": 0.5384615384615384,
+    "F1": 0.7,
+    "genuine_flagged": 0,
+    "en": {
+      "n_spam": 8,
+      "recall": 0.75,
+      "genuine_flagged": 0,
+      "n_ham": 92
+    },
+    "hinglish": {
+      "n_spam": 18,
+      "recall": 0.4444444444444444,
+      "genuine_flagged": 0,
+      "n_ham": 101
+    }
+  },
+  "sentiment": {
+    "en": {
+      "n": 34,
+      "accuracy": 0.7058823529411765,
+      "macro_F1": 0.7048611111111112
+    },
+    "hinglish": {
+      "n": 95,
+      "accuracy": 0.6421052631578947,
+      "macro_F1": 0.6054916985951468
+    }
+  }
+}

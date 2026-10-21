@@ -1,7 +1,7 @@
 {
   "n": 3921,
-  "seconds": 66.99613380432129,
-  "messages_per_second": 58.525765254637626,
+  "seconds": 62.4375422000885,
+  "messages_per_second": 62.79875635454533,
   "language": {
     "n": 3044,
     "coverage": 0.9628777923784494,
@@ -20,33 +20,33 @@
       "n_spam": 125,
       "n_genuine": 1900,
       "recall": 0.96,
-      "precision": 0.8759124087591241,
-      "genuine_flagged": 17,
-      "false_alarm_rate": 0.008947368421052631
+      "precision": 0.8823529411764706,
+      "genuine_flagged": 16,
+      "false_alarm_rate": 0.008421052631578947
     },
     "english_oracle_routing": {
       "n_spam": 125,
       "n_genuine": 1900,
       "recall": 0.96,
-      "precision": 0.8695652173913043,
-      "genuine_flagged": 18,
-      "false_alarm_rate": 0.009473684210526316
+      "precision": 0.8759124087591241,
+      "genuine_flagged": 17,
+      "false_alarm_rate": 0.008947368421052631
     },
     "hinglish_predicted_routing": {
       "n_spam": 51,
       "n_genuine": 1226,
-      "recall": 0.35294117647058826,
-      "precision": 0.75,
-      "genuine_flagged": 6,
-      "false_alarm_rate": 0.004893964110929853
+      "recall": 0.47058823529411764,
+      "precision": 0.7058823529411765,
+      "genuine_flagged": 10,
+      "false_alarm_rate": 0.008156606851549755
     },
     "hinglish_oracle_routing": {
       "n_spam": 51,
       "n_genuine": 1226,
-      "recall": 0.35294117647058826,
-      "precision": 0.782608695652174,
-      "genuine_flagged": 5,
-      "false_alarm_rate": 0.004078303425774877
+      "recall": 0.5294117647058824,
+      "precision": 0.7297297297297297,
+      "genuine_flagged": 10,
+      "false_alarm_rate": 0.008156606851549755
     }
   },
   "sentiment": {
@@ -64,14 +64,14 @@
     },
     "hinglish": {
       "predicted_routing": {
-        "coverage": 0.9188144329896907,
-        "accuracy": 0.6830294530154277,
-        "macro_F1": 0.659793926840794
+        "coverage": 0.9123711340206185,
+        "accuracy": 0.6822033898305084,
+        "macro_F1": 0.6593532059697473
       },
       "oracle_routing": {
-        "coverage": 0.9961340206185567,
-        "accuracy": 0.7179818887451488,
-        "macro_F1": 0.6938813494742564
+        "coverage": 0.9884020618556701,
+        "accuracy": 0.7170795306388527,
+        "macro_F1": 0.6932373294685097
       }
     }
   }

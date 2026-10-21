@@ -13,9 +13,12 @@ STEPS = [
     ("spam transfer experiments", ["src/exp_spam.py"]),
     ("theme-discovery experiment", ["src/exp_cluster.py"]),
     ("deployed language model (reject option)", ["src/final_language.py"]),
+    ("synthetic Hinglish data", ["scripts/make_synthetic_hinglish.py"]),
+    ("synthetic augmentation experiment", ["src/exp_spam_synth.py"]),
     ("deployed spam model (calibrated, per-language thresholds)", ["src/final_spam.py"]),
     ("deployed theme models", ["src/final_themes.py"]),
     ("end-to-end evaluation", ["src/final_e2e.py"]),
+    ("labelled end-to-end evaluation (250 messages)", ["src/eval_labelled.py"]),
     ("README from results", ["scripts/make_readme.py"]),
 ]
 for name, cmd in STEPS:

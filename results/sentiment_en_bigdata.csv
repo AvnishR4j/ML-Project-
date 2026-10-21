@@ -1,0 +1,4 @@
+variant,train_n,C,cv_F1,NLTK tweets,short reviews,movie reviews (cross-domain),TweetEval test (SemEval-2017),fresh everyday (32),negation challenge
+A baseline (NLTK tweets + short reviews),15944,0.1,0.7303,0.7619,0.7789,0.7683,0.6269,0.8095,0.7956
+B + TweetEval train,40841,1.0,0.6993,0.7584,0.771,0.8043,0.7732,0.9687,0.8963
+"C + TweetEval train, balanced classes",40841,0.3,0.706,0.7749,0.7657,0.7211,0.7915,0.9054,0.8295

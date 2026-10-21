@@ -1,0 +1,934 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multilingual Message Intelligence</title>
+<meta name="description" content="Language identification, spam detection, sentiment analysis and theme discovery for short English, Hindi and Hinglish messages.">
+<meta name="theme-color" content="#3a2a1e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Kalam:wght@400;700&family=Permanent+Marker&display=swap">
+<style>
+:root{color-scheme:light;--paper:#f3e8cb;--paper2:#efe1bd;--ink:#22304f;--pencil:#4a4639;--faint:#7c7260;--blue:#1f43a0;--red:#c4302b;--green:#1f7d45;--hl:rgba(255,226,58,.75);--pink:rgba(255,128,180,.55);--mint:rgba(120,230,170,.55);--line:rgba(74,112,186,.28);--sticky:#fff1a0;
+--wob:255px 18px 225px 18px/18px 225px 18px 255px;--wob2:14px 4px 16px 5px/5px 16px 4px 14px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:'Kalam','Comic Neue',cursive;font-size:16px;line-height:1.55;
+background:#3a2a1e radial-gradient(ellipse at 30% 20%,#5a4130 0,#3a2a1e 60%,#24190f 100%) fixed}
+h1,h2,h3,p,ol,ul{margin:0}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
+::selection{background:var(--hl)}
+/* ---------- the notebook page */
+.book{position:relative;max-width:1320px;margin:28px auto 40px;background-color:var(--paper);
+background-image:
+ url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .3 0 0 0 0 .12 0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+ radial-gradient(circle at 92% 3%,rgba(150,95,30,.16) 0,rgba(150,95,30,.05) 6%,transparent 12%),
+ radial-gradient(circle at 7% 46%,rgba(140,90,30,.12) 0,transparent 7%),
+ radial-gradient(circle at 85% 61%,rgba(140,90,30,.10) 0,transparent 5%),
+ radial-gradient(circle at 40% 88%,rgba(140,90,30,.10) 0,transparent 6%),
+ radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(130,85,25,.22) 100%),
+ linear-gradient(90deg,transparent 0 86px,rgba(205,60,60,.55) 86px 88px,transparent 88px 92px,rgba(205,60,60,.45) 92px 93px,transparent 93px),
+ repeating-linear-gradient(180deg,transparent 0 31px,var(--line) 31px 32px);
+background-size:260px 260px,auto,auto,auto,auto,auto,auto,auto;
+background-position:0 0,0 0,0 0,0 0,0 0,0 0,0 0,0 96px;
+box-shadow:0 1px 0 #d8c9a2,0 3px 0 #e9dcb8,0 5px 0 #cdbb90,0 22px 50px rgba(0,0,0,.55);border-radius:3px 10px 10px 3px}
+/* binding holes */
+.book::before{content:"";position:absolute;left:22px;top:0;bottom:0;width:30px;pointer-events:none;
+background:radial-gradient(circle at 15px 50%,#2b1f15 0 9px,rgba(0,0,0,.25) 10px,transparent 11.5px) 0 40px/30px 120px repeat-y}
+/* coffee ring */
+.book::after{content:"";position:absolute;right:6%;top:520px;width:170px;height:170px;border-radius:50%;pointer-events:none;
+background:radial-gradient(circle,transparent 60%,rgba(130,75,20,.18) 62%,rgba(130,75,20,.07) 66%,transparent 69%);transform:rotate(18deg)}
+.inner{max-width:1184px;margin:0 auto;padding:0 clamp(20px,4vw,56px) 0 128px}
+.main{padding-bottom:70px;position:relative;z-index:1}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.in1{animation:up .9s cubic-bezier(.2,.7,.2,1) both}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .8s,transform .8s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+/* type roles */
+.d{font-family:'Permanent Marker','Kalam',cursive;font-weight:400;letter-spacing:.01em;line-height:1.05;color:#1d1d22}
+.m{font-family:'Caveat',cursive;font-size:19px;font-weight:600;line-height:1.2;color:var(--faint)}
+.hl{background:linear-gradient(100deg,transparent 0 1%,var(--hl) 2% 97%,transparent 99%) 0 62%/100% 58% no-repeat;padding:0 .12em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+/* ---------- top strip */
+.top{position:sticky;top:0;z-index:20;background:rgba(243,232,203,.94);border-bottom:2px solid rgba(74,112,186,.45);backdrop-filter:blur(2px)}
+.top .inner{display:flex;flex-wrap:wrap;align-items:center;gap:0 28px}
+.brand{font-size:22px;padding:10px 0;transform:rotate(-1.5deg)}.brand b{color:var(--red)}
+.nav{margin-left:auto;display:flex;flex-wrap:wrap;gap:0 22px}
+.nav a{display:inline-block;padding:10px 2px 6px;font-size:21px;color:var(--pencil);background:no-repeat 0 100%/0 6px;transition:color .2s,background-size .3s}
+.nav a:hover{color:var(--blue)}
+.nav a.on{color:var(--red);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='8' preserveAspectRatio='none' viewBox='0 0 100 8'%3E%3Cpath d='M2 5 Q 25 1 50 5 T 98 4' fill='none' stroke='%23c4302b' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");background-size:100% 6px}
+/* ---------- hero */
+.hero{padding:56px 0 96px;display:flex;flex-wrap:wrap;gap:56px;align-items:center;position:relative}
+.hero .l{flex:999 1 520px;min-width:0}
+.eyebrow{display:flex;gap:10px;align-items:center;color:var(--red);font-size:22px;transform:rotate(-2deg);transform-origin:left}
+.eyebrow i{display:inline-block;width:34px;height:10px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='10'%3E%3Cpath d='M2 5 L30 5 M24 1 L31 5 L24 9' fill='none' stroke='%23c4302b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.hero h1{margin-top:18px;font-size:clamp(40px,5.6vw,76px);line-height:1.08}
+.hero h1 span{color:var(--red)}
+.lede{margin-top:24px;max-width:36rem;font-size:17px;line-height:1.7;color:var(--ink)}
+.lede b{font-weight:700;background:linear-gradient(100deg,transparent 0 1%,var(--mint) 2% 98%,transparent 99%) 0 70%/100% 45% no-repeat}
+.five{margin-top:34px;max-width:34rem;position:relative;padding:18px 22px 14px;border:2px solid rgba(31,67,160,.75);border-radius:var(--wob)}
+.five>.m{color:var(--blue);font-size:21px}
+.five ol{list-style:none;padding:0;margin:6px 0 0}
+.five li{display:flex;gap:12px;padding:4px 0;font-size:16px}
+.five li span{color:var(--red);width:26px;flex:none;font-size:19px}
+.five li span::after{content:")"}
+.hero .r{flex:1 1 340px;max-width:440px;margin:0 auto;padding:12px 10px 0 0;position:relative}
+.hero .r::before{content:"look! it reads this \2193";position:absolute;left:-6px;top:-30px;font-family:'Caveat',cursive;font-size:22px;color:var(--blue);transform:rotate(-4deg)}
+/* sticky-note slips with tape */
+.slip{position:relative;background:var(--sticky);color:#2a2a2a;box-shadow:0 1px 1px rgba(0,0,0,.1),4px 10px 18px rgba(60,40,10,.25);
+background-image:linear-gradient(180deg,rgba(255,255,255,.35),transparent 30%),repeating-linear-gradient(180deg,transparent 0 27px,rgba(160,130,40,.18) 27px 28px)}
+.slip::before{content:"";position:absolute;top:-13px;left:50%;width:110px;height:26px;margin-left:-55px;background:rgba(235,225,195,.75);box-shadow:0 1px 2px rgba(0,0,0,.12);transform:rotate(-3deg);
+clip-path:polygon(3% 0,97% 4%,100% 50%,97% 100%,4% 96%,0 52%)}
+.slip.h{padding:30px 26px 18px;transform:rotate(-2deg)}
+.slip .hd{display:flex;justify-content:space-between}.slip .hd .m,.slip .hd span{color:#7a6a3a}
+.slip .msg{margin-top:8px;min-height:76px;font-size:19px;line-height:1.45;font-family:'Kalam',cursive;color:var(--blue);word-break:break-word}
+.slip .perf{margin:12px 0 2px;border-top:2px dashed rgba(120,100,40,.45)}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;min-height:48px;border-bottom:1px dotted rgba(120,100,40,.35)}
+.srow .m{color:#6d5f35}
+/* circled marker "stamps" */
+.stamp{display:inline-block;font-size:17px;padding:4px 14px;border:2.5px solid;border-radius:var(--wob);white-space:nowrap;opacity:0;transform:rotate(-8deg) scale(1.6);transition:opacity .3s,transform .4s cubic-bezier(.3,1.6,.5,1)}
+.stamp.show{opacity:1;transform:rotate(-3deg) scale(1)}
+.stamp.ink{color:var(--blue)}.stamp.ok{color:var(--green)}.stamp.bad{color:var(--red)}.stamp.skip{color:#8a8070;border-style:dashed;text-decoration:line-through}
+.dots{display:flex;gap:8px;margin-top:26px;justify-content:center}.dots i{display:block;width:10px;height:10px;border:2px solid var(--pencil);border-radius:50% 45% 55% 40%;transition:all .3s}.dots i.on{background:var(--red);border-color:var(--red);transform:scale(1.2)}
+/* ---------- sections */
+section{scroll-margin-top:64px}
+.sec{margin-top:110px}
+.sh{padding-top:4px;display:flex;flex-wrap:wrap;gap:6px 40px;align-items:flex-start}
+.sh .no{flex:0 0 140px;color:var(--red);font-size:24px;transform:rotate(-4deg);margin-top:10px}
+.sh .t{flex:1 1 440px;min-width:0}
+.h2d{display:inline-block;font-size:clamp(30px,3.8vw,48px);padding-bottom:10px;
+background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='14' preserveAspectRatio='none' viewBox='0 0 300 14'%3E%3Cpath d='M3 9 C 60 2, 120 13, 180 7 S 270 4, 297 8' fill='none' stroke='%231f43a0' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M12 12 C 80 7, 160 14, 290 10' fill='none' stroke='%231f43a0' stroke-width='1.6' stroke-linecap='round' opacity='.6'/%3E%3C/svg%3E") 0 100%/100% 14px no-repeat}
+.intro{margin-top:10px;max-width:40rem;font-size:17px;line-height:1.6;color:var(--pencil)}
+.h3d{font-size:26px}
+.hint{margin:6px 0 20px;max-width:46rem;font-size:15.5px;line-height:1.6;color:var(--pencil)}
+/* ---------- demo */
+.demo{margin-top:48px;display:flex;flex-wrap:wrap;gap:48px}
+.demo .a{flex:1 1 300px;min-width:0;align-self:flex-start}
+.demo .b{flex:2 1 460px;min-width:0;padding-top:14px}
+.own label{display:block;color:var(--blue);font-size:21px;margin-bottom:6px}
+.own textarea{width:100%;min-height:110px;resize:vertical;font:inherit;font-size:17px;line-height:32px;color:var(--blue);padding:0 14px;border:2px solid var(--pencil);border-radius:var(--wob2);
+background:rgba(255,253,240,.55) repeating-linear-gradient(180deg,transparent 0 31px,var(--line) 31px 32px);background-attachment:local}
+.own textarea::placeholder{color:#998d74}
+.own textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(31,67,160,.15)}
+.own .row{display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;margin-top:14px}
+.go{font-family:'Permanent Marker',cursive;font-size:18px;letter-spacing:.04em;color:#fff;background:var(--red);border:0;border-radius:var(--wob2);padding:10px 24px;min-height:46px;cursor:pointer;box-shadow:2px 3px 0 #7d1d19;transform:rotate(-1.5deg);transition:transform .15s,box-shadow .15s}
+.go:hover{transform:rotate(0) translateY(-1px)}.go:active{transform:translateY(2px);box-shadow:0 1px 0 #7d1d19}.go[disabled]{opacity:.55;cursor:default}
+.own .note{font-family:'Caveat',cursive;font-size:18px;color:var(--faint);flex:1 1 220px;line-height:1.2}
+.exh{margin-top:32px;color:var(--blue);font-size:21px}
+.exl{margin-top:4px}
+.ex{display:flex;gap:12px;align-items:baseline;width:100%;text-align:left;font:inherit;font-size:16px;padding:0 10px;min-height:32px;line-height:32px;border:0;cursor:pointer;background:transparent;color:var(--ink);transition:padding-left .25s,color .2s}
+.ex span:first-child{width:28px;flex:none;color:var(--faint)}
+.ex:hover{padding-left:18px;color:var(--blue)}
+.ex[aria-pressed=true]{color:#1b1b1b;background:linear-gradient(100deg,transparent 0 1%,var(--pink) 2% 97%,transparent 99%) 0 55%/100% 70% no-repeat}
+.ex[aria-pressed=true] span:first-child{color:var(--red)}
+.lk{background:none;border:0;cursor:pointer;color:var(--blue);padding:10px 0;min-height:44px;margin-top:10px;font-size:20px}.lk:hover{color:var(--red)}
+.slip.w{padding:34px 28px 22px;transform:rotate(-.8deg)}
+.slip.w::before{width:140px;height:32px;margin-left:-70px;top:-17px;transform:rotate(-1.5deg);
+background:
+ url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='32'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9 .05' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .25 0 0 0 0 .25 0 0 0 0 .27 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='140' height='32' filter='url(%23t)'/%3E%3C/svg%3E"),
+ repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 1px,rgba(0,0,0,.07) 1px 2px),
+ linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,0) 40%,rgba(0,0,0,.14)),
+ #a9acaf;
+box-shadow:0 2px 4px rgba(0,0,0,.3),inset 0 0 0 1px rgba(255,255,255,.18);
+clip-path:polygon(0 8%,2% 0,5% 14%,8% 2%,11% 12%,14% 0,100% 0,98% 18%,100% 36%,97% 54%,100% 74%,98% 100%,95% 88%,92% 100%,88% 86%,85% 100%,0 100%,2% 70%,0 48%,3% 28%)}
+.slip.w .msg{font-size:20px;min-height:0;margin-top:6px}
+#w-title{color:#7a6a3a!important}
+.tl{list-style:none;margin:40px 0 0;padding:0}
+.tl li{display:grid;grid-template-columns:56px minmax(0,1fr);gap:14px;padding:14px 0 16px;border-bottom:1px dashed rgba(74,70,57,.35);transition:opacity .5s,transform .5s;opacity:.18;transform:translateX(-10px)}
+.tl li.on{opacity:1;transform:none}
+.tl .n{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;font-size:24px;line-height:1;color:#b9ad92;border:2.5px solid currentColor;border-radius:52% 46% 55% 44%/48% 55% 45% 52%;transform:rotate(-6deg);transition:color .4s}
+.tl li.on .n{color:var(--red)}.tl li.on.skip .n{color:#a49a84}
+.tl .nm{color:var(--faint)}
+.tl .rs{margin-top:2px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.tl .res{font-size:25px;line-height:1.1;word-break:break-word;color:var(--blue)}
+.tl .res.ok{color:var(--green)}.tl .res.bad{color:var(--red)}
+.tl li.skip .res{color:#a49a84;text-decoration:line-through;text-decoration-thickness:3px;text-decoration-color:rgba(196,48,43,.6)}
+.tag{padding:0 10px;border:2px solid;border-radius:var(--wob2);font-size:17px;transform:rotate(-2deg);color:var(--faint)}.tag.ok{color:var(--green)}.tag.bad{color:var(--red)}
+.meter{margin-top:10px;max-width:320px;height:12px;border:1.5px solid var(--pencil);border-radius:var(--wob2);background:rgba(255,255,255,.3);overflow:hidden}
+.meter i{display:block;height:100%;width:0;opacity:.8;transition:width .9s cubic-bezier(.2,.7,.2,1) .15s}
+.tl .why{margin-top:6px;font-size:15.5px;line-height:1.55;color:var(--pencil);max-width:36rem}
+/* ---------- pipeline cards (index cards) */
+.cells{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:28px}
+.cells{align-items:start}
+.cell{position:relative}
+.cell:nth-child(odd){transform:rotate(-1deg)}.cell:nth-child(even){transform:rotate(1.2deg)}
+.cpaper{position:relative;padding:26px 22px 14px;background:#fffdf3;border-radius:2px;display:flex;flex-direction:column;gap:0;
+background-image:linear-gradient(180deg,transparent 0 80px,rgba(205,60,60,.5) 80px 82px,transparent 82px),linear-gradient(180deg,transparent 0 27px,rgba(74,112,186,.25) 27px 28px);background-size:100% 100%,100% 28px;background-position:0 0,0 -1px;background-repeat:no-repeat,repeat-y;
+;box-shadow:2px 4px 10px rgba(60,40,10,.18);transition:opacity .5s ease}
+/* creases left behind after a crumpled sheet is smoothed out */
+.cpaper::after{content:"";position:absolute;inset:0;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.011' numOctaves='5' seed='7'/%3E%3CfeDiffuseLighting lighting-color='%23fff' surfaceScale='2.2'%3E%3CfeDistantLight azimuth='225' elevation='58'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E") center/cover;mix-blend-mode:soft-light;opacity:0;transition:opacity .6s ease}
+.cell.used .cpaper::after{opacity:.6}
+.cell::before{content:"";position:absolute;top:-10px;left:22px;width:70px;height:20px;background:rgba(255,140,180,.5);transform:rotate(-6deg);z-index:5;transition:opacity .4s ease}
+/* crumpled state: the HTML card is invisible (but keeps its size) and a WebGL paper ball is drawn instead */
+.cell.crum{cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none}
+.cell.crum .cpaper,.cell.anim .cpaper{opacity:0;pointer-events:none;transition:none}
+.cell.crum::before,.cell.anim::before{opacity:0}
+.cell .ball{position:absolute;left:-70px;top:-70px;pointer-events:none;z-index:4;opacity:0;transition:opacity .45s ease}
+.cells.balls .cpaper{position:absolute;left:0;right:0;top:0;z-index:1}
+.cell.crum .ball,.cell.anim .ball{opacity:1}
+.cell .shad{position:absolute;left:0;top:0;width:0;height:0;border-radius:50%;pointer-events:none;z-index:0;opacity:0;background:rgba(45,28,8,.34)}
+.cell.crum .shad{opacity:1}
+.blab,.bhint{position:absolute;left:0;right:0;top:0;text-align:center;pointer-events:none;z-index:5;transition:opacity .35s ease,transform .35s ease}
+.blab{top:6px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 14px}
+.blab .no{font-family:'Permanent Marker',cursive;font-size:24px;color:var(--red);width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:2.5px solid var(--red);border-radius:52% 46% 55% 44%/48% 55% 45% 52%;transform:rotate(-8deg)}
+.blab .tt{font-family:'Permanent Marker',cursive;font-size:19px;line-height:1.2;color:#1d1d22}
+.bhint{font-family:'Caveat',cursive;font-size:20px;color:var(--blue)}
+.cell:not(.crum) .blab,.cell:not(.crum) .bhint,.cell.anim .blab,.cell.anim .bhint{opacity:0}
+.cell.crum:hover .bhint{transform:translateY(3px)}
+.cell.crum:focus-visible .bhint{outline:2px dashed var(--red);outline-offset:4px}
+.recrum{position:absolute;right:6px;bottom:-32px;background:none;border:0;cursor:pointer;font-family:'Caveat',cursive;font-size:19px;color:var(--faint);opacity:0;pointer-events:none;transition:opacity .3s}
+.cell.used:not(.crum):not(.anim) .recrum{opacity:1;pointer-events:auto}.recrum:hover{color:var(--red)}
+.cells.balls{row-gap:52px}
+.book{overflow-x:clip}
+.unf{display:block;margin-top:6px}
+.cell .big{position:absolute;top:10px;right:16px;font-size:34px;line-height:1;color:var(--red);opacity:.85}
+.cell h3{font-size:20px;line-height:28px;height:56px;padding-right:34px;display:flex;align-items:flex-end;margin-top:0;overflow:visible}
+.cell .bd{font-size:15px;line-height:28px;color:var(--ink);display:flex;flex-direction:column;gap:0}
+.cell .bd .m{color:var(--red);font-size:19px;line-height:28px;margin-bottom:0}.cell .bd>div+div{margin-top:0}
+.cell .sc{margin-top:auto;border-top:2px dashed rgba(74,70,57,.4);padding-top:10px;background:#fffdf3;position:relative}
+.cell .sc .d{font-size:30px;color:var(--blue)}.cell .sc .m{margin-top:2px}
+.cell .sc .two{display:flex;align-items:baseline;gap:10px}.cell .sc .two+.two{margin-top:4px}.cell .sc .two .m{margin:0}
+.two2{margin-top:56px;display:flex;flex-wrap:wrap;gap:36px 56px}
+.two2>div{flex:1 1 320px}.two2 h3{font-size:22px}.two2 p{margin-top:10px;font-size:16px;line-height:1.65;color:var(--ink)}
+/* ---------- performance */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:0 18px}
+.stats.first{margin-top:40px}
+.stat{padding:18px 8px 18px 0}
+.stat .d{display:inline-block;font-size:clamp(34px,3.6vw,50px);color:var(--blue);padding:0 10px;margin-left:-10px;border:2.5px solid transparent}
+.stat .d.r{color:var(--red);border-color:rgba(196,48,43,.7);border-radius:var(--wob);transform:rotate(-3deg)}
+.stat p{margin-top:4px;font-size:15.5px;line-height:1.45;color:var(--pencil);max-width:15rem}
+.blk{margin-top:84px}.blk.first{margin-top:76px}
+.readout{min-height:24px;margin-bottom:10px;color:var(--blue)}
+.seg{display:flex;gap:3px;height:52px;padding:4px;border:2px solid var(--pencil);border-radius:var(--wob2)}
+.seg span{flex:0 1 0;min-width:0;cursor:pointer;opacity:.85;border-radius:3px;transition:flex-grow .9s cubic-bezier(.2,.7,.2,1),opacity .2s;
+background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.22) 0 3px,transparent 3px 8px)}.seg span.g{min-width:4px}
+.legend{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:0 26px;font-size:15.5px}
+.legend div{display:flex;align-items:center;gap:10px;padding:2px 0;cursor:pointer;transition:opacity .2s}
+.legend i{display:inline-block;width:14px;height:14px;flex:none;border-radius:50% 40% 55% 45%}.legend em{font-style:normal;margin-left:auto;color:var(--faint);font-family:'Caveat',cursive;font-size:18px}
+.tabs{display:flex;flex-wrap:wrap;gap:4px 14px}
+.tab{background:none;border:2px solid transparent;border-radius:var(--wob2);cursor:pointer;padding:2px 14px;min-height:40px;font-size:21px;color:var(--pencil);transition:color .2s,border-color .2s}
+.tab:hover{color:var(--blue)}.tab[aria-pressed=true]{color:var(--red);border-color:var(--red);transform:rotate(-1.5deg)}
+.cmprow{padding:18px 0;border-bottom:1px dashed rgba(74,70,57,.35)}
+.cmprow .top2{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 16px}.cmprow .top2 span:first-child{font-size:17px;font-weight:700}
+.bars{margin-top:10px;display:grid;grid-template-columns:120px minmax(0,1fr) 64px;gap:6px 14px;align-items:center}
+.bars .m{color:var(--pencil)}.bars .v{text-align:right;color:var(--faint)}.bars .v.best{color:var(--red);font-weight:700}
+.bt{display:block;height:16px;border-bottom:1.5px solid rgba(74,70,57,.35)}
+.bt i{display:block;height:100%;width:0;border-radius:2px 8px 3px 6px;transition:width .9s cubic-bezier(.2,.7,.2,1);
+background:repeating-linear-gradient(-55deg,rgba(74,70,57,.55) 0 1.5px,transparent 1.5px 6px)}
+.bt i.best{background:rgba(31,67,160,.72);box-shadow:inset 0 -3px 0 rgba(0,0,0,.08)}
+.key{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px 26px}.key i{display:inline-block;width:22px;height:12px;margin-right:8px;vertical-align:-1px;border-radius:2px}
+.tw{overflow-x:auto}.trfh,.trfr{display:grid;grid-template-columns:minmax(200px,1.3fr) minmax(120px,2fr) 84px minmax(110px,1fr);gap:14px;align-items:center;min-width:560px}
+.trfh{padding:6px 0;border-bottom:2px solid var(--pencil)}
+.trfr{padding:10px 0;border-bottom:1px dashed rgba(74,70,57,.35);font-size:16px}.trfr .v{text-align:right;color:var(--faint)}.trfr .v.best{color:var(--red)}.trfr .c{color:var(--faint);font-family:'Caveat',cursive;font-size:18px}
+/* ---------- robustness */
+.rob{margin-top:48px;display:flex;flex-wrap:wrap;gap:60px}
+.rob>div{min-width:0}.rob .a{flex:1 1 380px}.rob .b{flex:1 1 440px}
+.rob h3{font-size:22px}.rob .hint{margin:8px 0 26px}
+.cols{display:flex;align-items:flex-end;gap:16px;height:260px;border-bottom:2.5px solid var(--ink);border-left:2.5px solid var(--ink);padding:0 10px;border-radius:0 0 0 4px}
+.col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.col .v{text-align:center;margin-bottom:6px;font-size:18px;color:var(--ink)}
+.col i{display:block;width:100%;height:0;border:2px solid var(--blue);border-bottom:0;border-radius:6px 3px 0 0;transition:height .9s cubic-bezier(.2,.7,.2,1);
+background:repeating-linear-gradient(45deg,rgba(31,67,160,.45) 0 2px,transparent 2px 7px)}
+.col.w i{border-color:var(--red);background:repeating-linear-gradient(45deg,rgba(196,48,43,.5) 0 2px,transparent 2px 7px)}
+.collab{display:flex;gap:16px;margin-top:8px;padding:0 10px}.collab span{flex:1 1 0;min-width:0;text-align:center;font-size:17px}
+.dbk{display:flex;flex-wrap:wrap;gap:4px 24px;margin-bottom:6px}.dbk i{display:inline-block;width:12px;height:12px;margin-right:8px;border-radius:50%}
+.sw{display:inline-flex;align-items:center;gap:12px;background:none;border:0;cursor:pointer;color:var(--ink);padding:8px 0;min-height:44px;font-size:20px}
+.sw .tr{display:inline-block;width:26px;height:26px;position:relative;border:2.5px solid var(--ink);border-radius:var(--wob2)}
+.sw .tr i{position:absolute;inset:0;opacity:0;transition:opacity .2s;
+background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Cpath d='M4 13 L11 20 L24 2' fill='none' stroke='%231f7d45' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat;transform:scale(1.25) translate(2px,-3px)}
+.sw[aria-pressed=true] .tr i{opacity:1}
+.db{display:grid;grid-template-columns:150px minmax(0,1fr) 124px;gap:6px 14px;align-items:center;margin-top:12px}
+.db .ax{display:flex;justify-content:space-between}
+.db .trk{position:relative;height:36px;border-bottom:1.5px solid rgba(74,70,57,.4)}
+.db .cl{position:absolute;left:73.3%;top:2px;bottom:2px;border-left:2px dashed var(--faint)}
+.db .ln{position:absolute;top:50%;height:2px;margin-top:-1px;background:var(--pencil);transition:width .8s cubic-bezier(.2,.7,.2,1)}
+.db .pt{position:absolute;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50% 45% 55% 40%}
+.db .red{background:var(--red)}.db .teal{background:var(--green);transition:left .8s cubic-bezier(.2,.7,.2,1)}
+.db .txt{text-align:right}.db .lb{font-size:15.5px}.db .lb span{color:var(--faint)}
+/* ---------- explorer */
+.bar{margin-top:36px;display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center}
+.filters{display:flex;flex-wrap:wrap;gap:0 10px}
+.bar input{margin-left:auto;font-family:'Kalam',cursive;font-size:16px;color:var(--blue);background:transparent;border:0;border-bottom:2px solid var(--pencil);border-radius:0;padding:8px 2px;min-width:min(100%,280px)}
+.bar input:focus{outline:none;border-bottom-color:var(--blue)}
+.count{margin:12px 0 8px}
+.tbox{overflow:auto;max-height:580px;border:2px solid var(--pencil);border-radius:var(--wob2);background:rgba(255,253,240,.45)}
+table{width:100%;min-width:760px;border-collapse:collapse;font-size:15px;color:var(--ink)}
+th{position:sticky;top:0;background:#efe3c3;text-align:left;padding:8px 14px;border-bottom:2px solid var(--pencil)}
+.th{background:none;border:0;padding:0;cursor:pointer;color:var(--red);font-family:'Caveat',cursive;font-size:20px;font-weight:700}.th:hover{color:var(--blue)}
+td{padding:6px 14px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+tbody tr:hover td{background:rgba(255,226,58,.3)}
+td.id{white-space:nowrap}td.msg{min-width:240px;max-width:460px;color:var(--blue)}td.l{white-space:nowrap}td.l i{display:inline-block;width:10px;height:10px;margin-right:9px;border-radius:50%}
+td.sp{white-space:nowrap}td.sp.spam{color:var(--red);font-weight:700}td.sp.ham{color:var(--green)}td.sp.na{color:#a49a84}
+td.g{color:var(--pencil);white-space:nowrap}
+footer{margin-top:100px;padding-top:16px;border-top:2px dashed rgba(74,70,57,.45);max-width:50rem;font-family:'Caveat',cursive;font-size:19px;line-height:1.35;color:var(--faint)}
+footer::before{content:"sources \2014";display:block;color:var(--red);font-size:22px;margin-bottom:2px}
+@media (max-width:760px){
+.book{margin:0;border-radius:0;background-position:0 0,0 0,0 0,0 0,0 0,0 0,-44px 0,0 96px}
+.book::before{left:6px;transform:scale(.7);transform-origin:left top;height:143%}
+.book::after{display:none}
+.inner{padding:0 18px 0 62px}
+.hero .r::before{display:none}
+.sh .no{flex-basis:100%;margin-top:0}
+.db{grid-template-columns:96px minmax(0,1fr) 112px}.hero{padding-top:36px}
+.tl li{grid-template-columns:48px minmax(0,1fr)}.tl .n{width:40px;height:40px;font-size:20px}.tl .res{font-size:22px}
+.nav{gap:0 14px}.nav a{font-size:19px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="book">
+
+<div class="top"><div class="inner">
+<span class="brand d">Message<b>/</b>Intelligence</span>
+<nav class="nav m" aria-label="Sections"><a href="#s3" data-s="s3">Demo</a><a href="#s2" data-s="s2">Pipeline</a><a href="#s4" data-s="s4">Performance</a><a href="#s5" data-s="s5">Robustness</a><a href="#s6" data-s="s6">Explorer</a></nav>
+</div></div>
+
+<div class="inner main">
+
+<header class="hero">
+<div class="l">
+<p class="m eyebrow in1"><i></i>Machine Learning Project</p>
+<h1 class="d in1" style="animation-delay:.08s">Multilingual<br>Message<br><span class="hl">Intelligence</span></h1>
+<p class="lede in1" style="animation-delay:.2s">A system that reads short messages in English, Hindi and Hinglish (Hindi typed in English letters) and works out <b>what language each one is in, whether it is spam, how the sender feels, and what people are talking about</b>.</p>
+<div class="five in1" style="animation-delay:.3s">
+<p class="m">Built from five CodeChef project ideas</p>
+<ol><li><span class="m">01</span>Language Detection System</li><li><span class="m">02</span>Email Spam Classifier</li><li><span class="m">03</span>Movie Review Sentiment Analyzer</li><li><span class="m">04</span>Clustering and Dimensionality Reduction</li><li><span class="m">05</span>KNN, SVM and Naive Bayes comparison</li></ol>
+</div>
+</div>
+<div class="r in1" style="animation-delay:.35s" aria-label="Automatic demonstration of the pipeline">
+<div class="slip h">
+<div class="hd m"><span>Incoming message</span><span id="h-ct">1 / 4</span></div>
+<p class="msg" id="h-msg"></p>
+<div class="perf"></div>
+<div id="h-rows"></div>
+</div>
+<div class="dots" id="h-dots" aria-hidden="true"></div>
+</div>
+</header>
+
+<section id="s3" class="rv">
+<div class="sh"><p class="m no">01 — Demo</p><div class="t"><h2 class="d h2d">Try it on a message</h2><p class="intro">Type your own message, or choose an example, to see what each stage decides.</p></div></div>
+<div class="demo">
+<div class="a">
+<div class="own">
+<label class="m" for="own-t">Your own message</label>
+<textarea id="own-t" maxlength="600" placeholder="For example: Congratulations! You have won a free prize, click the link to claim"></textarea>
+<div class="row"><button class="go" id="own-go" type="button">Analyze</button><span class="note" id="own-note">Works for English, Hinglish and 13 other languages. It runs in your browser with the same trained models, and nothing you type is sent anywhere.</span></div>
+</div>
+<p class="m exh">Or pick an example</p>
+<div class="exl" role="group" aria-label="Example messages" id="chips"></div>
+<button class="m lk" id="replay" type="button">↻ Replay</button>
+</div>
+<div class="b">
+<div class="slip w"><div class="m" id="w-title" style="color:#6b665a"></div><p class="msg" id="w-msg"></p></div>
+<ol class="tl" id="tl"></ol>
+</div>
+</div>
+</section>
+
+<section id="s2" class="rv sec">
+<div class="sh"><p class="m no">02 — Pipeline</p><div class="t"><h2 class="d h2d">How it works</h2><p class="intro">Every message passes through four models, one question each. Tap a crumpled note to smooth it out.</p><button class="m lk unf" id="unfold-all" type="button">smooth out all notes</button></div></div>
+<div class="cells">
+<div class="cell"><span class="d big">1</span><h3 class="d">Which language is this?</h3>
+<div class="bd"><div><div class="m">How</div>Cuts the text into 1 to 4 letter chunks, weights rare chunks higher (TF-IDF), and a classifier picks the language. If it is not confident enough, the message goes to review.</div><div><div class="m">Learned from</div>UN texts in 15 languages, English SMS and tweets, and real Hinglish tweets (L3Cube).</div><div><div class="m">CodeChef idea</div>Language Detection System</div></div>
+<div class="sc"><div class="d">97.5%</div><div class="m">on real Hinglish tweets</div></div></div>
+<div class="cell"><span class="d big">2</span><h3 class="d">Is it spam or a scam?</h3>
+<div class="bd"><div><div class="m">How</div>Words, letter chunks and scam cues (links, phone numbers, money symbols) feed a classifier. The score is a true probability, and each language has its own cut-off so genuine messages are rarely blocked.</div><div><div class="m">Learned from</div>The UCI SMS Spam Collection, with duplicate messages removed.</div><div><div class="m">CodeChef idea</div>Email Spam Classifier</div></div>
+<div class="sc"><div class="d">96.3%</div><div class="m">spam F1 on English SMS</div></div></div>
+<div class="cell"><span class="d big">3</span><h3 class="d">Is the sender happy or upset?</h3>
+<div class="bd"><div><div class="m">How</div>Word and letter patterns feed a linear classifier. One model for English (positive or negative) and one for Hinglish (negative, neutral or positive).</div><div><div class="m">Learned from</div>English: about 41,000 tweets and short reviews, plus a human-rated word list for rarer words like &ldquo;handsome&rdquo;. Hinglish: IIIT-H comments plus 120 everyday sentences written by us.</div><div><div class="m">What changed</div>English rose from 63% to 79% macro F1 on 6,339 unseen tweets. Hinglish dipped from 69.4 to 67.5 on its comment test (within the margin of error) but rose from 70% to 95% on 20 new everyday sentences.</div><div><div class="m">CodeChef idea</div>Movie Review Sentiment Analyzer</div></div>
+<div class="sc"><div class="two"><span class="d">67.5%</span><span class="m">Hinglish macro F1 (3 classes)</span></div><div class="two"><span class="d">78.7%</span><span class="m">English macro F1 (unseen SemEval tweets)</span></div></div></div>
+<div class="cell"><span class="d big">4</span><h3 class="d">What are people talking about?</h3>
+<div class="bd"><div><div class="m">How</div>Each message becomes a vector of numbers from word embeddings, and K-Means groups similar messages into 6 themes per language. No labels needed.</div><div><div class="m">Learned from</div>Genuine English SMS and real Hinglish comments.</div><div><div class="m">CodeChef idea</div>Clustering and Dimensionality Reduction</div></div>
+<div class="sc"><div class="m">Chosen over TF-IDF with PCA for stability</div></div></div>
+</div>
+<div class="two2">
+<div><h3 class="d">The comparison behind stages 1 to 3</h3><p>For each of these stages we trained three kinds of model on the same data: Naive Bayes, a linear SVM and KNN. Then we compared them fairly. This is the algorithm comparison from the CodeChef Iris project.</p></div>
+<div><h3 class="d">Smart routing</h3><p>Spam stops the line, so a scam is never scored for sentiment. Messages whose language is unclear are held for review instead of guessed.</p></div>
+</div>
+</section>
+
+<section id="s4" class="rv sec">
+<div class="sh"><p class="m no">03 — Performance</p><div class="t"><h2 class="d h2d">Results</h2></div></div>
+<div class="stats first">
+<div class="stat"><div class="d" id="k-m">340</div><p>real held-out messages in the demo sample</p></div>
+<div class="stat"><div class="d" id="k-l">14</div><p>languages in that sample</p></div>
+<div class="stat"><div class="d r" id="k-h">142</div><p>were Hinglish</p></div>
+<div class="stat"><div class="d" id="k-s">7%</div><p>of the English and Hinglish messages were flagged as spam</p></div>
+</div>
+<div class="stats">
+<div class="stat"><div class="d">3,921</div><p>held-out messages in a larger stream</p></div>
+<div class="stat"><div class="d">96.3%</div><p>answered by the language stage</p></div>
+<div class="stat"><div class="d">99.1%</div><p>right when it answered</p></div>
+<div class="stat"><div class="d">63</div><p>messages per second on one CPU core</p></div>
+</div>
+
+<div class="blk first">
+<h3 class="d h3d">Language mix</h3>
+<p class="hint">Each block is one language. Wider means more messages. Point at a block to see its count.</p>
+<div class="m readout" id="mix-read"></div>
+<div class="seg" id="seg"></div>
+<div class="legend" id="legend"></div>
+</div>
+
+<div class="blk">
+<h3 class="d h3d">Which of the three models is best?</h3>
+<p class="hint">Each row is one test. A longer bar is better, and the winner in each row is highlighted. Language detection is tested on five different sets because a single average would hide the hard cases.</p>
+<div class="tabs m" role="group" aria-label="Choose a task" id="tabs"></div>
+<div id="cmp"></div>
+<div class="key m"><span><i style="background:rgba(31,67,160,.72)"></i>Best in row</span><span><i style="background:repeating-linear-gradient(-55deg,rgba(74,70,57,.55) 0 1.5px,transparent 1.5px 6px)"></i>Other models</span><span>Bars start at 60</span></div>
+</div>
+
+<div class="blk">
+<h3 class="d h3d">Do pretrained transformers do better?</h3>
+<p class="hint">Hinglish sentiment (3 classes), the same 776 test messages as above. Macro F1 in %, mean of 3 runs. Models made for Hinglish gain a little over the classical SVM; general multilingual models score lower, and they need a GPU to train.</p>
+<div class="tw"><div class="trfh m"><span>Model</span><span></span><span style="text-align:right">Macro F1</span><span>Training cost</span></div><div id="trf"></div></div>
+</div>
+</section>
+
+<section id="s5" class="rv sec">
+<div class="sh"><p class="m no">04 — Robustness</p><div class="t"><h2 class="d h2d">Robustness</h2><p class="intro">Tested against short texts and against spammers who disguise their wording.</p></div></div>
+<div class="rob">
+<div class="a">
+<h3 class="d">Short messages are harder to identify</h3>
+<p class="hint">Language detection accuracy by message length. The bars start at 90%.</p>
+<div class="cols" id="cols" role="img" aria-label="Accuracy by message length: 1 to 3 words 95.7%, 4 to 6 words 98.6%, 7 to 10 words 98.2%, 11 to 20 words 100%, 21 or more words 100%"></div>
+<div class="collab m" id="collab"></div>
+</div>
+<div class="b">
+<h3 class="d">Spam that hides its letters</h3>
+<p class="hint" style="margin-bottom:20px">Share of spam still caught when letters are spaced out or swapped for look-alikes, without and with a clean-up step that undoes both tricks.</p>
+<div class="dbk m"><span><i style="background:#c4302b"></i>Without clean-up</span><span><i style="background:#1f7d45"></i>With clean-up</span><span>Dashed line: untouched spam</span></div>
+<button class="m sw" id="clean" type="button" aria-pressed="false"><span class="tr"><i></i></span>Apply the clean-up step</button>
+<div id="db"></div>
+</div>
+</div>
+</section>
+
+<section id="s6" class="rv sec">
+<div class="sh"><p class="m no">05 — Explorer</p><div class="t"><h2 class="d h2d">Message explorer</h2><p class="intro">Every message in the demo sample with the pipeline's decisions.</p></div></div>
+<div class="bar"><div class="filters m" role="group" aria-label="Filter messages" id="filters"></div><input type="search" id="q" aria-label="Search messages or themes" placeholder="Search messages or themes"></div>
+<div class="count m" id="count">Loading messages…</div>
+<div class="tbox"><table><thead><tr>
+<th><button class="th" data-s="id">ID</button></th><th><button class="th" data-s="message">Message</button></th><th><button class="th" data-s="language">Language</button></th><th><button class="th" data-s="spam">Spam check</button></th><th><button class="th" data-s="sentiment">Sentiment</button></th><th><button class="th" data-s="theme">Theme</button></th>
+</tr></thead><tbody id="rows"></tbody></table></div>
+</section>
+
+<footer>Data: UN Declaration of Human Rights and NLTK corpora (tweets, short reviews, movie reviews), UCI SMS Spam Collection, L3Cube-HingLID (Nayak and Joshi, 2022; CC BY-NC-SA 4.0), IIIT-H Hindi-English code-mixed corpus (Prabhu et al., 2016). All messages shown are held-out test data.</footer>
+
+</div>
+
+</div>
+<script src="engine.js"></script>
+<script>
+(function () {
+'use strict';
+var SHA = 'fac7212702a2fa945ecb5f2293ea07dd1f227590';
+var RAW = 'https://raw.githubusercontent.com/AvnishR4j/ML-Project-/' + SHA + '/site/';
+var MODELS = ['language', 'spam', 'sent_hi', 'sent_en', 'theme_en', 'theme_hi', 'meta'];
+var $ = function (id) { return document.getElementById(id); };
+var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+var fmtN = function (n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); };
+var reduced = false; try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+
+var W = [
+{ id: 'W1', title: 'Everyday English complaint', message: 'My order has not arrived yet and nobody is replying to my emails', language: 'English', spam: 'ham', p: '0.02', sentiment: 'negative', theme: 'Requests and calls' },
+{ id: 'W2', title: 'English praise', message: 'Really happy with the service, the delivery was quick and the staff were helpful', language: 'English', spam: 'ham', p: '0.04', sentiment: 'positive', theme: 'Opinions and advice' },
+{ id: 'W3', title: 'English spam', message: 'Congratulations! You have won a free prize, call 09061701461 now to claim', language: 'English', spam: 'spam', p: '1.0' },
+{ id: 'W4', title: 'Spam with spaced-out letters', message: 'Congratulations!  You  h a v e  won  a  f r e e  prize,  c a l l  09061701461  now  to  c l a i m', language: 'English', spam: 'spam', p: '1.0' },
+{ id: 'W5', title: 'Hinglish negative comment', message: 'ye film bilkul bekar thi, paisa barbad ho gaya', language: 'Hinglish', spam: 'ham', p: '0.0', sentiment: 'negative', theme: 'General fan comments' },
+{ id: 'W6', title: 'Hinglish positive comment', message: 'salman bhai ki nayi film ka trailer bahut zabardast hai, eid par dekhne jayenge', language: 'Hinglish', spam: 'ham', p: '0.0', sentiment: 'positive', theme: 'Film and festival buzz' },
+{ id: 'W7', title: 'Hinglish scam', message: 'Dost PM Awas Yojana mein tera naam hai - 2.5 lakh ki subsidy ke liye register kar aaj.', language: 'Hinglish', spam: 'spam', p: '0.56' },
+{ id: 'W8', title: 'Hindi in Devanagari', message: 'यह फ़ोन बहुत अच्छा है', language: 'Hindi', spam: 'none' },
+{ id: 'W9', title: 'German', message: 'Der Film war wirklich gut, ich habe ihn sehr genossen', language: 'German', spam: 'none' },
+{ id: 'W10', title: 'Unclear language, sent to review', message: 'Merci beaucoup pour votre aide, a bientot', language: 'Uncertain', spam: 'none' }
+];
+var CMP = {
+lang: [['UN texts (other languages)', 'accuracy %', 99.8, 98.8, 97.1], ['Informal English (SMS incl. spam)', 'accuracy %', 100.0, 99.8, 98.2], ['English tweets (unfiltered; some are not English)', 'accuracy %', 97.8, 97.5, 94.5], ['Real Hinglish (HingLID test)', 'accuracy %', 97.2, 97.5, 96.8], ['Hand-written Hinglish (OOD)', 'accuracy %', 100.0, 100.0, 93.6]],
+spam: [['Spam detection · UCI SMS test', 'spam F1 %', 96.3, 95.9, 94.2]],
+sent: [['Sentiment (Hinglish) · IIIT-H comments, 3 classes', 'macro F1 %', 69.2, 69.4, 62.6], ['Sentiment (English) · tweets, 2 classes', 'macro F1 %', 75.4, 75.9, 71.6]]
+};
+var TABS = [['lang', 'Language detection'], ['spam', 'Spam detection'], ['sent', 'Sentiment']];
+var TRF = [['Linear SVM (classical, for comparison)', 69.4, 'seconds on a CPU', 0], ['HingRoBERTa (L3Cube)', 72.6, 'GPU', 1], ['HingBERT (L3Cube)', 71.6, 'GPU', 0], ['XLM-RoBERTa base', 64.5, 'GPU', 0], ['Multilingual BERT', 63.6, 'GPU', 0], ['MuRIL', 38.1, 'GPU, unstable', 0]];
+var LENS = [['1-3 words', 95.7], ['4-6 words', 98.6], ['7-10 words', 98.2], ['11-20 words', 100.0], ['21+ words', 100.0]];
+var DB = [['letters spaced', 89.6, 96.0], ['look-alike letters', 92.8, 96.0]];
+var GRAYS = ['#a8966c', '#7f8c6a'];
+var vis = {}, rows = [], colorOf = {}, langCount = {}, order = [];
+
+function stagesFor(c) {
+var unsure = c.language === 'Uncertain', supported = c.language === 'English' || c.language === 'Hinglish', isSpam = c.spam === 'spam', S = [];
+S.push({ name: 'Language', res: unsure ? 'Not sure' : c.language, tag: unsure ? 'sent to review' : '', tagK: '', why: unsure ? 'Confidence is below the threshold, so a person reviews it instead of the system guessing.' : 'Identified from character patterns.' });
+if (!supported) {
+var why = unsure ? 'Waits for the language to be confirmed.' : 'Spam filtering applies to English and Hinglish.', word = unsure ? 'Waiting' : 'Not applied';
+S.push({ name: 'Spam check', res: word, skip: 1, why: why });
+S.push({ name: 'Sentiment', res: word, skip: 1, why: unsure ? why : 'Sentiment applies to English and Hinglish.' });
+S.push({ name: 'Theme', res: word, skip: 1, why: unsure ? why : 'Themes apply to English and Hinglish.' });
+} else {
+S.push({ name: 'Spam check', res: isSpam ? 'Spam' : 'Looks genuine', tag: isSpam ? 'blocked' : 'passed', tagK: isSpam ? 'bad' : 'ok', resK: isSpam ? 'bad' : 'ok', meter: Number(c.p), spam: isSpam, why: 'Spam probability ' + c.p + '. Compared with a cut-off tuned for ' + c.language + '.' });
+if (isSpam) {
+S.push({ name: 'Sentiment', res: 'Skipped', skip: 1, why: 'Spam is removed before sentiment.' });
+S.push({ name: 'Theme', res: 'Skipped', skip: 1, why: 'Spam is removed before grouping.' });
+} else {
+S.push({ name: 'Sentiment', res: c.sentiment, why: c.language === 'Hinglish' ? 'Hinglish model: negative, neutral or positive.' : 'English model: positive or negative.' });
+S.push({ name: 'Theme', res: c.theme, why: 'Closest of 6 themes learned for ' + c.language + ' messages.' });
+}
+}
+return S;
+}
+
+var HERO = ['W2', 'W4', 'W6', 'W9'].map(function (id) { return W.filter(function (w) { return w.id === id; })[0]; });
+var hIdx = -1, hTick = 0;
+function heroBuild(i) {
+var c = HERO[i], S = stagesFor(c);
+$('h-msg').textContent = c.message; $('h-ct').textContent = (i + 1) + ' / ' + HERO.length;
+$('h-rows').innerHTML = S.map(function (s) {
+var text = s.res, k = 'ink';
+if (s.skip) { text = '—'; k = 'skip'; }
+else if (s.name === 'Spam check') { text = s.res === 'Spam' ? 'Blocked' : 'Clear'; k = s.res === 'Spam' ? 'bad' : 'ok'; }
+else if (s.name === 'Sentiment') { k = s.res === 'positive' ? 'ok' : (s.res === 'negative' ? 'bad' : 'ink'); }
+return '<div class="srow"><span class="m">' + s.name + '</span><span class="d stamp ' + k + '">' + esc(text) + '</span></div>';
+}).join('');
+$('h-dots').innerHTML = HERO.map(function (h, k) { return '<i class="' + (k === i ? 'on' : '') + '"></i>'; }).join('');
+}
+function heroStep() {
+var cyc = 10, i = Math.floor(hTick / cyc) % HERO.length, t = hTick % cyc;
+if (i !== hIdx) { hIdx = i; heroBuild(i); }
+var st = $('h-rows').querySelectorAll('.stamp');
+for (var k = 0; k < st.length; k++) st[k].classList.toggle('show', k < Math.min(4, t));
+hTick++;
+}
+
+var timer = null, cur = W[0];
+function showWalk(r) {
+cur = r;
+$('w-title').textContent = r.title; $('w-msg').textContent = r.message;
+$('tl').innerHTML = stagesFor(r).map(function (s, i) {
+return '<li class="' + (s.skip ? 'skip' : '') + '"><span class="d n">' + (i + 1) + '</span><div><div class="m nm">' + s.name + '</div><div class="rs"><span class="d res ' + (s.resK || '') + '">' + esc(s.res) + '</span>' + (s.tag ? '<span class="m tag ' + s.tagK + '">' + s.tag + '</span>' : '') + '</div>' +
+(s.meter !== undefined ? '<div class="meter" aria-hidden="true"><i data-w="' + Math.max(2, Math.round(s.meter * 100)) + '" style="background:' + (s.spam ? '#c4302b' : '#1f7d45') + '"></i></div>' : '') +
+'<p class="why">' + esc(s.why) + '</p></div></li>';
+}).join('');
+replay();
+}
+function replay() {
+clearInterval(timer);
+var items = $('tl').children, n = 0;
+for (var k = 0; k < items.length; k++) { items[k].classList.remove('on'); var m = items[k].querySelector('.meter i'); if (m) m.style.width = '0'; }
+var step = function () {
+if (n < items.length) { items[n].classList.add('on'); var m2 = items[n].querySelector('.meter i'); if (m2) m2.style.width = m2.dataset.w + '%'; n++; }
+else clearInterval(timer);
+};
+if (reduced) { while (n < items.length) step(); return; }
+timer = setInterval(step, 700); setTimeout(step, 120);
+}
+function renderChips(selectedId) {
+$('chips').innerHTML = W.map(function (w, i) { return '<button class="ex" type="button" data-id="' + w.id + '" aria-pressed="' + (w.id === selectedId) + '"><span class="m">' + (i < 9 ? '0' : '') + (i + 1) + '</span><span>' + esc(w.title) + '</span></button>'; }).join('');
+}
+$('chips').addEventListener('click', function (e) {
+var b = e.target.closest('button'); if (!b) return;
+showWalk(W.filter(function (w) { return w.id === b.dataset.id; })[0]); renderChips(b.dataset.id);
+});
+$('replay').addEventListener('click', replay);
+
+var engineP = null;
+function unpack(name) {
+return fetch(RAW + 'mdl/' + name + '.json').then(function (r) { if (!r.ok) throw new Error('download'); return r.json(); }).then(function (j) {
+var bin = Uint8Array.from(atob(j.gz), function (c) { return c.charCodeAt(0); });
+return new Response(new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+}).then(function (t) { return JSON.parse(t); });
+}
+function loadEngine() {
+if (!engineP) engineP = Promise.all(MODELS.map(unpack)).then(function (parts) {
+var M = {}; MODELS.forEach(function (n, i) { M[n] = parts[i]; });
+return window.MIEngine.Engine(M);
+})['catch'](function (e) { engineP = null; throw e; });
+return engineP;
+}
+function toRow(a, text) {
+var cap = function (x) { return x ? x.charAt(0).toUpperCase() + x.slice(1) : x; };
+var lang = a.language === 'uncertain' ? 'Uncertain' : (a.language === 'hinglish' ? 'Hinglish' : a.language_name);
+return { id: '__own', title: 'Your message', message: text, language: lang, spam: a.spam === 'spam' ? 'spam' : (a.spam === 'ham' ? 'ham' : 'none'),
+p: a.spam_prob == null ? '' : a.spam_prob.toFixed(3), sentiment: cap(a.sentiment || ''), theme: a.cluster_label || (a.cluster != null ? '#' + a.cluster : '') };
+}
+var NOTE = $('own-note').textContent;
+function runOwn() {
+var t = $('own-t').value.trim(), note = $('own-note'), go = $('own-go');
+if (!t) { note.textContent = 'Type a message first.'; return; }
+go.disabled = true; note.textContent = 'Loading the models (about 11 MB, first time only)…';
+loadEngine().then(function (E) {
+var a = window.MIEngine.analyze(E, t);
+showWalk(toRow(a, t)); renderChips(null);
+note.textContent = NOTE; go.disabled = false;
+$('w-msg').scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' });
+})['catch'](function () { note.textContent = 'Could not load the models. Check your connection and try again.'; go.disabled = false; });
+}
+$('own-go').addEventListener('click', runOwn);
+$('own-t').addEventListener('focus', function () { loadEngine()['catch'](function () {}); }, { once: true });
+$('own-t').addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) runOwn(); });
+
+var tab = 'lang';
+function grow(root) {
+requestAnimationFrame(function () { requestAnimationFrame(function () {
+root.querySelectorAll('[data-w]').forEach(function (el) { el.style.width = el.dataset.w + '%'; });
+root.querySelectorAll('[data-h]').forEach(function (el) { el.style.height = el.dataset.h + 'px'; });
+}); });
+}
+function renderTabs() {
+$('tabs').innerHTML = TABS.map(function (t) { return '<button class="tab" type="button" data-t="' + t[0] + '" aria-pressed="' + (t[0] === tab) + '">' + t[1] + '</button>'; }).join('');
+}
+function renderCmp() {
+$('cmp').innerHTML = CMP[tab].map(function (r) {
+var b = Math.max(r[2], r[3], r[4]), names = ['Naive Bayes', 'Linear SVM', 'KNN'], out = '';
+for (var i = 0; i < 3; i++) { var v = r[2 + i], best = v === b ? ' best' : '';
+out += '<span class="m">' + names[i] + '</span><span class="bt"><i class="' + best.trim() + '" data-w="' + Math.max(2, (v - 60) / 40 * 100) + '"></i></span><span class="m v' + best + '">' + v.toFixed(1) + '</span>'; }
+return '<div class="cmprow"><div class="top2"><span>' + esc(r[0]) + '</span><span class="m">' + r[1] + '</span></div><div class="bars">' + out + '</div></div>';
+}).join('');
+if (vis.s4) grow($('cmp'));
+}
+$('tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; tab = b.dataset.t; renderTabs(); renderCmp(); });
+function renderTrf() {
+$('trf').innerHTML = TRF.map(function (t, i) {
+return '<div class="trfr"><span>' + esc(t[0]) + '</span><span class="bt"><i class="' + (t[3] ? 'best' : '') + '" data-w="' + t[1] + '" style="transition-delay:' + (i * 0.07).toFixed(2) + 's"></i></span><span class="m v' + (t[3] ? ' best' : '') + '">' + t[1].toFixed(1) + '</span><span class="c">' + t[2] + '</span></div>';
+}).join('');
+}
+function renderLens() {
+$('cols').innerHTML = LENS.map(function (l, i) {
+return '<div class="col' + (i === 0 ? ' w' : '') + '"><span class="m v">' + l[1].toFixed(1) + '%</span><i data-h="' + Math.max(6, (l[1] - 90) / 10 * 200) + '" style="transition-delay:' + (i * 0.08).toFixed(2) + 's"></i></div>';
+}).join('');
+$('collab').innerHTML = LENS.map(function (l) { return '<span>' + l[0] + '</span>'; }).join('');
+}
+var clean = false;
+function pos(x) { return (x - 85) / 15 * 100; }
+function renderDb() {
+var h = '<div class="db m"><span></span><span class="ax"><span>85%</span><span>92.5%</span><span>100%</span></span><span></span></div>';
+DB.forEach(function (d) {
+var wp = pos(d[1]);
+h += '<div class="db"><span class="lb"><b style="font-weight:600">Deployed spam model</b><br><span>' + d[0] + '</span></span><span class="trk"><i class="cl"></i><i class="ln" style="left:' + wp + '%;width:0"></i><i class="pt red" style="left:' + wp + '%"></i><i class="pt teal" style="left:' + wp + '%"></i></span><span class="m txt">' + d[1].toFixed(1) + ' → …</span></div>';
+});
+$('db').innerHTML = h;
+}
+function setClean(v) {
+clean = v;
+var lines = $('db').querySelectorAll('.ln'), teals = $('db').querySelectorAll('.teal'), txt = $('db').querySelectorAll('.txt');
+DB.forEach(function (x, i) {
+var wp = pos(x[1]), cp = pos(x[2]), tp = clean ? cp : wp;
+lines[i].style.width = (tp - wp) + '%'; teals[i].style.left = tp + '%'; txt[i].textContent = x[1].toFixed(1) + ' → ' + (clean ? x[2].toFixed(1) : '…');
+});
+$('clean').setAttribute('aria-pressed', String(clean));
+}
+$('clean').addEventListener('click', function () { setClean(!clean); });
+
+function spamShare() {
+var c = rows.filter(function (r) { return r.spam !== 'not checked'; });
+return c.length ? Math.round(100 * c.filter(function (r) { return r.spam === 'spam'; }).length / c.length) : 0;
+}
+function finals() { return rows.length ? { m: rows.length, l: order.filter(function (k) { return k !== 'Uncertain'; }).length, h: langCount.Hinglish || 0, s: spamShare() } : { m: 340, l: 14, h: 142, s: 7 }; }
+function setKpi(f, e) {
+$('k-m').textContent = fmtN(Math.round(f.m * e)); $('k-l').textContent = Math.round(f.l * e); $('k-h').textContent = fmtN(Math.round(f.h * e)); $('k-s').textContent = Math.round(f.s * e) + '%';
+}
+function countUp() {
+if (reduced) { setKpi(finals(), 1); return; }
+var p = 0, iv = setInterval(function () { p += 0.04; if (p >= 1) { p = 1; clearInterval(iv); } setKpi(finals(), 1 - Math.pow(1 - p, 3)); }, 30);
+}
+
+function renderMix() {
+var total = rows.length || 1;
+$('mix-read').textContent = rows.length ? fmtN(rows.length) + ' messages in ' + order.length + ' groups' : 'Loading…';
+$('seg').innerHTML = order.map(function (k) { return '<span data-k="' + esc(k) + '" data-f="' + langCount[k] + '" style="background:' + colorOf[k] + '"></span>'; }).join('');
+$('legend').innerHTML = order.map(function (k) { return '<div data-k="' + esc(k) + '"><i style="background:' + colorOf[k] + '"></i><span>' + esc(k) + '</span><em class="m">' + fmtN(langCount[k]) + ' · ' + Math.round(100 * langCount[k] / total) + '%</em></div>'; }).join('');
+if (vis.s4) growMix();
+}
+function growMix() {
+requestAnimationFrame(function () { requestAnimationFrame(function () {
+$('seg').querySelectorAll('span').forEach(function (s) { s.style.flexGrow = s.dataset.f; s.classList.add('g'); });
+}); });
+}
+function mixHover(k) {
+var total = rows.length || 1;
+$('seg').querySelectorAll('span').forEach(function (s) { s.style.opacity = !k || s.dataset.k === k ? '1' : '.25'; });
+$('legend').querySelectorAll('div').forEach(function (d) { d.style.opacity = !k || d.dataset.k === k ? '1' : '.35'; });
+$('mix-read').textContent = k ? k + ' · ' + fmtN(langCount[k]) + ' messages (' + Math.round(100 * langCount[k] / total) + '%)' : fmtN(rows.length) + ' messages in ' + order.length + ' groups';
+}
+['seg', 'legend'].forEach(function (id) {
+$(id).addEventListener('mouseover', function (e) { var t = e.target.closest('[data-k]'); if (t) mixHover(t.dataset.k); });
+$(id).addEventListener('mouseleave', function () { mixHover(null); });
+});
+
+var filter = 'all', query = '', sortKey = null, sortDir = 1;
+var FILTERS = [['all', 'All'], ['English', 'English'], ['Hinglish', 'Hinglish'], ['other', 'Other languages'], ['review', 'Sent to review'], ['spam', 'Flagged spam']];
+function renderFilters() {
+$('filters').innerHTML = FILTERS.map(function (f) { return '<button class="tab" type="button" data-f="' + f[0] + '" aria-pressed="' + (f[0] === filter) + '">' + f[1] + '</button>'; }).join('');
+}
+function renderRows() {
+var isOther = function (l) { return l !== 'English' && l !== 'Hinglish' && l !== 'Uncertain'; }, q = query.trim().toLowerCase();
+var v = rows.filter(function (r) {
+return (filter === 'all' || (filter === 'other' ? isOther(r.language) : filter === 'spam' ? r.spam === 'spam' : filter === 'review' ? r.language === 'Uncertain' : r.language === filter)) && (!q || r.message.toLowerCase().indexOf(q) >= 0 || r.theme.toLowerCase().indexOf(q) >= 0);
+});
+if (sortKey) v = v.slice().sort(function (a, b) { return sortDir * String(a[sortKey]).localeCompare(String(b[sortKey]), 'en', { numeric: true }); });
+$('rows').innerHTML = v.map(function (r) {
+var sc = r.spam === 'spam' ? 'spam' : r.spam === 'ham' ? 'ham' : 'na', st = r.spam === 'spam' ? '■ Spam' : r.spam === 'ham' ? 'Clear' : 'Not checked';
+return '<tr><td class="m id">' + esc(r.id) + '</td><td class="msg">' + esc(r.message) + '</td><td class="l"><i style="background:' + (colorOf[r.language] || '#a8966c') + '"></i>' + esc(r.language) + '</td><td class="m sp ' + sc + '">' + st + '</td><td class="g">' + esc(r.sentiment === 'n/a' ? '—' : r.sentiment) + '</td><td class="g">' + esc(r.theme === 'n/a' ? '—' : r.theme) + '</td></tr>';
+}).join('');
+$('count').textContent = rows.length ? 'Showing ' + fmtN(v.length) + ' of ' + fmtN(rows.length) + ' messages' : 'Loading messages…';
+}
+$('filters').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; filter = b.dataset.f; renderFilters(); renderRows(); });
+$('q').addEventListener('input', function (e) { query = e.target.value; renderRows(); });
+document.querySelectorAll('thead .th').forEach(function (b) { b.addEventListener('click', function () { sortDir = sortKey === b.dataset.s ? -sortDir : 1; sortKey = b.dataset.s; renderRows(); }); });
+
+function parseCsv(text) {
+var out = [], row = [], cell = '', q = false;
+for (var i = 0; i < text.length; i++) {
+var ch = text[i];
+if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; }
+else if (ch === '"') q = true; else if (ch === ',') { row.push(cell); cell = ''; }
+else if (ch === '\n') { row.push(cell); out.push(row); row = []; cell = ''; } else if (ch !== '\r') cell += ch;
+}
+if (cell !== '' || row.length) { row.push(cell); out.push(row); }
+var head = out.shift() || [];
+return out.filter(function (r) { return r.length === head.length; }).map(function (r) { var o = {}; head.forEach(function (h, i) { o[h] = r[i]; }); return o; });
+}
+function loadRows() {
+fetch('messages.csv').then(function (r) { if (!r.ok) throw new Error('csv'); return r.text(); })['catch'](function () { return fetch(RAW + 'messages.csv').then(function (r) { return r.text(); }); }).then(function (t) {
+rows = parseCsv(t); langCount = {};
+rows.forEach(function (r) { langCount[r.language] = (langCount[r.language] || 0) + 1; });
+order = Object.keys(langCount).sort(function (a, b) { return langCount[b] - langCount[a]; });
+var gi = 0; order.forEach(function (k) { if (k === 'English') colorOf[k] = '#1f43a0'; else if (k === 'Hinglish') colorOf[k] = '#c4302b'; else { colorOf[k] = GRAYS[gi % 2]; gi++; } });
+renderMix(); renderRows();
+if (!vis.s4 || reduced) setKpi(finals(), 1);
+})['catch'](function () { $('count').textContent = 'The message table could not be loaded.'; });
+}
+
+var ids = ['s3', 's2', 's4', 's5', 's6'];
+function reveal(id) {
+if (vis[id]) return; vis[id] = true;
+$(id).classList.add('in');
+if (id === 's4') { grow($('cmp')); grow($('trf')); growMix(); countUp(); }
+if (id === 's5') { grow($('cols')); setTimeout(function () { setClean(true); }, 900); }
+}
+if (reduced || !('IntersectionObserver' in window)) {
+ids.forEach(function (i) { $(i).classList.add('in'); vis[i] = true; });
+setTimeout(function () { grow($('cmp')); grow($('trf')); growMix(); grow($('cols')); setClean(true); }, 80);
+} else {
+var io = new IntersectionObserver(function (ents) { ents.forEach(function (en) { if (en.isIntersecting) { reveal(en.target.id); io.unobserve(en.target); } }); }, { threshold: 0.08 });
+var io2 = new IntersectionObserver(function (ents) { ents.forEach(function (en) { if (en.isIntersecting) document.querySelectorAll('.nav a').forEach(function (a) { a.classList.toggle('on', a.dataset.s === en.target.id); }); }); }, { rootMargin: '-40% 0px -55% 0px' });
+ids.forEach(function (i) { io.observe($(i)); io2.observe($(i)); });
+setTimeout(function () { ids.forEach(reveal); }, 9000);
+}
+
+renderChips('W1'); showWalk(W[0]); renderTabs(); renderCmp(); renderTrf(); renderLens(); renderDb(); renderFilters();
+if (!reduced) { heroStep(); setInterval(heroStep, 650); } else { hTick = 6; heroStep(); }
+loadRows();
+})();
+</script>
+
+<script>
+/* Crumpled-paper notes for the pipeline section.
+   Each card is photographed (html2canvas) onto a WebGL sheet that is crumpled into a ball by a vertex shader.
+   Tapping smooths it out: ball -> loosened, wrinkled sheet -> flat. At t = 0 the sheet maps pixel-for-pixel onto the
+   real HTML card, so the hand-over to the live text is seamless. Falls back to the plain cards if anything is missing. */
+(function () {
+'use strict';
+var cells = [].slice.call(document.querySelectorAll('.cells .cell')); if (!cells.length) return;
+var box = document.querySelector('.cells'), all = document.getElementById('unfold-all');
+var reduce = false; try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+cells.forEach(function (c, k) {
+  var title = (c.querySelector('h3') || {}).textContent || '', no = (c.querySelector('.big') || {}).textContent || String(k + 1);
+  c.innerHTML = '<div class="cpaper">' + c.innerHTML + '</div><div class="shad"></div><canvas class="ball" aria-hidden="true"></canvas>' +
+    '<div class="blab" aria-hidden="true"><span class="no">' + no + '</span><span class="tt">' + title + '</span></div>' +
+    '<div class="bhint" aria-hidden="true">tap to smooth it out</div><button class="recrum" type="button">crumple it again</button>';
+  c.dataset.title = title;
+});
+function flatAll() { box.classList.remove('balls'); cells.forEach(function (c) { c.style.height = ''; c.classList.remove('crum', 'anim'); c.removeAttribute('role'); c.removeAttribute('tabindex'); }); if (all) all.style.display = 'none'; }
+if (reduce || !window.WebGLRenderingContext) { flatAll(); return; }
+box.classList.add('balls');
+cells.forEach(function (c) { c.classList.add('crum'); c.setAttribute('role', 'button'); c.setAttribute('tabindex', '0'); c.setAttribute('aria-label', c.dataset.title + ' (crumpled note, press to smooth it out)'); });
+
+function load(src) { return new Promise(function (res, rej) { var s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); }
+
+var NOISE = [
+'vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}',
+'vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}',
+'float snoise(vec3 v){const vec2 C=vec2(1.0/6.0,1.0/3.0);const vec4 D=vec4(0.0,0.5,1.0,2.0);vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);',
+'vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.0-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;',
+'i=mod289(i);vec4 p=permute(permute(permute(i.z+vec4(0.0,i1.z,i2.z,1.0))+i.y+vec4(0.0,i1.y,i2.y,1.0))+i.x+vec4(0.0,i1.x,i2.x,1.0));',
+'float n_=0.142857142857;vec3 ns=n_*D.wyz-D.xzx;vec4 j=p-49.0*floor(p*ns.z*ns.z);vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.0*x_);',
+'vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.0-abs(x)-abs(y);vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);',
+'vec4 s0=floor(b0)*2.0+1.0;vec4 s1=floor(b1)*2.0+1.0;vec4 sh=-step(h,vec4(0.0));vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;',
+'vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);',
+'vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;',
+'vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0);m=m*m;',
+'return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}'].join('\n');
+
+// t = 1: tight ball, t ~ 0.5: loosened wrinkled sheet with raised crumpled edges, t = 0: flat
+var CRUMPLE = [
+'vec2 q = position.xy / uSz; float asp = uSz.y / uSz.x;',
+'vec3 sp = vec3(position.xy / uSz.x * 2.6, uSeed);',
+'float rs = length(q * vec2(1.0, asp)) / length(vec2(0.5, 0.5 * asp));',
+'float n1 = snoise(sp); float n2 = snoise(sp * 2.1 + 7.1); float n3 = snoise(sp * 4.7 + 3.3);',
+'float ridge = 1.0 - abs(n1); ridge *= ridge; float crease = abs(n2) * 0.65 + abs(n3) * 0.3;',
+'vec3 bowl = vec3(position.xy * (1.0 - 0.30 * rs * rs), 0.0);',
+'bowl.xy += vec2(snoise(sp * 1.3 + 11.0), snoise(sp * 1.3 + 23.0)) * uSz.x * 0.045 * (0.25 + rs);',
+'bowl.z = uSz.x * (0.20 * rs * rs * rs + 0.085 * crease * (0.25 + rs) + 0.03 * ridge);',
+'float R = uSz.x * 0.27;',
+'float az = atan(q.y * asp, q.x) + 1.6 * n1 + 0.7 * n2;',
+'float ph = 3.14159 * 1.18 * rs + 0.45 * n2 + 0.2 * n3;',
+'float rr = R * (0.82 + 0.17 * ridge + 0.12 * crease - 0.05 * rs);',
+'vec3 bl = vec3(sin(ph) * cos(az), sin(ph) * sin(az), -cos(ph)) * rr;',
+'float ca = cos(1.05), sa = sin(1.05), cb = cos(0.6 + uSeed), sb = sin(0.6 + uSeed);',
+'bl = vec3(bl.x, ca * bl.y - sa * bl.z, sa * bl.y + ca * bl.z);',
+'bl = vec3(cb * bl.x + sb * bl.z, bl.y, -sb * bl.x + cb * bl.z);',
+'float cr = cos(uRot), sr = sin(uRot); bl.xy = vec2(cr * bl.x - sr * bl.y, sr * bl.x + cr * bl.y);',
+'vec3 ball = bl + vec3(0.0, uOff, R * 0.95);',
+'float rb = uRot * 0.5; bowl.xy = vec2(cos(rb) * bowl.x - sin(rb) * bowl.y, sin(rb) * bowl.x + cos(rb) * bowl.y);',
+'float ta = smoothstep(0.0, 0.62, uT); float tb = smoothstep(0.40, 1.0, uT);',
+'vec3 p = mix(vec3(position.xy, 0.0), bowl, ta);',
+'vec3 transformed = mix(p, ball, tb);'].join('\n');
+
+function smoothstep(a, b, x) { var u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); }
+function bez(p1x, p1y, p2x, p2y) { // same maths as CSS cubic-bezier()
+  function cx(t) { return 3 * p1x * t * (1 - t) * (1 - t) + 3 * p2x * t * t * (1 - t) + t * t * t; }
+  function cy(t) { return 3 * p1y * t * (1 - t) * (1 - t) + 3 * p2y * t * t * (1 - t) + t * t * t; }
+  return function (x) { var lo = 0, hi = 1, t = x; for (var i = 0; i < 24; i++) { t = (lo + hi) / 2; if (cx(t) < x) lo = t; else hi = t; } return cy(t); };
+}
+var easeOpen = bez(0.42, 0.0, 0.18, 1.0), easeClose = bez(0.5, 0.0, 0.35, 1.0);
+
+function paintPaper(ctx, w, h, s) {
+  ctx.fillStyle = '#fffdf3'; ctx.fillRect(0, 0, w * s, h * s);
+  ctx.fillStyle = 'rgba(74,112,186,.25)'; for (var y = 26; y < h; y += 28) ctx.fillRect(0, y * s, w * s, s);
+  ctx.fillStyle = 'rgba(205,60,60,.5)'; ctx.fillRect(0, 80 * s, w * s, 2 * s);
+}
+
+function capture(c) {
+  var el = c.querySelector('.cpaper'), w = el.offsetWidth, h = el.offsetHeight, S = Math.min(2, (window.devicePixelRatio || 1) * 1.25);
+  c.setAttribute('data-cap', '1');
+  return window.html2canvas(el, {
+    backgroundColor: null, scale: S, logging: false, useCORS: true, width: w, height: h,
+    ignoreElements: function (n) { return n.tagName === 'CANVAS' || (n.classList && (n.classList.contains('shad') || n.classList.contains('blab') || n.classList.contains('bhint'))); },
+    onclone: function (doc) {
+      var st = doc.createElement('style');
+      st.textContent = '.rv{opacity:1!important;transform:none!important}.cell[data-cap]{transform:none!important}.cell[data-cap] .cpaper{opacity:1!important;background:none!important;box-shadow:none!important}.cpaper::after{display:none!important}';
+      doc.head.appendChild(st);
+    }
+  }).then(function (shot) {
+    c.removeAttribute('data-cap');
+    var cv = document.createElement('canvas'); cv.width = Math.round(w * S); cv.height = Math.round(h * S);
+    var ctx = cv.getContext('2d'); paintPaper(ctx, w, h, S); ctx.drawImage(shot, 0, 0, cv.width, cv.height);
+    return { cv: cv, w: w, h: h };
+  });
+}
+
+function setup(c, k) {
+  return capture(c).then(function (tex) {
+    var T = window.THREE, cv = c.querySelector('.ball'), PAD = 70;
+    var W = tex.w + PAD * 2, H = tex.h + PAD * 2; cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    if (c._gl) { c._gl.dispose(); }
+    var r = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, premultipliedAlpha: true });
+    r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); r.setSize(W, H, false); r.setClearColor(0x000000, 0);
+    var fov = 30, d = (H / 2) / Math.tan(fov * Math.PI / 360);
+    var cam = new T.PerspectiveCamera(fov, W / H, 1, d * 4); cam.position.set(0, 0, d);
+    var scene = new T.Scene();
+    scene.add(new T.AmbientLight(0xfffaf0, 0.62));
+    var L = new T.DirectionalLight(0xfff1dc, 0.46); L.position.set(-0.42, 0.62, 1.0); scene.add(L);
+    var map = new T.CanvasTexture(tex.cv); map.anisotropy = r.capabilities.getMaxAnisotropy(); map.minFilter = T.LinearMipmapLinearFilter;
+    var segX = 22, segY = Math.max(22, Math.round(segX * tex.h / tex.w));
+    var geo = new T.PlaneGeometry(tex.w, tex.h, segX, segY);
+    var R = tex.w * 0.27, TOP = 112, cy = TOP + R;
+    var U = { uT: { value: 1 }, uSz: { value: new T.Vector2(tex.w, tex.h) }, uSeed: { value: 0.7 + k * 1.9 }, uOff: { value: tex.h / 2 - cy }, uRot: { value: 0 } };
+    var mat = new T.MeshStandardMaterial({ map: map, side: T.DoubleSide, flatShading: true, roughness: 1.0, metalness: 0 });
+    mat.onBeforeCompile = function (sh) {
+      sh.uniforms.uT = U.uT; sh.uniforms.uSz = U.uSz; sh.uniforms.uSeed = U.uSeed; sh.uniforms.uOff = U.uOff; sh.uniforms.uRot = U.uRot;
+      sh.vertexShader = 'uniform float uT;\nuniform vec2 uSz;\nuniform float uSeed;\nuniform float uOff;\nuniform float uRot;\n' + NOISE + '\n' + sh.vertexShader.replace('#include <begin_vertex>', CRUMPLE);
+      sh.fragmentShader = 'uniform float uT;\n' + sh.fragmentShader
+        .replace('#include <map_fragment>', 'vec4 texelColor = texture2D( map, vUv ); texelColor = mapTexelToLinear( texelColor );\nif ( !gl_FrontFacing ) texelColor = vec4( 0.95, 0.92, 0.84, 1.0 );\ndiffuseColor *= texelColor;')
+        .replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.rgb = mix( texelColor.rgb, gl_FragColor.rgb, smoothstep( 0.0, 0.16, uT ) );');
+    };
+    var mesh = new T.Mesh(geo, mat); mesh.frustumCulled = false; scene.add(mesh);
+    c.querySelector('.bhint').style.top = (cy + R + 14) + 'px';
+    var g = { r: r, scene: scene, cam: cam, mesh: mesh, U: U, t: c.classList.contains('crum') ? 1 : 0, rot0: (k % 2 ? -0.55 : 0.5), w: tex.w, h: tex.h, R: R, cy: cy, H0: cy + R + 56,
+      dispose: function () { geo.dispose(); mat.dispose(); map.dispose(); r.dispose(); } };
+    c._gl = g; pose(c, g.t, 0); return g;
+  });
+}
+
+function pose(c, t, wob) {
+  var g = c._gl; if (!g) return;
+  g.U.uT.value = t;
+  g.U.uRot.value = g.rot0 * Math.pow(t, 1.5) + (wob || 0);
+  // the note's footprint grows from ball-size to the full card while it opens
+  var grow = 1 - smoothstep(0.12, 0.92, t);
+  c.style.height = Math.round(g.H0 + (g.h - g.H0) * grow) + 'px';
+  // desk shadow: round under the ball, card-shaped once flat
+  var sh = c.querySelector('.shad'), a = smoothstep(0.35, 1.0, t), bw = g.R * 2.05, bh = g.R * 1.9;
+  var bx = g.w / 2 - bw / 2 + 9, by = g.cy - bh / 2 + 12, fw = g.w * (1 - 0.2 * (1 - grow) * (1 - a)), fh = Math.max(g.H0, g.h * grow);
+  var L = bx * a + ((g.w - fw) / 2 + 3) * (1 - a), Tp = by * a + 5 * (1 - a), Wd = bw * a + fw * (1 - a), Ht = bh * a + (fh - 6) * (1 - a);
+  sh.style.left = L + 'px'; sh.style.top = Tp + 'px'; sh.style.width = Wd + 'px'; sh.style.height = Ht + 'px';
+  sh.style.borderRadius = (50 * a) + '%'; sh.style.filter = 'blur(' + (5 + 7 * (1 - a)) + 'px)';
+  sh.style.opacity = (c.classList.contains('anim') || c.classList.contains('crum')) ? String(0.9 - 0.45 * (1 - a)) : '0';
+  g.r.render(g.scene, g.cam);
+}
+
+function play(c, to) {
+  var g = c._gl; if (!g || c._busy) return; c._busy = true;
+  var from = g.t, dur = to === 0 ? 2100 : 1500, t0 = performance.now();
+  c.classList.add('anim');
+  if (to === 1) { c.classList.add('crum'); }
+  else { c.classList.remove('crum'); }
+  function step(now) {
+    var x = Math.min(1, (now - t0) / dur), e = (to === 0 ? easeOpen : easeClose)(x);
+    g.t = from + (to - from) * e; pose(c, g.t, 0);
+    if (x < 1) requestAnimationFrame(step);
+    else {
+      c._busy = false; c.classList.remove('anim'); if (to === 0) c.querySelector('.shad').style.opacity = '0';
+      if (to === 0) { c.style.height = c._gl.h + 'px'; c.classList.add('used'); c.removeAttribute('role'); c.removeAttribute('tabindex'); c.removeAttribute('aria-label'); }
+      else { c.setAttribute('role', 'button'); c.setAttribute('tabindex', '0'); c.setAttribute('aria-label', c.dataset.title + ' (crumpled note, press to smooth it out)'); }
+      syncAll();
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+function wobble(c, on) {
+  var g = c._gl; if (!g) return;
+  if (!on) { c._hov = false; return; }
+  if (c._hov) return; c._hov = true; var t0 = performance.now();
+  (function loop(now) {
+    if (!c._hov || c._busy || !c.classList.contains('crum')) { if (!c._busy && c.classList.contains('crum')) pose(c, 1, 0); return; }
+    var s = (now - t0) / 1000; pose(c, 1 - 0.035 * (0.5 - 0.5 * Math.cos(s * 3.2)), 0.06 * Math.sin(s * 2.1)); requestAnimationFrame(loop);
+  })(t0);
+}
+
+function syncAll() { if (!all) return; var anyC = cells.some(function (c) { return c.classList.contains('crum'); }); all.textContent = anyC ? 'smooth out all notes' : 'crumple them again'; }
+
+function wire() {
+  cells.forEach(function (c) {
+    c.addEventListener('click', function (e) {
+      if (e.target.closest('.recrum')) { e.stopPropagation(); play(c, 1); return; }
+      if (c.classList.contains('crum')) play(c, 0);
+    });
+    c.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && c.classList.contains('crum')) { e.preventDefault(); play(c, 0); } });
+    c.addEventListener('mouseenter', function () { if (c.classList.contains('crum')) wobble(c, true); });
+    c.addEventListener('mouseleave', function () { wobble(c, false); });
+  });
+  if (all) all.addEventListener('click', function () {
+    var anyC = cells.some(function (c) { return c.classList.contains('crum'); });
+    cells.forEach(function (c, i) { setTimeout(function () { play(c, anyC ? 0 : 1); }, i * 220); });
+  });
+  var rt, lastW = window.innerWidth;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt); rt = setTimeout(function () {
+      if (Math.abs(window.innerWidth - lastW) < 2) return; lastW = window.innerWidth;
+      cells.reduce(function (pr, c, k) { return pr.then(function () { return setup(c, k); }); }, Promise.resolve());
+    }, 250);
+  });
+}
+
+var ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+Promise.all([load('vendor/three-r128.min.js'), load('vendor/html2canvas-1.4.1.min.js'), ready])
+  .then(function () { return cells.reduce(function (pr, c, k) { return pr.then(function () { return setup(c, k); }); }, Promise.resolve()); })
+  .then(wire)
+  .catch(function (err) { if (window.console) console.warn('crumple effect unavailable', err); flatAll(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+syn,syn_per_class,en_F1,en_recall,hi_challenge_recall,hi_challenge_AUC,hi_challenge_genuine_flagged,real_genuine_hi_flag_rate,hi_thr
+False,,0.956,0.96,0.353,0.995,0,0.012,0.796
+True,100.0,0.952,0.952,0.51,0.973,0,0.011,0.161
+True,300.0,0.964,0.96,0.529,0.97,0,0.012,0.106
+True,,0.96,0.96,0.529,0.966,0,0.012,0.13
