@@ -151,17 +151,17 @@ clip-path:polygon(0 8%,2% 0,5% 14%,8% 2%,11% 12%,14% 0,100% 0,98% 18%,100% 36%,9
 .tl .why{margin-top:6px;font-size:15.5px;line-height:1.55;color:var(--pencil);max-width:36rem}
 /* ---------- pipeline cards (index cards) */
 .cells{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:28px}
-.cell{position:relative;padding:26px 22px 20px;background:#fffdf3;border-radius:2px;display:flex;flex-direction:column;gap:14px;
-background-image:linear-gradient(180deg,transparent 0 62px,rgba(205,60,60,.45) 62px 64px,transparent 64px),repeating-linear-gradient(180deg,transparent 0 27px,rgba(74,112,186,.22) 27px 28px);
+.cell{position:relative;padding:26px 22px 14px;background:#fffdf3;border-radius:2px;display:flex;flex-direction:column;gap:0;
+background-image:linear-gradient(180deg,transparent 0 80px,rgba(205,60,60,.5) 80px 82px,transparent 82px),repeating-linear-gradient(180deg,transparent 0 27px,rgba(74,112,186,.25) 27px 28px);background-position:0 0,0 27px;background-repeat:no-repeat,repeat;
 box-shadow:2px 4px 10px rgba(60,40,10,.18);transition:transform .25s}
 .cell:nth-child(odd){transform:rotate(-1deg)}.cell:nth-child(even){transform:rotate(1.2deg)}
 .cell:hover{transform:rotate(0) translateY(-4px)}
 .cell::before{content:"";position:absolute;top:-10px;left:22px;width:70px;height:20px;background:rgba(255,140,180,.45);transform:rotate(-6deg)}
 .cell .big{position:absolute;top:10px;right:16px;font-size:34px;line-height:1;color:var(--red);opacity:.85}
-.cell h3{font-size:21px;line-height:1.15;padding-right:34px;min-height:40px}
-.cell .bd{font-size:15px;line-height:1.55;color:var(--ink);display:flex;flex-direction:column;gap:10px}
-.cell .bd .m{color:var(--red);font-size:19px;margin-bottom:0}
-.cell .sc{margin-top:auto;border-top:2px dashed rgba(74,70,57,.4);padding-top:10px}
+.cell h3{font-size:20px;line-height:28px;height:56px;padding-right:34px;display:flex;align-items:flex-end;margin-top:0;overflow:visible}
+.cell .bd{font-size:15px;line-height:28px;color:var(--ink);display:flex;flex-direction:column;gap:0}
+.cell .bd .m{color:var(--red);font-size:19px;line-height:28px;margin-bottom:0}.cell .bd>div+div{margin-top:0}
+.cell .sc{margin-top:auto;border-top:2px dashed rgba(74,70,57,.4);padding-top:10px;background:#fffdf3;position:relative}
 .cell .sc .d{font-size:30px;color:var(--blue)}.cell .sc .m{margin-top:2px}
 .cell .sc .two{display:flex;align-items:baseline;gap:10px}.cell .sc .two+.two{margin-top:4px}.cell .sc .two .m{margin:0}
 .two2{margin-top:56px;display:flex;flex-wrap:wrap;gap:36px 56px}
@@ -312,7 +312,7 @@ footer::before{content:"sources \2014";display:block;color:var(--red);font-size:
 <div class="bd"><div><div class="m">How</div>Words, letter chunks and scam cues (links, phone numbers, money symbols) feed a classifier. The score is a true probability, and each language has its own cut-off so genuine messages are rarely blocked.</div><div><div class="m">Learned from</div>The UCI SMS Spam Collection, with duplicate messages removed.</div><div><div class="m">CodeChef idea</div>Email Spam Classifier</div></div>
 <div class="sc"><div class="d">96.3%</div><div class="m">spam F1 on English SMS</div></div></div>
 <div class="cell"><span class="d big">3</span><h3 class="d">Is the sender happy or upset?</h3>
-<div class="bd"><div><div class="m">How</div>Word and letter patterns feed a linear classifier. One model for English (positive or negative) and one for Hinglish (negative, neutral or positive).</div><div><div class="m">Learned from</div>English: about 41,000 tweets and short reviews (SemEval-2017 tweets, NLTK tweets and reviews) plus a human-rated word list so rarer words like &ldquo;handsome&rdquo; are known. Hinglish: real IIIT-H comments plus 120 short everyday sentences written by us. On 6,339 unseen SemEval tweets English rose from 63% to 79% macro F1. Hinglish dipped from 69.4 to 67.5 on its comment test (within the margin of error) but rose from 70% to 95% on 20 new everyday sentences.</div><div><div class="m">CodeChef idea</div>Movie Review Sentiment Analyzer</div></div>
+<div class="bd"><div><div class="m">How</div>Word and letter patterns feed a linear classifier. One model for English (positive or negative) and one for Hinglish (negative, neutral or positive).</div><div><div class="m">Learned from</div>English: about 41,000 tweets and short reviews, plus a human-rated word list for rarer words like &ldquo;handsome&rdquo;. Hinglish: IIIT-H comments plus 120 everyday sentences written by us.</div><div><div class="m">What changed</div>English rose from 63% to 79% macro F1 on 6,339 unseen tweets. Hinglish dipped from 69.4 to 67.5 on its comment test (within the margin of error) but rose from 70% to 95% on 20 new everyday sentences.</div><div><div class="m">CodeChef idea</div>Movie Review Sentiment Analyzer</div></div>
 <div class="sc"><div class="two"><span class="d">67.5%</span><span class="m">Hinglish macro F1 (3 classes)</span></div><div class="two"><span class="d">78.7%</span><span class="m">English macro F1 (unseen SemEval tweets)</span></div></div></div>
 <div class="cell"><span class="d big">4</span><h3 class="d">What are people talking about?</h3>
 <div class="bd"><div><div class="m">How</div>Each message becomes a vector of numbers from word embeddings, and K-Means groups similar messages into 6 themes per language. No labels needed.</div><div><div class="m">Learned from</div>Genuine English SMS and real Hinglish comments.</div><div><div class="m">CodeChef idea</div>Clustering and Dimensionality Reduction</div></div>
