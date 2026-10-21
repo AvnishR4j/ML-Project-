@@ -10,9 +10,9 @@ from pipeline import analyze  # noqa: E402
 R = ROOT / "results"
 st.set_page_config(page_title="Multilingual Message Intelligence - Prototype", layout="wide")
 st.title("Multilingual Message Intelligence System")
-st.caption("PROTOTYPE v0.2 - classical models. Language detection -> spam filter -> sentiment -> theme clustering.")
+st.caption("PROTOTYPE v0.3 - classical models. Language detection -> spam filter -> sentiment -> theme clustering.")
 
-tabs = st.tabs(["Try it", "Model comparison", "Evaluation", "Clusters", "Status & limits"])
+tabs = st.tabs(["Try it", "Batch dashboard", "Model comparison", "Evaluation", "Clusters", "Status & limits"])
 
 EXAMPLES = {
     "English complaint": "My order has not arrived yet and nobody is replying to my emails",
@@ -40,7 +40,80 @@ with tabs[0]:
             a.markdown(f"**{step}**")
             b.markdown(f"`{value}`" + (f"  \n:grey[{note}]" if note else ""))
 
+
+@st.cache_data(show_spinner=False)
+def run_batch(texts: tuple):
+    rows = []
+    for t in texts:
+        r = analyze(t)
+        rows.append({"message": t, "language": r["language_name"], "spam": r.get("spam") or "not checked",
+                     "sentiment": r.get("sentiment") or "n/a", "theme": (f"#{r['cluster']}: " + r["cluster_terms"]) if "cluster" in r else "n/a"})
+    return pd.DataFrame(rows)
+
+
+def demo_sample():
+    import numpy as np
+    frames = [pd.read_csv(ROOT / "data" / "pipeline_testset_DRAFT.csv").text]
+    raw = ROOT / "data" / "raw"
+    if (raw / "sms.tsv").exists():
+        sms = pd.read_csv(raw / "sms.tsv", sep="\t", header=None, names=["l", "text"]).sample(250, random_state=1).text
+        frames.append(sms)
+    if (raw / "hinglid" / "test.txt").exists():
+        from data import _hing_samples
+        frames.append(pd.Series(_hing_samples(raw / "hinglid" / "test.txt", 80, np.random.default_rng(1))))
+    return pd.concat(frames, ignore_index=True).tolist()
+
+
 with tabs[1]:
+    st.markdown("What a company would see: upload a CSV with a **text** column, or use the demo sample "
+                "(draft test messages + English SMS + real Hinglish tweets). Everything runs through the same pipeline.")
+    up = st.file_uploader("CSV with a 'text' column", type="csv")
+    use_demo = st.button("Use demo sample")
+    texts = None
+    if up is not None:
+        d0 = pd.read_csv(up)
+        if "text" in d0.columns:
+            texts = d0["text"].astype(str).tolist()[:5000]
+        else:
+            st.error("The CSV needs a column named 'text'.")
+    elif use_demo or st.session_state.get("demo_loaded"):
+        st.session_state["demo_loaded"] = True
+        texts = demo_sample()
+    if texts:
+        with st.spinner(f"Analysing {len(texts)} messages ..."):
+            B = run_batch(tuple(texts))
+        n = len(B); checked = B[B.spam != "not checked"]
+        k = st.columns(4)
+        k[0].metric("Messages", n)
+        k[1].metric("Flagged as spam", f"{(checked.spam == 'spam').mean():.0%}" if len(checked) else "n/a", help="Of messages in English/Hinglish (the only languages the spam model covers)")
+        eng = B[B.sentiment.isin(["positive", "negative"])]
+        k[2].metric("Negative (English, non-spam) - UNRELIABLE", f"{(eng.sentiment == 'negative').mean():.0%}" if len(eng) else "n/a",
+                 help="Sentiment model was trained on movie reviews; casual chat/SMS text is mostly labelled negative. Do not quote this number.")
+        k[3].metric("Languages seen", B.language.nunique())
+        st.warning("Sentiment numbers are unreliable for now: the model was trained on movie reviews and reads casual messages as negative. "
+                   "They become meaningful after domain-specific / Hinglish sentiment training. Language, spam and theme counts are the usable parts.")
+        c1, c2 = st.columns(2)
+        c1.markdown("**Messages by language**"); c1.bar_chart(B.language.value_counts())
+        c2.markdown("**Sentiment (English, non-spam only)**")
+        c2.bar_chart(B.sentiment.value_counts().drop(["n/a"], errors="ignore"))
+        st.markdown("**Biggest themes among genuine English messages**")
+        th = B[B.theme != "n/a"].theme.value_counts().head(8)
+        st.bar_chart(th)
+        st.markdown("**Filter messages**")
+        f1, f2 = st.columns(2)
+        lang_sel = f1.multiselect("Language", sorted(B.language.unique()))
+        spam_sel = f2.multiselect("Spam status", sorted(B.spam.unique()))
+        mask = pd.Series(True, index=B.index)
+        if lang_sel:
+            mask &= B.language.isin(lang_sel)
+        if spam_sel:
+            mask &= B.spam.isin(spam_sel)
+        V = B[mask]
+        st.dataframe(V, hide_index=True, width="stretch")
+        st.download_button("Download results (CSV)", B.to_csv(index=False).encode("utf-8"), "pipeline_results.csv", "text/csv")
+        st.caption("Demo caveat: Hinglish messages are not checked for sentiment/themes yet, and Hinglish spam is mostly missed (see Status & limits).")
+
+with tabs[2]:
     st.markdown("Same features for all three models on each task; hyper-parameters tuned with 3-fold CV on the training split only.")
     df = pd.read_csv(R / "model_comparison.csv").drop(columns=["best_params", "n_test"])
     st.dataframe(df.round(3), width="stretch", hide_index=True)
@@ -53,7 +126,7 @@ with tabs[1]:
     c2.dataframe(pd.read_csv(R / "language_accuracy_by_length.csv").rename(columns={"mean": "accuracy", "size": "n"}).round(3), hide_index=True)
     c2.caption("Very short fragments are the weak spot; many misses are plainly English words inside tweets labelled Hinglish.")
 
-with tabs[2]:
+with tabs[3]:
     ex = json.loads((R / "experiments_summary.json").read_text())
     st.subheader("1. Calibration and spam threshold")
     st.markdown(f"Deployed spam model: **{ex['calibration']['deployed']}**, threshold **{ex['calibration']['threshold']}** "
@@ -80,7 +153,7 @@ with tabs[2]:
                "a French message was absorbed by the Hinglish class; 2 of 6 clearly positive English messages were called negative.")
     st.dataframe(pd.read_csv(R / "pipeline_eval_detail.csv"), hide_index=True, width="stretch")
 
-with tabs[3]:
+with tabs[4]:
     summ = json.loads((R / "summary.json").read_text())["clustering"]
     st.markdown(f"Genuine (non-spam) English SMS, {summ['n_messages']} messages -> TF-IDF -> SVD/PCA (50 dims) -> K-Means, k={summ['k_best']}.")
     c1, c2 = st.columns(2)
@@ -88,7 +161,7 @@ with tabs[3]:
     c2.dataframe(pd.read_csv(R / "cluster_summary.csv"), hide_index=True, width="stretch")
     st.warning("Clusters are weak so far (silhouette about 0.07-0.10, rising with k, no elbow). Next step: multilingual sentence embeddings.")
 
-with tabs[4]:
+with tabs[5]:
     st.markdown("""
 **Done so far**
 - Language detection on 15 languages + English + **real romanized Hinglish** (L3Cube-HingLID), NB / SVM / KNN

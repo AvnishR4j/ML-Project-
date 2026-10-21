@@ -1,4 +1,4 @@
-# Multilingual Message Intelligence System (prototype v0.2)
+# Multilingual Message Intelligence System (prototype v0.3)
 
 A pipeline that takes a short message and returns its **language -> spam / not spam -> sentiment -> theme cluster**,
 with a Naive Bayes / linear SVM / KNN comparison on every task. Built from five CodeChef ML project ideas:
@@ -16,6 +16,9 @@ cd .. && streamlit run app/streamlit_app.py
 ```
 Optional: Hinglish sentiment -> download SemEval-2020 Task 9 (Zenodo 3974927) into `data/raw/semeval/`, run `python src/semeval.py`.
 Transformers -> `notebooks/transformer_finetune_colab.ipynb` (needs a Colab GPU; written but not yet run).
+
+## Dashboard
+The app has a **Batch dashboard** tab: upload a CSV with a `text` column (or use the demo sample) to see language mix, spam share, themes and a filterable table, with a CSV download. Sentiment counts there are flagged unreliable until a domain-specific model is trained.
 
 ## Results
 **Language detection** (accuracy per separate test set; training data: UN-declaration pieces for 15 languages, informal English SMS, real Hinglish tweets):
