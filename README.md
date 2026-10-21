@@ -150,6 +150,9 @@ Character n-grams beat word features because romanized Hindi has no fixed spelli
 | tweets                 |           0.562 |           0.576 |    0.759 |
 | tweets + short reviews |           0.744 |           0.78  |    0.759 |
 
+### 3c. Negation handling (English sentiment)
+A plain bag-of-words model read "the food is not tasty" as positive. The deployed English model now rewrites words after a negation ("not tasty" becomes `not_tasty`) and adds a flag saying a positive or negative word was negated; word polarity is learned from the training data, and 1,200 template sentences with and without "not" are added to training. On a 45-sentence hand-written negation set (written by the author after seeing the failure, so optimistic) accuracy rose from 56% to 82%; on the normal held-out sets macro-F1 did not drop (tweets 0.759 to 0.765, short reviews 0.780 to 0.783, movie reviews 0.744 to 0.785). The same idea did not help Hinglish (challenge accuracy fell), so the Hinglish model is unchanged. Remaining misses include "not boring", "not disappointed" and some plain positives. Details: `results/sentiment_negation.csv`, `src/negation.py`, `src/final_sentiment_en.py`.
+
 ### 3b. Transformer track (Colab, T4 GPU)
 Five pretrained encoders fine-tuned on the same IIIT-H training split and scored on the same 776-message test set (3 seeds each, 4 epochs, best epoch chosen on a validation split taken from the training data). Classical reference: linear SVM 0.694 (95% CI 0.658 to 0.729).
 
@@ -253,6 +256,7 @@ Genuine-vs-spam labels for the large stream above (tweets and comments) are assu
 ## Limitations (read before quoting numbers)
 - **Hinglish spam is the weakest part.** No public dataset of real Hinglish scams exists (the repositories checked either hand-write or template-generate them). About half of Hinglish scams are caught at about 1% false alarms (up from a third before the synthetic augmentation); real labelled examples would still help most.
 - The scam vocabulary list is hand-written domain knowledge and was shaped while looking at the challenge set, so its gain is indicative.
+- Sentiment still misreads some negation (for example not boring), sarcasm and mixed opinions; it is a bag-of-words model with a negation patch.
 - Hindi in Devanagari is detected but not spam-checked, scored for sentiment or grouped into themes.
 - Hinglish sentiment labels are noisy and from one domain (mostly comments on videos and political posts); expect lower scores elsewhere.
 - Themes are unsupervised: cluster names are read from top terms and examples, not ground truth.
@@ -260,9 +264,9 @@ Genuine-vs-spam labels for the large stream above (tweets and comments) are assu
 - Transformer scores were copied by hand from the Colab output; the transformers are not part of the deployed pipeline (the classical model is within 0.03 macro-F1 and runs on a CPU in seconds).
 - The 250-message labelled set has machine-assigned labels; independent human verification is still pending.
 
+## Live demo box (in-browser models)
+The website's box runs the real trained models in the browser: `scripts/export_web_models.py` exports weights, `web/engine.js` re-implements `src/pipeline.py`, `scripts/web_parity.py` checks agreement (407 messages, 0 label differences), `scripts/pack_web_models.py` compresses for upload.
+
 ## Repository
 `src/` pipeline and experiments (`final_*.py` train the deployed models, `exp_*.py` are the comparisons), `app/` Streamlit app, `tests/`, `results/` all outputs,
 `notebooks/` Colab transformer track, `docs/` plan and research notes, `legacy` folders hold earlier prototype files kept for traceability.
-
-## Live demo box (in-browser models)
-The website's "Try it on a message" box runs the real trained models in the browser: `scripts/export_web_models.py` exports the weights, `web/engine.js` re-implements `src/pipeline.py` in JavaScript, and `scripts/web_parity.py` checks the two agree (348 messages: 0 label differences, probabilities within 0.00004). `scripts/pack_web_models.py` compresses the files for upload.

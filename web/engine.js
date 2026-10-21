@@ -38,8 +38,29 @@
   const prepFns = { lower: (t) => t.toLowerCase(), prep: (t) => squeeze(t.toLowerCase()) };
 
   // ---------------------------------------------------------------- TF-IDF vectoriser (sklearn semantics)
+  // negation-aware preprocessing (mirror of src/negation.py NegPrep)
+  const EN_NEG = new Set("not no never nothing neither nor without cannot hardly barely dont doesnt didnt isnt wasnt arent werent cant wont wouldnt shouldnt couldnt aint nobody".split(" "));
+  const STOP = new Set("the a an is was are were be been am it this that to at all very so too really much any i do does did have has had will would can could should hai tha thi ho hain hota hoti bahut bohot ek ye yeh ki ka ke".split(" "));
+  const CONTR = [[/\bcan'?t\b/g, "can not"], [/\bwon'?t\b/g, "will not"], [/\bain'?t\b/g, "is not"], [/n['\u2019]t\b/g, " not"], [/\bcannot\b/g, "can not"]];
+  const NTOK = /[\p{L}\p{N}]+|[^\p{L}\p{N}_\s]/gu, NWORD = /^[\p{L}\p{N}_]/u;
+  function negPrep(pol, scope) {
+    const P = new Map(Object.entries(pol));
+    return (text) => {
+      let t = squeeze(text.toLowerCase()); for (const [a, b] of CONTR) t = t.replace(a, b);
+      const out = []; let left = 0;
+      for (const w of t.match(NTOK) || []) {
+        if (!NWORD.test(w)) { left = 0; out.push(w); continue; }
+        if (EN_NEG.has(w)) { left = scope; out.push(w); continue; }
+        if (left > 0) {
+          if (STOP.has(w)) { out.push(w); continue; }
+          out.push("not_" + w); const p = P.get(w) || 0; if (p) out.push(p > 0 ? "negflip_pos" : "negflip_neg"); left--;
+        } else out.push(w);
+      }
+      return out.join(" ");
+    };
+  }
   function loadVec(v) {
-    return { an: v.an, ng: v.ng, prep: prepFns[v.prep], idx: new Map(v.vocab.map((t, i) => [t, i])), idf: f32(v.idf), n: v.vocab.length };
+    return { an: v.an, ng: v.ng, prep: v.prep === "neg" ? negPrep(v.pol, v.scope) : prepFns[v.prep], idx: new Map(v.vocab.map((t, i) => [t, i])), idf: f32(v.idf), n: v.vocab.length };
   }
   function grams(v, text) {
     const t = v.prep(text), out = [];

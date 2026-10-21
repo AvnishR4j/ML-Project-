@@ -13,11 +13,13 @@ OUT.mkdir(parents=True, exist_ok=True)
 b64 = lambda a: base64.b64encode(np.ascontiguousarray(a).tobytes()).decode()
 
 
-def vec(v, prep):
+def vec(v, prep, neg=None):
     terms = [None] * len(v.vocabulary_)
     for t, i in v.vocabulary_.items():
         terms[i] = t
-    return {"an": v.analyzer, "ng": list(v.ngram_range), "prep": prep, "vocab": terms, "idf": b64(v.idf_.astype("<f4"))}
+    d = {"an": v.analyzer, "ng": list(v.ngram_range), "prep": prep, "vocab": terms, "idf": b64(v.idf_.astype("<f4"))}
+    if neg is not None: d.update({"prep": "neg", "pol": neg.pol, "scope": neg.scope})
+    return d
 
 
 def quant(W, bits):
@@ -54,11 +56,12 @@ def main():
     # ---- Hinglish sentiment (3 classes) and English sentiment (2 classes)
     for name, fn in (("sent_hi", "hinglish_sentiment.joblib"), ("sent_en", "sentiment.joblib")):
         P = joblib.load(M / fn); steps = dict(P.named_steps); f, m = steps["f"], steps["m"]
-        prep = "prep" if getattr(f if hasattr(f, "preprocessor") else f.transformer_list[0][1], "preprocessor", None) is not None else "lower"
+        pp = getattr(f if hasattr(f, "preprocessor") else f.transformer_list[0][1], "preprocessor", None)
+        prep = "prep" if pp is not None else "lower"; neg = pp if pp.__class__.__name__ == "NegPrep" else None
         if hasattr(f, "transformer_list"):
-            tl = dict(f.transformer_list); vs = {"w": vec(tl["w"], prep), "c": vec(tl["c"], prep)}
+            tl = dict(f.transformer_list); vs = {"w": vec(tl["w"], prep, neg), "c": vec(tl["c"], prep, neg)}
         else:
-            vs = {"w": vec(f, prep)}
+            vs = {"w": vec(f, prep, neg)}
         coef = np.atleast_2d(m.coef_); sc, q = quant(coef, 16)
         dump(name, {"vecs": vs, "classes": [str(c) for c in m.classes_], "scale": b64(sc), "w": b64(q), "b": [float(x) for x in np.atleast_1d(m.intercept_)]})
     # ---- themes

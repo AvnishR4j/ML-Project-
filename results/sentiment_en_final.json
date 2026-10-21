@@ -1,0 +1,7 @@
+{
+  "tweets": 0.7653337035252615,
+  "short reviews": 0.7832332008503559,
+  "movie reviews": 0.7854899256875814,
+  "negation_challenge_acc": 0.8222222222222222,
+  "synthetic_examples": 1200
+}

@@ -11,7 +11,8 @@ EDGE = ["", "ok", "   ", "नमस्ते दोस्तों, कैसे
         "I love this so much 😍😍", "Order kab aayega? 3 din ho gaye", "Meeting kal 5 baje hai, please time par aana", "URGENT! Your account will be blocked. Verify OTP now 100%"]
 rows = pd.read_csv(ROOT / "data" / "eval" / "e2e_labelled_machine.csv").text.tolist()
 syn = pd.read_csv(ROOT / "data" / "synthetic" / "hinglish_spam_synthetic.csv").sample(80, random_state=1).text.tolist()
-texts = EDGE + rows + syn
+neg = pd.read_csv(ROOT / "data" / "eval" / "negation_challenge.csv").text.tolist()
+texts = EDGE + rows + syn + neg
 exp = [analyze(t) for t in texts]
 (ROOT / "web" / "parity_in.json").write_text(json.dumps(texts))
 r = subprocess.run(["node", str(ROOT / "web" / "parity.js")], capture_output=True, text=True); got = json.loads(r.stdout)
