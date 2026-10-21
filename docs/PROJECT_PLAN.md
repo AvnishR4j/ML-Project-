@@ -26,7 +26,7 @@ I tried to download every candidate dataset from the build environment and looke
 | Language model called French "Hinglish", "ok" Turkish | Calibrated model with a reject option; English tweets and more Hinglish added to training | Real Hinglish 96.5% -> 97.2%; 1-3 word messages 86.5% -> 95.7%; uncertain cases go to review |
 | Weak, unstable clusters | Compared TF-IDF+SVD, NMF and word2vec with four metrics | word2vec stability 0.62-0.92 vs 0.39-0.66 for TF-IDF+SVD |
 | End-to-end set was 47 AI-written messages | Mixed stream of ~3,900 real held-out messages from seven sources | Measured cost of language errors; throughput |
-| Duplicate/near-duplicate leakage risk | Tests that fail if any train/test text overlaps; found and fixed a real near-duplicate leak (7 SMS) | `pytest` guards it |
+| Duplicate/near-duplicate leakage risk | Tests that fail if any train/test text overlaps; found and fixed a real near-duplicate leak (7 SMS; it had inflated spam F1 by about 0.01-0.02) | `pytest` guards it |
 
 ## 3. Findings worth stating in the report
 
