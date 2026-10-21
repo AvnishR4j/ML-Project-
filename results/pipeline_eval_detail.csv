@@ -1,0 +1,48 @@
+text,true_lang,pred_lang,lang_ok,spam_pred,spam_oracle,spam_expected,sent_pred,sent_oracle,sent_expected,e2e_pred,e2e_oracle
+My order arrived two weeks late and the box was completely damaged,en,en,True,ham,ham,ham,negative,negative,negative,True,True
+"Customer care keeps cutting my call, this is really disappointing",en,en,True,ham,ham,ham,negative,negative,negative,True,True
+"The app crashes every time I try to pay, please fix this",en,en,True,ham,ham,ham,negative,negative,negative,True,True
+I was charged twice for the same ride and nobody is helping me,en,en,True,ham,ham,ham,negative,negative,negative,True,True
+"Worst delivery experience ever, the food was cold and half of it was m",en,en,True,ham,ham,ham,negative,negative,negative,True,True
+"Still waiting for my refund after three weeks, very frustrating",en,en,True,ham,ham,ham,negative,negative,negative,True,True
+"Great service, the delivery boy was polite and the food was still hot",en,en,True,ham,ham,ham,positive,positive,positive,True,True
+"Thank you so much, the issue was solved quickly and everyone was helpf",en,en,True,ham,ham,ham,negative,negative,positive,False,False
+"Loved the new update, the app is much faster now",en,en,True,ham,ham,ham,positive,positive,positive,True,True
+"Excellent quality, exactly as described and arrived a day early",en,en,True,ham,ham,ham,positive,positive,positive,True,True
+"The driver was friendly and the ride was smooth, will book again",en,en,True,ham,ham,ham,positive,positive,positive,True,True
+"Really happy with the support team, they answered within minutes",en,en,True,ham,ham,ham,negative,negative,positive,False,False
+"WINNER! You have been selected for a free iPhone, click the link now t",en,en,True,spam,spam,spam,skipped,skipped,skipped,True,True
+"URGENT: your bank account will be blocked today, update your KYC at th",en,en,True,spam,spam,spam,skipped,skipped,skipped,True,True
+"You have won a cash prize of 50000, call 09061701461 now to claim",en,en,True,spam,spam,spam,skipped,skipped,skipped,True,True
+Free entry in our weekly draw! Text WIN to 80082 to receive your rewar,en,en,True,spam,spam,spam,skipped,skipped,skipped,True,True
+mera order do hafte late aaya aur dabba bhi toota hua tha,hinglish,hinglish,True,ham,ham,ham,skipped,skipped,skipped,True,True
+"customer care wale baar baar call kaat dete hain, bahut bura lagta hai",hinglish,hinglish,True,ham,ham,ham,skipped,skipped,skipped,True,True
+"payment karte time app crash ho jata hai, jaldi theek karo",hinglish,hinglish,True,ham,ham,ham,skipped,skipped,skipped,True,True
+"ek hi ride ke do baar paise kat gaye, koi sunta hi nahi",hinglish,hinglish,True,ham,ham,ham,skipped,skipped,skipped,True,True
+"khana thanda aaya aur aadha saman missing tha, bakwas service",hinglish,hinglish,True,ham,ham,ham,skipped,skipped,skipped,True,True
+"teen hafte ho gaye refund nahi aaya, bahut pareshan hu",hinglish,hinglish,True,ham,ham,ham,skipped,skipped,skipped,True,True
+delivery boy bahut tameez se baat kar raha tha aur khana bhi garam tha,hinglish,hinglish,True,ham,ham,ham,skipped,skipped,skipped,True,True
+"bahut shukriya, aapne meri problem turant solve kar di",hinglish,hinglish,True,ham,ham,ham,skipped,skipped,skipped,True,True
+"naya update mast hai, app ab bahut fast chalta hai",hinglish,hinglish,True,ham,ham,ham,skipped,skipped,skipped,True,True
+"quality ekdum badhiya hai, bilkul waisa hi mila jaisa dikhaya tha",hinglish,hinglish,True,ham,ham,ham,skipped,skipped,skipped,True,True
+"driver bhaiya bahut acche the, ride ekdum smooth thi",hinglish,hinglish,True,ham,ham,ham,skipped,skipped,skipped,True,True
+"support team ne kuch hi minute mein jawab de diya, maza aa gaya",hinglish,hinglish,True,ham,ham,ham,skipped,skipped,skipped,True,True
+"aapka KYC update nahi hua hai, account band ho jayega, abhi link par c",hinglish,hinglish,True,ham,ham,spam,skipped,skipped,skipped,False,False
+"badhai ho! aapne 5 lakh ka lottery jeeta hai, inaam paane ke liye abhi",hinglish,hinglish,True,ham,ham,spam,skipped,skipped,skipped,False,False
+"free recharge paane ke liye turant is link par click karo, offer sirf ",hinglish,hinglish,True,ham,ham,spam,skipped,skipped,skipped,False,False
+"aapka loan approve ho gaya hai, bina documents ke paisa paane ke liye ",hinglish,hinglish,True,ham,ham,spam,skipped,skipped,skipped,False,False
+"मेरा ऑर्डर अभी तक नहीं पहुँचा है, कृपया जल्दी बताइए",hi,hi,True,skipped,skipped,skipped,skipped,skipped,skipped,True,True
+"आपकी सेवा बहुत अच्छी थी, धन्यवाद",hi,hi,True,skipped,skipped,skipped,skipped,skipped,skipped,True,True
+यह फ़ोन बहुत अच्छा है और बैटरी भी बढ़िया चलती है,hi,hi,True,skipped,skipped,skipped,skipped,skipped,skipped,True,True
+"कल मैं दफ़्तर नहीं आ पाऊँगा, तबीयत ठीक नहीं है",hi,hi,True,skipped,skipped,skipped,skipped,skipped,skipped,True,True
+बारिश की वजह से ट्रेन देर से चल रही है,hi,hi,True,skipped,skipped,skipped,skipped,skipped,skipped,True,True
+क्या आप मुझे बिल की कॉपी भेज सकते हैं,hi,hi,True,skipped,skipped,skipped,skipped,skipped,skipped,True,True
+Die Lieferung kam zu spät und das Paket war beschädigt,de,de,True,skipped,skipped,skipped,skipped,skipped,skipped,True,True
+Vielen Dank für Ihre schnelle Hilfe,de,de,True,skipped,skipped,skipped,skipped,skipped,skipped,True,True
+Ich möchte meine Bestellung stornieren,de,de,True,skipped,skipped,skipped,skipped,skipped,skipped,True,True
+Ma commande n'est toujours pas arrivée,fr,fr,True,skipped,skipped,skipped,skipped,skipped,skipped,True,True
+Merci beaucoup pour votre aide rapide,fr,hinglish,False,ham,skipped,skipped,skipped,skipped,skipped,False,True
+Je voudrais un remboursement s'il vous plaît,fr,fr,True,skipped,skipped,skipped,skipped,skipped,skipped,True,True
+Mi pedido llegó tarde y dañado,es,es,True,skipped,skipped,skipped,skipped,skipped,skipped,True,True
+Muchas gracias por su ayuda,es,es,True,skipped,skipped,skipped,skipped,skipped,skipped,True,True
+Quiero cancelar mi suscripción,es,es,True,skipped,skipped,skipped,skipped,skipped,skipped,True,True

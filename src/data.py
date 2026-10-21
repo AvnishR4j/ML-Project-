@@ -77,6 +77,67 @@ def load_language(seed: int = 42, train_frac: float = 0.7):
     return df[df.split == "train"].reset_index(drop=True), df[df.split == "test"].reset_index(drop=True)
 
 
+def _read_hinglid(path):
+    """L3Cube-HingLID: 'token<TAB>HI|EN' per line, blank line between sentences."""
+    sents, cur = [], []
+    for line in Path(path).read_text(encoding="utf-8", errors="ignore").splitlines():
+        if not line.strip():
+            if len(cur) >= 3:
+                sents.append(cur)
+            cur = []
+        else:
+            cur.append(line.split("\t")[0])
+    if len(cur) >= 3:
+        sents.append(cur)
+    return sents
+
+
+def _hing_samples(path, n, rng):
+    """n real Hinglish samples: half full tweets, half short 3-10 token windows (message-like)."""
+    sents = _read_hinglid(path)
+    idx = rng.choice(len(sents), size=min(n, len(sents)), replace=False)
+    out = []
+    for j, i in enumerate(idx):
+        toks = sents[i]
+        if j % 2 == 0 or len(toks) <= 5:
+            out.append(" ".join(toks))
+        else:
+            w = int(rng.integers(3, min(10, len(toks)) + 1))
+            st = int(rng.integers(0, len(toks) - w + 1))
+            out.append(" ".join(toks[st:st + w]))
+    return out
+
+
+def load_language_v2(seed: int = 42, n_hing_train=1500, n_hing_test=400, n_sms=1500):
+    """Language-ID data v2 (real Hinglish).
+
+    train: UDHR pieces (15 languages) + informal English (SMS ham) + REAL romanized Hinglish (L3Cube-HingLID)
+    tests: 'udhr' (other languages, easy), 'sms_en' (informal English must NOT be called Hinglish),
+           'hinglid' (real Hinglish, held-out file), 'seed_ood' (my 78 hand-written Hinglish lines, never trained on)
+    """
+    rng = np.random.default_rng(seed)
+    udhr_tr, udhr_te = load_language(seed)
+    udhr_tr = udhr_tr[udhr_tr.label != "hinglish"]
+    udhr_te = udhr_te[udhr_te.label != "hinglish"]
+    sms_tr, sms_te, _ = load_spam(seed)
+    # all SMS (ham AND spam) are English: spam text must not be mistaken for Hinglish
+    sms_tr = sms_tr.sample(n_sms, random_state=seed)
+    hr = RAW / "hinglid"
+    tr = pd.concat([
+        udhr_tr[["text", "label"]],
+        pd.DataFrame({"text": sms_tr.text.values, "label": "en"}),
+        pd.DataFrame({"text": _hing_samples(hr / "train.txt", n_hing_train, rng), "label": "hinglish"}),
+    ], ignore_index=True)
+    seed_lines = [l.strip() for l in (ROOT / "data" / "hinglish_seed.txt").read_text(encoding="utf-8").splitlines() if l.strip()]
+    tests = {
+        "udhr (other languages)": udhr_te[["text", "label"]].reset_index(drop=True),
+        "informal English (SMS incl. spam)": pd.DataFrame({"text": sms_te.text.values, "label": "en"}),
+        "real Hinglish (HingLID test)": pd.DataFrame({"text": _hing_samples(hr / "test.txt", n_hing_test, rng), "label": "hinglish"}),
+        "hand-written Hinglish (OOD)": pd.DataFrame({"text": seed_lines, "label": "hinglish"}),
+    }
+    return tr, tests
+
+
 def load_spam(seed: int = 42):
     df = pd.read_csv(RAW / "sms.tsv", sep="\t", header=None, names=["label", "text"], encoding="utf-8")
     n0 = len(df)

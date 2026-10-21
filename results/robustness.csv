@@ -1,0 +1,16 @@
+model,attack,spam_recall_no_defence,spam_recall_with_normalizer
+Naive Bayes,clean,0.947,0.947
+Naive Bayes,spacing attack,0.908,0.947
+Naive Bayes,homoglyph attack,0.954,0.947
+Naive Bayes,both attacks,0.908,0.947
+Naive Bayes,ham false-positive rate (clean text),0.0022,0.0022
+Linear SVM,clean,0.939,0.939
+Linear SVM,spacing attack,0.779,0.939
+Linear SVM,homoglyph attack,0.901,0.939
+Linear SVM,both attacks,0.779,0.939
+Linear SVM,ham false-positive rate (clean text),0.0022,0.0022
+KNN,clean,0.893,0.893
+KNN,spacing attack,0.863,0.893
+KNN,homoglyph attack,0.863,0.893
+KNN,both attacks,0.863,0.893
+KNN,ham false-positive rate (clean text),0.0011,0.0011

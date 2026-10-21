@@ -1,0 +1,7 @@
+model,threshold,ECE,Brier,spam_precision,spam_recall,ham_flagged_as_spam,n_ham_test
+Naive Bayes (raw),default 0.5,0.0087,0.008,0.984,0.954,2,903
+Naive Bayes (raw),FPR<=0.5% (t=0.55),0.0087,0.008,0.984,0.947,2,903
+Linear SVM (calibrated),default 0.5,0.0103,0.0075,0.992,0.931,1,903
+Linear SVM (calibrated),FPR<=0.5% (t=0.27),0.0103,0.0075,0.962,0.962,5,903
+Naive Bayes (calibrated),default 0.5,0.0056,0.0078,0.984,0.954,2,903
+Naive Bayes (calibrated),FPR<=0.5% (t=0.41),0.0056,0.0078,0.984,0.954,2,903

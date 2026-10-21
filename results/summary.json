@@ -1,8 +1,7 @@
 {
   "language": {
-    "best": "Linear SVM",
-    "train": 1243,
-    "test": 542,
+    "best": "Naive Bayes",
+    "train": 4189,
     "classes": [
       "de",
       "el",
@@ -22,8 +21,13 @@
       "vi",
       "zh"
     ],
-    "hinglish_test_n": 24,
-    "hinglish_test_acc": 1.0
+    "test_sets": {
+      "udhr (other languages)": 518,
+      "informal English (SMS incl. spam)": 1034,
+      "real Hinglish (HingLID test)": 400,
+      "hand-written Hinglish (OOD)": 78
+    },
+    "selection": "mean accuracy on real Hinglish, hand-written Hinglish (OOD) and informal English"
   },
   "spam": {
     "best": "Naive Bayes",

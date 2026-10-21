@@ -1,10 +1,10 @@
-task,model,best_params,accuracy,macro_F1,train_s,predict_ms_per_msg,n_test,spam_precision,spam_recall,spam_F1
-Language detection,Naive Bayes,{'m__alpha': 0.01},0.9981549815498155,0.9984710846363862,2.2,0.079,542,,,
-Language detection,Linear SVM,{'m__C': 10},1.0,1.0,1.05,0.061,542,,,
-Language detection,KNN,{'m__n_neighbors': 9},0.992619926199262,0.9940154497349023,1.07,0.132,542,,,
-Spam detection,Naive Bayes,{'m__alpha': 0.01},0.9912959381044487,0.9800054573542145,3.94,0.097,1034,0.9841269841269841,0.9465648854961832,0.9649805447470817
-Spam detection,Linear SVM,{'m__C': 10},0.9903288201160542,0.9777093681015452,3.65,0.103,1034,0.984,0.9389312977099237,0.9609375
-Spam detection,KNN,{'m__n_neighbors': 3},0.9854932301740812,0.9657563734873524,4.66,0.369,1034,0.9915254237288136,0.8931297709923665,0.9397590361445783
-Sentiment (English),Naive Bayes,{'m__alpha': 0.5},0.81,0.8094235061059706,7.94,0.62,400,,,
-Sentiment (English),Linear SVM,{'m__C': 10},0.845,0.8448603743369032,6.97,0.762,400,,,
-Sentiment (English),KNN,{'m__n_neighbors': 9},0.71,0.7087695513544726,7.86,0.668,400,,,
+task,model,best_params,train_s,predict_ms_per_msg,acc: udhr (other languages),acc: informal English (SMS incl. spam),acc: real Hinglish (HingLID test),acc: hand-written Hinglish (OOD),accuracy,macro_F1,n_test,spam_precision,spam_recall,spam_F1
+Language detection,Naive Bayes,{'m__alpha': 0.01},6.61,0.134,0.9961389961389961,0.9990328820116054,0.9575,1.0,0.9901477832512315,0.9939768885638722,2030,,,
+Language detection,Linear SVM,{'m__C': 10},5.84,0.109,0.9922779922779923,0.9932301740812379,0.965,0.9871794871794872,0.987192118226601,0.9942282038566936,2030,,,
+Language detection,KNN,{'m__n_neighbors': 9},5.99,0.292,0.9884169884169884,0.9922630560928434,0.9125,0.9615384615384616,0.9743842364532019,0.9897085124436666,2030,,,
+Spam detection,Naive Bayes,{'m__alpha': 0.01},3.63,0.107,,,,,0.9912959381044487,0.9800054573542145,1034,0.9841269841269841,0.9465648854961832,0.9649805447470817
+Spam detection,Linear SVM,{'m__C': 10},3.81,0.096,,,,,0.9903288201160542,0.9777093681015452,1034,0.984,0.9389312977099237,0.9609375
+Spam detection,KNN,{'m__n_neighbors': 3},5.2,0.313,,,,,0.9854932301740812,0.9657563734873524,1034,0.9915254237288136,0.8931297709923665,0.9397590361445783
+Sentiment (English),Naive Bayes,{'m__alpha': 0.5},7.48,0.486,,,,,0.81,0.8094235061059706,400,,,
+Sentiment (English),Linear SVM,{'m__C': 10},7.26,0.608,,,,,0.845,0.8448603743369032,400,,,
+Sentiment (English),KNN,{'m__n_neighbors': 9},9.12,0.759,,,,,0.71,0.7087695513544726,400,,,

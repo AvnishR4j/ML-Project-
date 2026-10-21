@@ -23,7 +23,7 @@ from sklearn.pipeline import FeatureUnion, Pipeline
 from sklearn.preprocessing import Normalizer
 from sklearn.svm import LinearSVC
 
-from data import ROOT, load_language, load_sentiment, load_spam
+from data import ROOT, load_language, load_language_v2, load_sentiment, load_spam
 
 warnings.filterwarnings("ignore")
 (ROOT / "models").mkdir(exist_ok=True)
@@ -67,35 +67,56 @@ def run_task(name, tr, te, features, primary, pos_label=None):
 if __name__ == "__main__":
     all_rows, summary = [], {}
 
-    # ---------------- 1. language detection ----------------
+    # ---------------- 1. language detection (v2: real Hinglish) ----------------
     print("Language detection ...")
-    ltr, lte = load_language()
-    feats = TfidfVectorizer(analyzer="char_wb", ngram_range=(1, 3), sublinear_tf=True, lowercase=True)
-    rows, (bn, bs, bm) = run_task("Language detection", ltr, lte, feats, "macro_F1")
-    all_rows += rows
+    ltr, ltests = load_language_v2()
+    feats = TfidfVectorizer(analyzer="char_wb", ngram_range=(1, 4), sublinear_tf=True, lowercase=True)
+    pooled = pd.concat(ltests.values(), ignore_index=True)
+    # tune on the pooled in-domain tests' structure via CV on train; report per test set
+    lang_rows, best_lang = [], (None, -1, None)
+    for mname, (pipe, grid) in model_zoo(feats).items():
+        gs = GridSearchCV(pipe, grid, cv=CV, scoring="f1_macro", n_jobs=-1)
+        t0 = time.time(); gs.fit(ltr.text, ltr.label); fit_s = time.time() - t0
+        row = {"task": "Language detection", "model": mname, "best_params": str(gs.best_params_), "train_s": round(fit_s, 2)}
+        t0 = time.time(); pred_all = gs.predict(pooled.text); row["predict_ms_per_msg"] = round((time.time() - t0) / len(pooled) * 1000, 3)
+        for tname, tdf in ltests.items():
+            row["acc: " + tname] = accuracy_score(tdf.label, gs.predict(tdf.text))
+        row["accuracy"] = accuracy_score(pooled.label, pred_all)
+        row["macro_F1"] = f1_score(pooled.label, pred_all, average="macro")
+        row["n_test"] = len(pooled)
+        lang_rows.append(row)
+        sel = np.mean([row["acc: real Hinglish (HingLID test)"], row["acc: hand-written Hinglish (OOD)"], row["acc: informal English (SMS incl. spam)"]])
+        if sel > best_lang[1]:
+            best_lang = (mname, sel, gs.best_estimator_)
+        print(f"  [lang] {mname:12s} " + " ".join(f"{k.split(':')[1].strip()[:14]}={v:.3f}" for k, v in row.items() if k.startswith("acc: ")))
+    all_rows += lang_rows
+    bn, bm = best_lang[0], best_lang[2]
     joblib.dump(bm, ROOT / "models" / "language.joblib")
-    summary["language"] = {"best": bn, "train": len(ltr), "test": len(lte), "classes": sorted(ltr.label.unique().tolist())}
-    pred = bm.predict(lte.text)
-    labs = sorted(lte.label.unique())
-    cm = confusion_matrix(lte.label, pred, labels=labs)
+    summary["language"] = {"best": bn, "train": len(ltr), "classes": sorted(ltr.label.unique().tolist()),
+                           "test_sets": {k: len(v) for k, v in ltests.items()},
+                           "selection": "mean accuracy on real Hinglish, hand-written Hinglish (OOD) and informal English"}
+    pred = bm.predict(pooled.text)
+    labs = sorted(pooled.label.unique())
+    cm = confusion_matrix(pooled.label, pred, labels=labs)
     fig, ax = plt.subplots(figsize=(8, 7))
-    ax.imshow(cm, cmap="Blues")
+    ax.imshow(np.log1p(cm), cmap="Blues")
     ax.set_xticks(range(len(labs))); ax.set_xticklabels(labs, rotation=90)
     ax.set_yticks(range(len(labs))); ax.set_yticklabels(labs)
     for i in range(len(labs)):
         for j in range(len(labs)):
             if cm[i, j]:
                 ax.text(j, i, cm[i, j], ha="center", va="center", fontsize=7)
-    ax.set_xlabel("predicted"); ax.set_ylabel("true"); ax.set_title(f"Language detection - {bn} (test set)")
+    ax.set_xlabel("predicted"); ax.set_ylabel("true"); ax.set_title(f"Language detection - {bn} (all test sets pooled; colour = log count)")
     fig.tight_layout(); fig.savefig(ROOT / "results" / "language_confusion.png", dpi=130); plt.close(fig)
-    hl = lte[lte.label == "hinglish"]
-    summary["language"]["hinglish_test_n"] = int(len(hl))
-    summary["language"]["hinglish_test_acc"] = float((bm.predict(hl.text) == "hinglish").mean())
-    # accuracy by message length
-    L = lte.assign(ok=(pred == lte.label), n=lte.text.str.len())
-    L["bucket"] = pd.cut(L.n, [0, 30, 50, 80, 200], labels=["<=30", "31-50", "51-80", "81+"])
-    by_len = L.groupby("bucket", observed=True).ok.agg(["mean", "size"])
-    by_len.to_csv(ROOT / "results" / "language_accuracy_by_length.csv")
+    # accuracy by message length on the hard sets
+    hard = pd.concat([ltests["real Hinglish (HingLID test)"], ltests["informal English (SMS incl. spam)"], ltests["hand-written Hinglish (OOD)"]], ignore_index=True)
+    ph = bm.predict(hard.text)
+    L = hard.assign(ok=(ph == hard.label), n=hard.text.str.split().str.len())
+    L["words"] = pd.cut(L.n, [0, 3, 6, 10, 20, 1000], labels=["1-3", "4-6", "7-10", "11-20", "21+"])
+    L.groupby("words", observed=True).ok.agg(["mean", "size"]).to_csv(ROOT / "results" / "language_accuracy_by_length.csv")
+    # the errors that matter: English <-> Hinglish
+    eh = hard[(hard.label != ph)].assign(pred=ph[hard.label != ph]).head(25)
+    eh.to_csv(ROOT / "results" / "language_errors_sample.csv", index=False)
 
     # ---------------- 2. spam ----------------
     print("Spam ...")

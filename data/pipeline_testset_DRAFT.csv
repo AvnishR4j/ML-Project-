@@ -1,0 +1,48 @@
+text,true_lang,true_spam,true_sentiment
+My order arrived two weeks late and the box was completely damaged,en,ham,neg
+"Customer care keeps cutting my call, this is really disappointing",en,ham,neg
+"The app crashes every time I try to pay, please fix this",en,ham,neg
+I was charged twice for the same ride and nobody is helping me,en,ham,neg
+"Worst delivery experience ever, the food was cold and half of it was missing",en,ham,neg
+"Still waiting for my refund after three weeks, very frustrating",en,ham,neg
+"Great service, the delivery boy was polite and the food was still hot",en,ham,pos
+"Thank you so much, the issue was solved quickly and everyone was helpful",en,ham,pos
+"Loved the new update, the app is much faster now",en,ham,pos
+"Excellent quality, exactly as described and arrived a day early",en,ham,pos
+"The driver was friendly and the ride was smooth, will book again",en,ham,pos
+"Really happy with the support team, they answered within minutes",en,ham,pos
+"WINNER! You have been selected for a free iPhone, click the link now to claim your prize",en,spam,
+"URGENT: your bank account will be blocked today, update your KYC at the link immediately",en,spam,
+"You have won a cash prize of 50000, call 09061701461 now to claim",en,spam,
+Free entry in our weekly draw! Text WIN to 80082 to receive your reward,en,spam,
+mera order do hafte late aaya aur dabba bhi toota hua tha,hinglish,ham,neg
+"customer care wale baar baar call kaat dete hain, bahut bura lagta hai",hinglish,ham,neg
+"payment karte time app crash ho jata hai, jaldi theek karo",hinglish,ham,neg
+"ek hi ride ke do baar paise kat gaye, koi sunta hi nahi",hinglish,ham,neg
+"khana thanda aaya aur aadha saman missing tha, bakwas service",hinglish,ham,neg
+"teen hafte ho gaye refund nahi aaya, bahut pareshan hu",hinglish,ham,neg
+delivery boy bahut tameez se baat kar raha tha aur khana bhi garam tha,hinglish,ham,pos
+"bahut shukriya, aapne meri problem turant solve kar di",hinglish,ham,pos
+"naya update mast hai, app ab bahut fast chalta hai",hinglish,ham,pos
+"quality ekdum badhiya hai, bilkul waisa hi mila jaisa dikhaya tha",hinglish,ham,pos
+"driver bhaiya bahut acche the, ride ekdum smooth thi",hinglish,ham,pos
+"support team ne kuch hi minute mein jawab de diya, maza aa gaya",hinglish,ham,pos
+"aapka KYC update nahi hua hai, account band ho jayega, abhi link par click karein",hinglish,spam,
+"badhai ho! aapne 5 lakh ka lottery jeeta hai, inaam paane ke liye abhi call karein",hinglish,spam,
+"free recharge paane ke liye turant is link par click karo, offer sirf aaj ke liye",hinglish,spam,
+"aapka loan approve ho gaya hai, bina documents ke paisa paane ke liye ye link kholein",hinglish,spam,
+"मेरा ऑर्डर अभी तक नहीं पहुँचा है, कृपया जल्दी बताइए",hi,ham,
+"आपकी सेवा बहुत अच्छी थी, धन्यवाद",hi,ham,
+यह फ़ोन बहुत अच्छा है और बैटरी भी बढ़िया चलती है,hi,ham,
+"कल मैं दफ़्तर नहीं आ पाऊँगा, तबीयत ठीक नहीं है",hi,ham,
+बारिश की वजह से ट्रेन देर से चल रही है,hi,ham,
+क्या आप मुझे बिल की कॉपी भेज सकते हैं,hi,ham,
+Die Lieferung kam zu spät und das Paket war beschädigt,de,ham,
+Vielen Dank für Ihre schnelle Hilfe,de,ham,
+Ich möchte meine Bestellung stornieren,de,ham,
+Ma commande n'est toujours pas arrivée,fr,ham,
+Merci beaucoup pour votre aide rapide,fr,ham,
+Je voudrais un remboursement s'il vous plaît,fr,ham,
+Mi pedido llegó tarde y dañado,es,ham,
+Muchas gracias por su ayuda,es,ham,
+Quiero cancelar mi suscripción,es,ham,

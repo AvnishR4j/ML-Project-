@@ -1,0 +1,22 @@
+{
+  "calibration": {
+    "deployed": "Linear SVM (calibrated)",
+    "threshold": 0.27,
+    "val_brier": {
+      "Naive Bayes (raw)": 0.0152,
+      "Linear SVM (calibrated)": 0.0097,
+      "Naive Bayes (calibrated)": 0.0155
+    }
+  },
+  "pipeline_eval": {
+    "n": 47,
+    "language_accuracy": 0.979,
+    "spam_accuracy_predicted_language": 0.875,
+    "spam_accuracy_oracle_language": 0.875,
+    "end_to_end_exact_match_predicted": 0.851,
+    "end_to_end_exact_match_oracle_language": 0.872,
+    "messages_where_language_error_changed_outcome": 1,
+    "english_sentiment_accuracy_oracle": 0.833,
+    "english_sentiment_n": 12
+  }
+}
