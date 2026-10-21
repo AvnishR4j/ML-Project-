@@ -1,0 +1,341 @@
+id,message,language,spam,sentiment,theme
+M001,thank you lovely,English,ham,positive,Greetings and affection
+M002,School works,English,ham,positive,Opinions and advice
+M003,My darling sister. How are you doing. When's school resuming. Is there a minimum wait period before you reapply? Do take care,English,ham,positive,Greetings and affection
+M004,social media per inka baap nai hota isliye yeh feminismiscancer,Hinglish,ham,negative,General fan comments
+M005,Yaar ghar baithe daily 2000 kamao - registration ke liye sirf 500 invest karo.,Hinglish,spam,n/a,n/a
+M006,"leisure, including reasonable limitation of working hours and periodic holidays with pay. Article 25",English,ham,positive,Opinions and advice
+M007,fine!!,English,ham,positive,Greetings and affection
+M008,Thanks guys!,English,ham,positive,Greetings and affection
+M009,Do u noe wat time e place dat sells 4d closes?,English,ham,positive,Casual chat (Singapore-style)
+M010,bhai work hai kya..hume bhi hai thodi der baad but plzz tution jana hai,Hinglish,ham,neutral,Requests for a reply
+M011,Luckily that is just one out of many!,English,ham,positive,Opinions and advice
+M012,"Aaj baarish mein bhig gaya, maza aaya!",Hinglish,ham,neutral,Waiting for a reply
+M013,i really can't stream on melon i feel useless,English,ham,negative,Greetings and affection
+M014,Salman bhai agar aap ne apni movie mein Babbu maan ka song le liya to kam se kam 20 laakh fan ek din mein jyada ho jayenge,Hinglish,ham,positive,General fan comments
+M015,Yes..gauti and sehwag out of odi series.,English,ham,negative,Opinions and advice
+M016,muje apne mark s kehna,Hinglish,ham,neutral,Requests for a reply
+M017,exactly neemat they r all our heroes n legends n indians aur hum apne hi players ko troll kare its a big shame on us as indians n fans,Hinglish,ham,positive,Fan love and praise
+M018,ko apne views sahi lgte,Hinglish,ham,neutral,General fan comments
+M019,reminder 28 nora fatehi and kareena ka life review kab ayega last year apne bola tha,Hinglish,ham,neutral,Fan love and praise
+M020,"Yaar HDFC ka call aaya tha, bol rahe the tera account 2 din mein band hoga KYC ke bina.",Hinglish,ham,neutral,General fan comments
+M021,muskurati duniya ki shayar bhi karwaunga come,Hinglish,ham,neutral,Fan love and praise
+M022,"hi! we made some changes in our design, hope you like it",English,ham,positive,Greetings and affection
+M023,liy age khatam ho,Hinglish,ham,neutral,General fan comments
+M024,Sorry de i went to shop.,English,ham,negative,Casual chat (Singapore-style)
+M025,kuhifadhiwa barabara. Kifungu cha 29. Kila mtu ana wajibu kwa,Swahili,not checked,n/a,n/a
+M026,I can't sleep bc heartburn,English,ham,negative,Everyday plans and catching up
+M027,mjhe yakeen ha apne guess p p,Hinglish,ham,neutral,Requests for a reply
+M028,16 time world champion ne universaltitle ke liye ko challenge karne ki opportunity apne haath mein li and more wwenowindia watch here,Hinglish,ham,neutral,Fan love and praise
+M029,"27. Kila mtu anayo haki ya kushiriki katika maisha ya utamaduni ya jamii yo yote,",Swahili,not checked,n/a,n/a
+M030,karwayiye aur apne jijus ko,Hinglish,ham,neutral,General fan comments
+M031,abhe yeh really salman ki id h kya,Hinglish,ham,neutral,Requests for a reply
+M032,mai aap se milta chahta hu lekin mai mil nahi pawga,Hinglish,ham,neutral,General fan comments
+M033,"ICICI ne warning di hai - net banking expire ho rahi hai, abhi renew kar warna block ho jayega.",Hinglish,ham,neutral,General fan comments
+M034,hey babe i just came across this pic..what is this about? I cant read hindi,English,ham,negative,Greetings and affection
+M035,Yo guess what I just dropped,English,ham,negative,Everyday plans and catching up
+M036,не составляли преступления по,Russian,not checked,n/a,n/a
+M037,I'm in chennai velachery:),English,ham,positive,Everyday plans and catching up
+M038,the emoji,Uncertain,not checked,n/a,n/a
+M039,Chhotu homework kar liya? Aaj exam hai na.,Hinglish,ham,neutral,General fan comments
+M040,whaaat. this so isn't fair,English,ham,negative,Opinions and advice
+M041,ke kya itna pyara dost sirf mere liye banaya,Hinglish,ham,neutral,General fan comments
+M042,Narendra modi ji plz court me jo cases pending hai use jldi nyai mile aisi koi upai yojna kre,Hinglish,ham,negative,Patriotic messages
+M043,BJP youth ki skill niche video me dekhiye.,Hinglish,ham,positive,Patriotic messages
+M044,bajrangi bhai dar gaye is idd me lagta he,Hinglish,ham,neutral,Waiting for a reply
+M045,"die Autorität der öffentlichen Gewalt; dieser Wille muß durch regelmäßige, unverfälschte, allgemeine und gleiche",German,not checked,n/a,n/a
+M046,Here if you want the full thing,English,ham,positive,Opinions and advice
+M047,"Yeah why not, is the gang all ready",English,ham,positive,Everyday plans and catching up
+M048,dosto yai flim tho fulle hit pef hit hoge,Hinglish,ham,positive,Film and festival buzz
+M049,"для определения его прав и обязанностей и для установления обоснованности предъявленного ему уголовного обвинения,",Russian,not checked,n/a,n/a
+M050,Sepanx with this one,English,ham,negative,Opinions and advice
+M051,abba ko bole vaccine ki factory,Hinglish,ham,negative,General fan comments
+M052,Hi msg me:)i'm in office..,English,ham,positive,Requests and calls
+M053,ho truth seeker taras ata hai,Hinglish,ham,neutral,General fan comments
+M054,gharo se nikaliye scert lucknow pahuchiye ye hmari antim ladai,Hinglish,ham,neutral,General fan comments
+M055,You are right. Meanwhile how's project twins comin up,English,ham,positive,Everyday plans and catching up
+M056,Tnx bhai jan leliya,Hinglish,ham,neutral,Film and festival buzz
+M057,I'm awake oh. What's up.,English,ham,positive,Everyday plans and catching up
+M058,"Bhai main hospital mein hoon, phone kho gaya, please 5000 transfer kar do ye number pe.",Hinglish,spam,n/a,n/a
+M059,bez względu na granice. Artykuł 20 Każdy człowiek ma prawo spokojnego zgromadzania,Polish,not checked,n/a,n/a
+M060,"Bhai Byjus mein teacher chahiye, monthly 40k - interview ke liye 200 ka form bharo.",Hinglish,ham,neutral,General fan comments
+M061,Can you plz tell me the ans. BSLVYL sent via fullonsms.com,English,spam,n/a,n/a
+M062,Love makes two hearts one.,English,ham,positive,Opinions and advice
+M063,"Doctor ka appointment 10 baje hai, saath chaloge?",Hinglish,ham,neutral,General fan comments
+M064,oh my head #인피니트 save me,English,ham,negative,Requests and calls
+M065,I anything lor...,English,ham,negative,Casual chat (Singapore-style)
+M066,oh gosh i love it so much ;__; they have those fried noodles?? Love💜💜💜 but they stopped selling them here,English,ham,negative,Opinions and advice
+M067,btw ini sore say,English,ham,positive,Greetings and affection
+M068,prawo do ubezpieczenia na,Polish,not checked,n/a,n/a
+M069,"ontplooiing van zijn persoonlijkheid, verwezenlijkt worden. Artikel 23 Een ieder heeft",Dutch,not checked,n/a,n/a
+M070,There are many company. Tell me the language.,English,ham,negative,Opinions and advice
+M071,We currently have a message awaiting your collection. To collect your message just call 08718723815.,English,spam,n/a,n/a
+M072,ko itna educated samjte,Hinglish,ham,neutral,General fan comments
+M073,kashkol ko bharne klye ye,Hinglish,ham,negative,General fan comments
+M074,Desh ka vikas har koi petrol or diseal ke rate bda kar hi kyu krna chahta hai,Hinglish,ham,neutral,General fan comments
+M075,Wahlen mit geheimer Stimmabgabe oder,Uncertain,not checked,n/a,n/a
+M076,kyonki aapke baare main jaanta hu to aap bhi mere baare me saari jaankari jaane,Hinglish,ham,neutral,General fan comments
+M077,K k:) sms chat with me.,English,ham,positive,Requests and calls
+M078,its team play no one,English,ham,negative,Opinions and advice
+M079,I guess sleep was just not in my list of things to do today,English,ham,negative,Everyday plans and catching up
+M080,Mene kitni bar smjhaya tha rat ko chashma mt nikala kro animals njr ate hye ap ko firr,Hinglish,ham,negative,Requests for a reply
+M081,Hey tmr meet at bugis 930 ?,English,ham,positive,Casual chat (Singapore-style)
+M082,We will meet soon princess! Ttyl!,English,ham,positive,Greetings and affection
+M083,"Yes, and John",English,ham,positive,Opinions and advice
+M084,K.k:)when are you going?,English,ham,negative,Greetings and affection
+M085,"Beautiful Truth against Gravity.. Read carefully: ""Our heart feels light when someone is in it.. But it feels very heavy when someone leaves it.."" GOODMORNING",English,ham,negative,Opinions and advice
+M086,smartxgameryt please support me apne subscriber ko bata do mere channel ke bare mein meinebhi aapka channel subscribe kiya hai by i love you souvik bhai,Hinglish,ham,positive,Requests for a reply
+M087,invest karo magar apne molk ka karja to utar do phele fareek molk or uski zahil kaum,Hinglish,ham,negative,General fan comments
+M088,You can jot down things you want to remember later.,English,ham,positive,Everyday plans and catching up
+M089,To hum kya karay,Hinglish,ham,neutral,General fan comments
+M090,Ma teyar houn jnb,Hinglish,ham,neutral,General fan comments
+M091,Rammi hindo salman. Kafir kuty ho tum gandooo,Hinglish,ham,negative,Film and festival buzz
+M092,How are you doing? Hope you've settled in for the new school year. Just wishin you a gr8 day,English,ham,positive,Greetings and affection
+M093,yadi apse milana he to kya krna hoga,Hinglish,ham,neutral,Requests for a reply
+M094,Unsettled weather is the trend for the next few days. Sun this morning. Showers this afternoon. GH is 18C. Mixed bag for the weekend .,English,ham,negative,Greetings and affection
+M095,So what about you. What do you remember,English,ham,negative,Greetings and affection
+M096,m kya rkha jb koi qadar na kre to uski qadar krna chor do apne ache traits nh treat people as normal,Hinglish,ham,neutral,General fan comments
+M097,bhai 3:30 tha time to,Hinglish,ham,neutral,Requests for a reply
+M098,gaye jahan 127mm pitampura 91mm ghaziabad,Hinglish,ham,neutral,Waiting for a reply
+M099,dont know how r u guys even friends w,English,ham,negative,Greetings and affection
+M100,"geliştirmelidir. 3. Ana baba, çocuklarına verilecek",Turkish,not checked,n/a,n/a
+M101,"I keep seeing weird shit and bein all ""woah"" then realising it's actually reasonable and I'm all ""oh""",English,ham,negative,Everyday plans and catching up
+M102,"one of my friend is following me , a little heart attack , im sorry youre blocked sadis",English,ham,negative,Greetings and affection
+M103,Hows the champ just leaving glasgow!,English,ham,negative,Everyday plans and catching up
+M104,Dost PM Awas Yojana mein tera naam hai - 2.5 lakh ki subsidy ke liye register kar aaj.,Hinglish,spam,n/a,n/a
+M105,apne masle isliye noi khtm ho rehe kyuki logo ko dusre k masle m jada interest hota hai,Hinglish,ham,negative,General fan comments
+M106,de la duración del trabajo y a vacaciones periódicas pagadas. Artículo 25 Toda persona tiene derecho,Spanish,not checked,n/a,n/a
+M107,Aight well keep me informed,English,ham,positive,Everyday plans and catching up
+M108,ye sb se ghatiya akhbar h apne agenda,Hinglish,ham,negative,General fan comments
+M109,"Miss you dost, kab miloge?",English,ham,negative,Greetings and affection
+M110,"If you're still up, maybe leave the credit card so I can get gas when I get back like he told me to",English,ham,negative,Everyday plans and catching up
+M111,angrez apne wafadar rss walo k liye bomb ki factory banwa k gaye thy,Hinglish,ham,neutral,General fan comments
+M112,Arae sur jee pahelae hamare bharat ke bachho ka parao.... Firr vedesh may jao yaar,Hinglish,ham,positive,General fan comments
+M113,Yeah sure I'll leave in a min,English,ham,positive,Everyday plans and catching up
+M114,bharat ka shan narendar modi lakin bihar ka kya hoga modi jee,Hinglish,ham,positive,Patriotic messages
+M115,ghar me padhare gajanand ji ab Ghar me padhare..........,Uncertain,not checked,n/a,n/a
+M116,"thanks, sent it now",English,ham,positive,Requests and calls
+M117,Jai ho bhai.,Hinglish,ham,positive,Patriotic messages
+M118,Yar pooja kya ho gya ha aise bat ni krte,Hinglish,ham,neutral,General fan comments
+M119,Where did u go? My phone is gonna die you have to stay in here,English,ham,negative,Everyday plans and catching up
+M120,Exam mein ache marks aaye! Maa bahut khush hain.,Hinglish,ham,positive,General fan comments
+M121,grat indian army & salman vai.,English,ham,negative,"Money, places and times"
+M122,Yup. Wun believe wat? U really neva c e msg i sent shuhui?,English,ham,negative,Casual chat (Singapore-style)
+M123,"Library book return karni hai, deadline hai.",Hinglish,ham,neutral,General fan comments
+M124,Assalaam o alaikum bhai,Hinglish,ham,neutral,Film and festival buzz
+M125,Shukriya Bhaijaaaaan... Mere bday pe aj tak mila huva Sabse pyara tohfa.... Bajrangi Bhaijaaaaan....,Hinglish,ham,positive,Requests for a reply
+M126,Today's weather sums up how I feel about going to work #TGIF,English,ham,negative,Greetings and affection
+M127,"Thanx. Yup we coming back on sun. Finish dinner going back 2 hotel now. Time flies, we're tog 4 exactly a mth today. Hope we'll haf many more mths to come...",English,ham,positive,Casual chat (Singapore-style)
+M128,Salman Khan apka dil sch me pure water jaisa hai,Hinglish,ham,positive,Film and festival buzz
+M129,#cakehamper baskets have arrived Best gonna be busy 2 get the finished products ready for you all to see #excited,English,ham,positive,Everyday plans and catching up
+M130,Mimi is such a cute name but it feels weird when I use it as my name,English,ham,negative,Opinions and advice
+M131,Should I head straight there or what,English,ham,negative,Opinions and advice
+M132,Just got back from Walmart,Uncertain,not checked,n/a,n/a
+M133,New joiners ka orientation tomorrow morning hai.,English,ham,positive,Greetings and affection
+M134,"Article 27 Everyone has the right freely to participate in the cultural life of the community,",English,ham,positive,Opinions and advice
+M135,Are you free now?can i call now?,English,ham,negative,Requests and calls
+M136,"Yaar Google Pay se 1200 ka cashback mila hai tujhe, 24 ghante mein claim kar warna expire.",Hinglish,spam,n/a,n/a
+M137,All day working day:)except saturday and sunday..,English,ham,negative,Greetings and affection
+M138,chalo sab apne apne ghar koi salman nahi aaega....!!,Hinglish,ham,neutral,General fan comments
+M139,film ka story mast he aur aap bhi mast ho............,Uncertain,not checked,n/a,n/a
+M140,Don't worry bhai aap aaye nhi toh bhi chlega,Hinglish,ham,neutral,Requests for a reply
+M141,MY snapchat - JillMill19 #snapchat #kikmeboys #hot #webcam #teens #elfindelmundo #sexi,English,ham,negative,Requests and calls
+M142,abe pgl gawar apne kaam se kaam rkh ya lga kr ghum road,Hinglish,ham,negative,General fan comments
+M143,Here is your discount code RP176781. To stop further messages reply stop. www.regalportfolio.co.uk. Customer Services 08717205546,English,spam,n/a,n/a
+M144,"chí này được thể hiện qua các cuộc bầu cử định kỳ và thực sự, theo nguyên tắc bỏ phiếu phổ thông và bình đẳng",Vietnamese,not checked,n/a,n/a
+M145,ki sampatti bana le rhe,Hinglish,ham,negative,General fan comments
+M146,I'll pick you up at about 5.15pm to go to taunton if you still want to come.,English,ham,positive,Everyday plans and catching up
+M147,Bhai jaan ... plz ek bar mera name typ kr k hiii bol do plzzzzz bhai?,Hinglish,ham,neutral,Requests for a reply
+M148,Thanks ! Lovely to meet hope see you Ludlow on 28th July at Selway Arms,English,ham,positive,Greetings and affection
+M149,ap ko apne health,Hinglish,ham,neutral,Requests for a reply
+M150,έχει δικαίωμα να ασκεί αποτελεσματικά ένδικα μέσα στα αρμόδια εθνικά δικαστήρια κατά των πράξεων που παραβιάζουν,Greek,not checked,n/a,n/a
+M151,ka zyada khyal rakho meri tension na,Hinglish,ham,neutral,General fan comments
+M152,R U &SAM P IN EACHOTHER. IF WE MEET WE CAN GO 2 MY HOUSE,English,ham,positive,Everyday plans and catching up
+M153,Happy New year my dear brother. I really do miss you. Just got your number and decided to send you this text wishing you only happiness. Abiola,English,ham,positive,Greetings and affection
+M154,Yo im right by yo work,English,ham,positive,Everyday plans and catching up
+M155,No that just means you have a fat head,English,ham,negative,Opinions and advice
+M156,"Bro Amazon seller program - ghar baithe selling, 10k monthly guaranteed, join fee 2000.",English,spam,n/a,n/a
+M157,PRIVATE! Your 2003 Account Statement for shows 800 un-redeemed S.I.M. points. Call 08718738001 Identifier Code: 49557 Expires 26/11/04,English,spam,n/a,n/a
+M158,h rasule khuda saww tum mein se behtareen wo hai jo apne ahl o ayaal family ke liye achcha ho hadiyat ush shia p40,Hinglish,ham,negative,General fan comments
+M159,k mseeha ho mujhe bhi job dilado jesse,Hinglish,ham,neutral,Requests for a reply
+M160,Draw va?i dont think so:),English,ham,negative,Requests and calls
+M161,"I want some cock! My hubby's away, I need a real man 2 satisfy me. Txt WIFE to 89938 for no strings action. (Txt STOP 2 end, txt rec £1.50ea. OTBox 731 LA1 7WS. )",English,spam,n/a,n/a
+M162,mera account wapas aa gya apne account ki baat hi alag hoti h ab hame apna show bhi wapas chahiye season 2 we want saakk s2,Hinglish,ham,neutral,General fan comments
+M163,What to think no one saying clearly. Ok leave no need to ask her. I will go if she come or not,English,ham,negative,Everyday plans and catching up
+M164,Mai tho supper man salmaan ka fan Jo leve panga kardo ma bhean I'd Mubarak sir,Hinglish,ham,positive,Requests for a reply
+M165,you need help ganda?,English,ham,positive,Requests and calls
+M166,"Sir, Waiting for your mail.",English,ham,positive,Requests and calls
+M167,"Urgent! call 09066612661 from landline. Your complementary 4* Tenerife Holiday or £10,000 cash await collection SAE T&Cs PO Box 3 WA14 2PX 150ppm 18+ Sender: Hol Offer",English,spam,n/a,n/a
+M168,hiiii how r u ..aap ye btaye ki aap lucknow kyu nhi ate hai n agar ayeto mjhe plzzz inform kare..plzz,Hinglish,ham,neutral,Requests for a reply
+M169,Salman khan bn kr yaha kyi logo ne fake msg kiya h.... Bt hm hmesha real hero my salman khan se hmesha pyar krenge,Hinglish,ham,neutral,Requests for a reply
+M170,"économiques, sociaux et culturels indispensables à sa dignité et au libre",French,not checked,n/a,n/a
+M171,際的協力により、また、各国の組織及び資源に応じて、 自己の尊厳と自己の人格の自由な発展とに欠くことのできない経済的、社 会的及び,Japanese,not checked,n/a,n/a
+M172,na ana haki ya kufurahia ustadi wa kazi na kushiriki katika maendeleo ya,Swahili,not checked,n/a,n/a
+M173,"olan devri ve dürüst seçimlerle ifade edilir. Madde 22 Her şahsın,",Turkish,not checked,n/a,n/a
+M174,kiya kismat hai,Hinglish,ham,negative,General fan comments
+M175,"Customer place, i wil cal u sir.",English,ham,positive,Requests and calls
+M176,they're not. : ( except for those two who kill people ene,English,ham,negative,Opinions and advice
+M177,apna stunt tak nahi hai,Hinglish,ham,negative,General fan comments
+M178,If india win or level series means this is record:),Uncertain,not checked,n/a,n/a
+M179,"By the way, make sure u get train to worc foregate street not shrub hill. Have fun night x",English,ham,positive,Everyday plans and catching up
+M180,"don't ignore me please it was my birthday on the 12th of July, could you follow me now as a present? 😊😊😊❤️",English,ham,negative,Requests and calls
+M181,friends tum sab salman khan ku thaknah chati hu. ...???,English,ham,positive,Opinions and advice
+M182,Bring it if you got it,English,ham,positive,Everyday plans and catching up
+M183,Hi there. We have now moved in2 our pub . Would be great 2 c u if u cud come up.,English,ham,positive,Everyday plans and catching up
+M184,I don't sleep enough,English,ham,negative,Everyday plans and catching up
+M185,IM GONNA MISS U SO MUCH,English,ham,negative,Greetings and affection
+M186,rampal ji maharaj youtube channel,Hinglish,ham,positive,Patriotic messages
+M187,Sir kya aap fir kashmir aavoge plz reply,Hinglish,ham,neutral,Requests for a reply
+M188,Family time (at Dj Resto) —,English,ham,positive,Opinions and advice
+M189,rizzu lll mere acc me apne ap likhne ki zarueat nahu h,Hinglish,ham,neutral,Requests for a reply
+M190,"I want the armor piece, it's better than the legendary I have now",English,ham,positive,Opinions and advice
+M191,im Rohit vasfoda,Uncertain,not checked,n/a,n/a
+M192,I wish you cut your hair like this again,English,ham,negative,Greetings and affection
+M193,ho sarkar apne,Hinglish,ham,neutral,Patriotic messages
+M194,"Dost YouTube channel grow karo - 999 mein subscribers badhao, guaranteed results.",English,spam,n/a,n/a
+M195,sir promotion karne se pehle company ko jaan lena tha apne 23 24 din beet gaye inohne pehle to product nahi bheja abb paise ni de rahe wapis,Hinglish,ham,neutral,General fan comments
+M196,Okay same with me. Well thanks for the clarification,English,ham,positive,Greetings and affection
+M197,Those cocksuckers. If it makes you feel better ipads are worthless garbage novelty items and you should feel bad for even wanting one,English,ham,negative,Opinions and advice
+M198,ko bhi bola hai dekhne ko aisa movie na kabhi,Hinglish,ham,negative,General fan comments
+M199,"Bhai Bank of Baroda ka message - FD mature ho gayi, 50k release karne ko 500 fee bhar.",Hinglish,ham,neutral,General fan comments
+M200,"Yaar data entry job - ghar baithe 2-3 ghante, monthly 25k - training fee 1500.",English,spam,n/a,n/a
+M201,", ow u dey.i paid 60,400thousad.i told  u would call . ",English,ham,negative,Requests and calls
+M202,Han bhaijaan jaisa aap kaho..best of luck for bajrangi bhai,Hinglish,ham,positive,Film and festival buzz
+M203,"Yaar semester ki marksheet aayi, ache marks hain.",Hinglish,ham,positive,General fan comments
+M204,blood and plague pits,Uncertain,not checked,n/a,n/a
+M205,geboden en voorschriften. Artikel 19 Een ieder heeft recht op vrijheid van mening en,Dutch,not checked,n/a,n/a
+M206,reply dejeyga sir my name neeraj singh,Hinglish,ham,neutral,Fan love and praise
+M207,"Bhai Microsoft support - Windows license expire ho gayi, 800 mein renew karo.",Uncertain,not checked,n/a,n/a
+M208,Go Hokies! Our biz internships will be posted under University Recruiting - Non Tech on the website. I'll DM you info!,English,ham,positive,Requests and calls
+M209,ye jo tum log sad status aur deep lines apne status pe lagate ho milne ke baad to tum log bilkul thk hote ho phir ye sab kyun,Hinglish,ham,neutral,General fan comments
+M210,Apkeliya masig salman,Hinglish,ham,positive,Film and festival buzz
+M211,bet you do! Well I won't be getting any sleep it's a 9pm shift until 9am so it's quit hard work! But thank you xx,English,ham,negative,Everyday plans and catching up
+M212,Versorgung und notwendige soziale Leistungen gewährleistet,German,not checked,n/a,n/a
+M213,safar suru toh karo trend apne aap ho jaoge we want saakk s2,Hinglish,ham,neutral,Requests for a reply
+M214,I have a sore throat. It's scratches when I talk,English,ham,negative,Everyday plans and catching up
+M215,Mujhe shadi karni salman apse plzzzzzzzzzzzzzzzz marry me,Hinglish,ham,neutral,Requests for a reply
+M216,itni kam interaction ke baad v apne wish kiya thank you so much yashal happy freindship day to you,Hinglish,ham,positive,Fan love and praise
+M217,jo jo gali diya hai sabko sunna hoga ab,Hinglish,ham,neutral,General fan comments
+M218,Koi fayda hai inko ye sab dikhane se????,Hinglish,ham,neutral,General fan comments
+M219,Bhai ghar ka light bill pay hua kya?,Hinglish,ham,neutral,General fan comments
+M220,"Interview 3 baje hai, thoda pehle pahunch jaana.",Hinglish,ham,neutral,Waiting for a reply
+M221,rdx amarinder tu apne drugs ke,Hinglish,ham,negative,General fan comments
+M222,Idar hi hun bahi,Hinglish,ham,positive,Requests for a reply
+M223,shakl bnai ye wali us k liye tha baqi,Hinglish,ham,neutral,General fan comments
+M224,Ha! my mistake! Thanks for pointing it out!,English,ham,positive,Greetings and affection
+M225,"yanayoweza kubashiriwa kwamba yanaruhusu nchi yo yote, kikundi",Swahili,not checked,n/a,n/a
+M226,"ieder heeft recht op rust en op eigen vrije tijd, met inbegrip van een redelijke beperking van de",Dutch,not checked,n/a,n/a
+M227,you can't,English,ham,positive,Everyday plans and catching up
+M228,I didnt see your/ millie's guinea pigs,English,ham,positive,Requests and calls
+M229,ab sare apne opinions do mujhe bahut darr lag raha hai aage kya hoga re apke opinions we mujhe thoda hope milega barristerbabu,Hinglish,ham,neutral,General fan comments
+M230,S'fine. Anytime. All the best with it.,English,ham,positive,Opinions and advice
+M231,happyyyyyyyyyyyyyyyy incarnationmonth pitag luv u soooooooo much sb kuch tusi jaano apne aap sb smbaal lo ji no tension only 10 10,Hinglish,ham,positive,Requests for a reply
+M232,Oh k k:)but he is not a big hitter.anyway good,English,ham,negative,Opinions and advice
+M233,Can you please tell me,English,ham,negative,Requests and calls
+M234,Dukkar h salman suwar kahi ka,Hinglish,ham,negative,General fan comments
+M235,"In two weeks we will be closing for a few days to redecorate. Expect something a little different, ready for our second Birthday.",English,ham,positive,Opinions and advice
+M236,Hlo sir hm sb aapka wait kr rhe h,Hinglish,ham,neutral,Requests for a reply
+M237,Looks pretty nice. Love the flat looks.,English,ham,positive,Opinions and advice
+M238,Yaar driving license expire ho raha hai - online renew karo 150 fee ke saath.,Hinglish,ham,neutral,General fan comments
+M239,sakunga appse bs yahi dua karta hu aapse jald mil saku,Hinglish,ham,neutral,Requests for a reply
+M240,Apne glat kiya humlogo k sath,Hinglish,ham,neutral,General fan comments
+M241,singh paji apne best friend aur uske,Hinglish,ham,neutral,Fan love and praise
+M242,are u there too?,English,ham,negative,Opinions and advice
+M243,U sleeping now.. Or you going to take? Haha.. I got spys wat.. Me online checking n replying mails lor..,English,ham,negative,Casual chat (Singapore-style)
+M244,"wish i was good at makeup, the only thing im good at is doing eyeliner",English,ham,negative,Greetings and affection
+M245,You got called a tool?,English,ham,negative,Everyday plans and catching up
+M246,Ü come lt 25 n pass to me lar,Uncertain,not checked,n/a,n/a
+M247,He says he'll give me a call when his friend's got the money but that he's definitely buying before the end of the week,English,ham,negative,Everyday plans and catching up
+M248,I can't go to hallyu on sunday so sad,English,ham,negative,Everyday plans and catching up
+M249,Bhai MLM business join karo - 5000 invest karo 50000 monthly kamao.,Hinglish,spam,n/a,n/a
+M250,baar kaise ghum firse rkv par aate ho,Hinglish,ham,neutral,General fan comments
+M251,U have a secret admirer. REVEAL who thinks U R So special. Call 09065174042. To opt out Reply REVEAL STOP. 1.50 per msg recd. Cust care 07821230901,English,spam,n/a,n/a
+M252,apne talent se jaate usme caste nhi dekhi jaati kisi,Hinglish,ham,negative,General fan comments
+M253,G wants to know where the fuck you are,English,ham,negative,Greetings and affection
+M254,lavoro ed alla protezione contro la disoccupazione.,Italian,not checked,n/a,n/a
+M255,that was beeeeepin hilarious!!!!!!SUPER DUPER Awesome.....,English,ham,positive,Opinions and advice
+M256,Oh god. I'm gonna Google nearby cliffs now.,English,ham,negative,Everyday plans and catching up
+M257,apne liye ponty,Hinglish,ham,neutral,General fan comments
+M258,You also didnt get na hi hi hi hi hi,Uncertain,not checked,n/a,n/a
+M259,rafaj uddin rathee aur tune dp apne papa ki lga rakhi h,Hinglish,ham,neutral,General fan comments
+M260,Thanks for understanding. I've been trying to tell sura that.,English,ham,positive,Opinions and advice
+M261,Yes I'm ready u luk so handsome bhagwaan aapko buri nazar se bachaaye,Hinglish,ham,positive,Fan love and praise
+M262,Hey sathya till now we dint meet not even a single time then how can i saw the situation sathya.,English,ham,positive,Everyday plans and catching up
+M263,同等の報酬を受ける権利を有する。 労働する者は、すべて、自己及び家族に対して人間の尊厳にふさわし い生活を保障する公平かつ有利な報酬を受け、かつ、必要な場合には、他,Japanese,not checked,n/a,n/a
+M264,yes yes yes... I am in,English,ham,positive,Requests and calls
+M265,husian a s ka sath na chore happy friendship day,Hinglish,ham,positive,Fan love and praise
+M266,"Haha better late than ever, any way I could swing by?",English,ham,negative,Everyday plans and catching up
+M267,Hi. Customer Loyalty Offer:The NEW Nokia6650 Mobile from ONLY £10 at TXTAUCTION! Txt word: START to No: 81151 & get yours Now! 4T&Ctxt TC 150p/MTmsg,English,spam,n/a,n/a
+M268,sab batane lag rhe hai,Hinglish,ham,neutral,General fan comments
+M269,mummy ko bhejo beta apke bss ki baat ni hai kyu ki apke papa bakre ka stardom khatam hue 8 saal ho gaay hai aur ek baar aur aukaat dekho apne bakre papa ki,Hinglish,ham,neutral,General fan comments
+M270,unko bhi happy friendship day jo apne dost ki pichhe se maarte hai,Hinglish,ham,positive,General fan comments
+M271,Aap great ho modi ji aapki wajah se hamara sir fakar se ucha ho gaya dunia me jay ho,Hinglish,ham,positive,Patriotic messages
+M272,Sabka sath sabka vikas...Gud,Hinglish,ham,positive,Patriotic messages
+M273,"a garantire la salute e il benessere proprio e della sua famiglia, con particolare riguardo all'alimentazione,",Italian,not checked,n/a,n/a
+M274,hur hur dabangg dabangg dabangg ..... Bajrangi bhaijan,Uncertain,not checked,n/a,n/a
+M275,Now got tv 2 watch meh? U no work today?,English,ham,negative,Casual chat (Singapore-style)
+M276,apne mask pehan k pic is liye li k log apko camron bolo wo jisko 24 saal ki saza hoi dramy,Hinglish,ham,positive,General fan comments
+M277,U should have made an appointment,English,ham,negative,Opinions and advice
+M278,Meeting 11 baje conference room mein hai.,Uncertain,not checked,n/a,n/a
+M279,URL? Their new web site design is just *so* easy to use.,English,ham,positive,Opinions and advice
+M280,pata hi hoga aap,Hinglish,ham,positive,General fan comments
+M281,waaah mann ki baat keh daali apne viral bhaiya,Hinglish,ham,neutral,General fan comments
+M282,ya I realized check viber mwah,English,ham,positive,Casual chat (Singapore-style)
+M283,Sir ek nzr cmnt pe rkiye or dekhiye kitne sare log apko pyr krte h,Hinglish,ham,neutral,Requests for a reply
+M284,"It‘s reassuring, in this crazy world.",English,ham,positive,Opinions and advice
+M285,"Hum cahtiha ki vai, ek bar ake sobko jalak lagadea",Hinglish,ham,neutral,Requests for a reply
+M286,or mujhe sharm aati hai,Hinglish,ham,neutral,General fan comments
+M287,Homey,English,ham,negative,Opinions and advice
+M288,Hi.kabhi kabhi apne fanse bhi mil lia kijie.kuch surprised to dena chahie...,Hinglish,ham,neutral,General fan comments
+M289,bnde k sath auss ki wife km aur bachi,Hinglish,ham,positive,General fan comments
+M290,"hình thức truyền bá, thực hành, thờ phụng hoặc lễ tiết, với tư cách cá nhân hay tập thể, công khai",Vietnamese,not checked,n/a,n/a
+M291,i've been friends with steph and mel for the longest time im actually so sad i havent met them yet i just want to hug them,English,ham,negative,Everyday plans and catching up
+M292,Kis kis ko jawab dungachalo ek lucky draw karta hu,Hinglish,ham,neutral,General fan comments
+M293,fasal pe nazrsani krae pmln ke jado jahad,Hinglish,ham,neutral,General fan comments
+M294,"Dost, Paytm se message aaya - tera wallet hack hua. OTP share kar cancel karne ke liye.",Hinglish,ham,neutral,General fan comments
+M295,URGENT This is our 2nd attempt to contact U. Your £900 prize from YESTERDAY is still awaiting collection. To claim CALL NOW 09061702893. ACL03530150PM,English,spam,n/a,n/a
+M296,kia h0A sal00 bai.....?,English,ham,negative,Opinions and advice
+M297,"It's cool, we can last a little while. Getting more any time soon?",English,ham,positive,Everyday plans and catching up
+M298,Get a FREE mobile video player FREE movie. To collect text GO to 89105. Its free! Extra films can be ordered t's and c's apply. 18 yrs only,English,spam,n/a,n/a
+M299,per aap apne dost ka dil tood rahy ho,Hinglish,ham,positive,Requests for a reply
+M300,and zayn,English,ham,negative,Requests and calls
+M301,K. Did you call me just now ah? ,English,ham,positive,Requests and calls
+M302,"Okay. No no, just shining on. That was meant to be signing, but that sounds better.",English,ham,negative,Opinions and advice
+M303,"Hey, I missed you tm of last night as my phone was on the charge ... *smiles* ... I am meeting a friend shortly",English,ham,negative,Requests and calls
+M304,hum apna nam jagah,Hinglish,ham,neutral,General fan comments
+M305,We tried to call you re your reply to our sms for a video mobile 750 mins UNLIMITED TEXT free camcorder Reply or call now 08000930705 Del Thurs,English,spam,n/a,n/a
+M306,Just normal only here :),English,ham,positive,Requests and calls
+M307,"como miembro de la sociedad, tiene derecho a la seguridad social,",Spanish,not checked,n/a,n/a
+M308,Yeah that'd pretty much be the best case scenario,English,ham,positive,Opinions and advice
+M309,"Good morning. Thank YOU ALL for RTs, follows, mentions, favorites, convos, #sharing &amp; rescoops! Keep UP the GOOD work &amp; have a GREAT day",English,ham,positive,Greetings and affection
+M310,"so I found this last night, lets just say there was an instant stiffening of my interest",English,ham,negative,Opinions and advice
+M311,"26 Toda persona tiene derecho a la educación. La educación debe ser gratuita, al",Spanish,not checked,n/a,n/a
+M312,"Bhai passport seva - application pending hai, documents upload karo warna reject hoga.",Hinglish,ham,neutral,Requests for a reply
+M313,tiger hi mante the sab but jab moka aaya to apne khud ke hak ke liye vo khade ni hue ab beech beech me chote mote visphot karne se kya hoga yeee to ram ji hi jane,Hinglish,ham,negative,General fan comments
+M314,#aaj #sabhi #superhits film.dekhane chale #bbthiseid #superdupar film,Uncertain,not checked,n/a,n/a
+M315,Aiya we discuss later lar... Pick ü up at 4 is it?,English,ham,positive,Casual chat (Singapore-style)
+M316,wa Mataifa. Kifungu cha 30. Hakuna maneno,Swahili,not checked,n/a,n/a
+M317,The search 4 happiness is 1 of d main sources of unhappiness! Accept life the way it comes! U will find happiness in every moment u live.,English,ham,positive,Opinions and advice
+M318,What time you thinkin of goin?,English,ham,positive,Everyday plans and catching up
+M319,A Huge &amp; Warm Welcome to,English,ham,positive,Opinions and advice
+M320,Where r e meeting tmr?,English,ham,negative,Casual chat (Singapore-style)
+M321,koi apki tarah ishqi ishqi,Hinglish,ham,positive,General fan comments
+M322,"Annual leave apply ki hai, approve ho jayegi.",Uncertain,not checked,n/a,n/a
+M323,What happened in interview?,English,ham,negative,Greetings and affection
+M324,"Sorry chikku, my cell got some problem thts y i was nt able to reply u or msg u..",English,ham,negative,Casual chat (Singapore-style)
+M325,bhai mae tho tayar hae,Hinglish,ham,neutral,General fan comments
+M326,account hay sharmana,Hinglish,ham,neutral,Requests for a reply
+M327,bhai ise apne yaha ke dm ko do aur jansunwai portal pat dalo sabhi tweet nahi dekh payenge wo,Hinglish,ham,neutral,General fan comments
+M328,ko ye example kaa koi action lena chahye,Hinglish,ham,neutral,General fan comments
+M329,Bhus bhar 2. Ink daath milkar dushyon kaa,Hinglish,ham,positive,General fan comments
+M330,mei ek topic uthake baat start kro dimag ko busy,Hinglish,ham,neutral,General fan comments
+M331,Bhai hostel ka mess food aaj bahut acha tha.,Hinglish,ham,positive,General fan comments
+M332,Yes watching footie but worried we're going to blow it - Phil Neville?,English,ham,negative,Everyday plans and catching up
+M333,"Glad to hear it, Dan! We're mega excited about our retail launch Don't forget to look for us in Boots and WHSmith, too!",English,ham,positive,Greetings and affection
+M334,Really wish I was out to d.c w my friends rn,English,ham,negative,Greetings and affection
+M335,Good night everyone!! : ),English,ham,positive,Greetings and affection
+M336,paye kuppi puthe vichil,Hinglish,ham,positive,General fan comments
+M337,unko bhi jo apne glass,Hinglish,ham,neutral,General fan comments
+M338,"Hello.How u doing?What u been up 2?When will u b moving out of the flat, cos I will need to arrange to pick up the lamp, etc. Take care. Hello caroline!",English,ham,positive,Everyday plans and catching up
+M339,"Bhai SBI ne message bheja hai, account mein kuch problem hai. Is link pe ja: sbi-verify.net",Hinglish,spam,n/a,n/a
+M340,"Sweetheart, hope you are not having that kind of day! Have one with loads of reasons to smile. Biola",English,ham,positive,Greetings and affection
