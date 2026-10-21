@@ -1,0 +1,37 @@
+{
+  "chosen": "Linear SVM (calibrated)",
+  "threshold": 0.7318705035971222,
+  "target_accepted_accuracy": 0.99,
+  "probes": [
+    {
+      "text": "Merci beaucoup pour votre aide, a bientot",
+      "pred": "en",
+      "confidence": 0.6542485144233787,
+      "accepted": false
+    },
+    {
+      "text": "ok",
+      "pred": "en",
+      "confidence": 0.9308639926750725,
+      "accepted": true
+    },
+    {
+      "text": "Hello, how are you today?",
+      "pred": "en",
+      "confidence": 0.9838644145556117,
+      "accepted": true
+    },
+    {
+      "text": "kal milte hain, ok?",
+      "pred": "hinglish",
+      "confidence": 0.6262112847602721,
+      "accepted": false
+    },
+    {
+      "text": "Danke schoen, bis morgen",
+      "pred": "en",
+      "confidence": 0.5778797316281404,
+      "accepted": false
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "n": 3921,
+  "seconds": 66.99613380432129,
+  "messages_per_second": 58.525765254637626,
+  "language": {
+    "n": 3044,
+    "coverage": 0.9628777923784494,
+    "accuracy_on_accepted": 0.9911293074036165,
+    "accuracy_overall_if_uncertain_counted_wrong": 0.9543363994743759
+  },
+  "language_by_source": {
+    "English SMS": 0.9921951219512195,
+    "English tweets": 0.933,
+    "Hinglish scam challenge": 0.7821782178217822,
+    "Hinglish tweets (L3Cube)": 0.96,
+    "Other languages (UDHR)": 0.9498069498069498
+  },
+  "spam": {
+    "english_predicted_routing": {
+      "n_spam": 125,
+      "n_genuine": 1900,
+      "recall": 0.96,
+      "precision": 0.8759124087591241,
+      "genuine_flagged": 17,
+      "false_alarm_rate": 0.008947368421052631
+    },
+    "english_oracle_routing": {
+      "n_spam": 125,
+      "n_genuine": 1900,
+      "recall": 0.96,
+      "precision": 0.8695652173913043,
+      "genuine_flagged": 18,
+      "false_alarm_rate": 0.009473684210526316
+    },
+    "hinglish_predicted_routing": {
+      "n_spam": 51,
+      "n_genuine": 1226,
+      "recall": 0.35294117647058826,
+      "precision": 0.75,
+      "genuine_flagged": 6,
+      "false_alarm_rate": 0.004893964110929853
+    },
+    "hinglish_oracle_routing": {
+      "n_spam": 51,
+      "n_genuine": 1226,
+      "recall": 0.35294117647058826,
+      "precision": 0.782608695652174,
+      "genuine_flagged": 5,
+      "false_alarm_rate": 0.004078303425774877
+    }
+  },
+  "sentiment": {
+    "english": {
+      "predicted_routing": {
+        "coverage": 0.93,
+        "accuracy": 0.7462365591397849,
+        "macro_F1": 0.7481001263093252
+      },
+      "oracle_routing": {
+        "coverage": 0.988,
+        "accuracy": 0.7469635627530364,
+        "macro_F1": 0.7466978423168431
+      }
+    },
+    "hinglish": {
+      "predicted_routing": {
+        "coverage": 0.9188144329896907,
+        "accuracy": 0.6830294530154277,
+        "macro_F1": 0.659793926840794
+      },
+      "oracle_routing": {
+        "coverage": 0.9961340206185567,
+        "accuracy": 0.7179818887451488,
+        "macro_F1": 0.6938813494742564
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "language": {
+    "best": "Linear SVM",
+    "train": 10189,
+    "classes": [
+      "de",
+      "el",
+      "en",
+      "es",
+      "fr",
+      "hi",
+      "hinglish",
+      "it",
+      "ja",
+      "nl",
+      "pl",
+      "pt",
+      "ru",
+      "sw",
+      "tr",
+      "vi",
+      "zh"
+    ],
+    "test_sets": {
+      "udhr (other languages)": 518,
+      "informal English (SMS incl. spam)": 1025,
+      "English tweets (unfiltered; some are not English)": 400,
+      "real Hinglish (HingLID test)": 400,
+      "hand-written Hinglish (OOD)": 78
+    },
+    "selection": "mean accuracy on real Hinglish, hand-written Hinglish (OOD) and informal English"
+  },
+  "spam": {
+    "best": "Naive Bayes",
+    "duplicates_removed": 447,
+    "train": 4100,
+    "test": 1025,
+    "spam_share_test": 0.12195121951219512
+  }
+}

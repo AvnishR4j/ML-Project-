@@ -1,0 +1,7 @@
+task,model,best_params,train_s,predict_ms_per_msg,acc: udhr (other languages),acc: informal English (SMS incl. spam),acc: English tweets (unfiltered; some are not English),acc: real Hinglish (HingLID test),acc: hand-written Hinglish (OOD),accuracy,macro_F1,n_test,spam_precision,spam_recall,spam_F1
+Language detection,Naive Bayes,{'m__alpha': 0.01},12.06,0.129,0.9980694980694981,1.0,0.9775,0.9725,1.0,0.9913258983890955,0.9968363611567653,2421,,,
+Language detection,Linear SVM,{'m__C': 1},13.07,0.102,0.9884169884169884,0.9980487804878049,0.975,0.975,1.0,0.9884345311854605,0.9935781617684557,2421,,,
+Language detection,KNN,{'m__n_neighbors': 9},18.49,0.727,0.971042471042471,0.9824390243902439,0.945,0.9675,0.9358974358974359,0.969847170590665,0.9838039879367361,2421,,,
+Spam detection,Naive Bayes,{'m__alpha': 0.01},4.12,0.137,,,,,,0.9912195121951219,0.9791395782689807,1025,0.9833333333333333,0.944,0.963265306122449
+Spam detection,Linear SVM,{'m__C': 10},3.5,0.136,,,,,,0.9902439024390244,0.9767396474411343,1025,0.9831932773109243,0.936,0.9590163934426229
+Spam detection,KNN,{'m__n_neighbors': 3},4.38,0.252,,,,,,0.9863414634146341,0.96720269874936,1025,0.9743589743589743,0.912,0.9421487603305785

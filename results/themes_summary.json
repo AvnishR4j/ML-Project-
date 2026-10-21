@@ -1,0 +1,72 @@
+{
+  "hinglish": {
+    "n": 3876,
+    "clusters": [
+      {
+        "cluster": 0,
+        "size": 252,
+        "top_terms": "jai, bharat, pm, hind, jay, bihar"
+      },
+      {
+        "cluster": 1,
+        "size": 343,
+        "top_terms": "baj, gaye, gye, jao, jaldi, aao"
+      },
+      {
+        "cluster": 2,
+        "size": 1203,
+        "top_terms": "musalman, sale, tere, teri, mat, muslim"
+      },
+      {
+        "cluster": 3,
+        "size": 311,
+        "top_terms": "love, ur, luv, yes, gud, uuuu"
+      },
+      {
+        "cluster": 4,
+        "size": 1026,
+        "top_terms": "plz, reply, apka, wait, fan, meri"
+      },
+      {
+        "cluster": 5,
+        "size": 741,
+        "top_terms": "bhaijaan, khan, sallu, bajrangi, jaan, bhaijan"
+      }
+    ]
+  },
+  "en": {
+    "n": 4499,
+    "clusters": [
+      {
+        "cluster": 0,
+        "size": 686,
+        "top_terms": "lor, wat, ok, wan, dun, thk"
+      },
+      {
+        "cluster": 1,
+        "size": 1267,
+        "top_terms": "i'm, yeah, i'll, want, you're, gonna"
+      },
+      {
+        "cluster": 2,
+        "size": 816,
+        "top_terms": "like, life, does, that's, world, people"
+      },
+      {
+        "cluster": 3,
+        "size": 768,
+        "top_terms": "send, pls, number, dont, ur, hi"
+      },
+      {
+        "cluster": 4,
+        "size": 763,
+        "top_terms": "good, love, day, dear, great, hope"
+      },
+      {
+        "cluster": 5,
+        "size": 199,
+        "top_terms": "gt, lt, min, decimal, mins, rs"
+      }
+    ]
+  }
+}

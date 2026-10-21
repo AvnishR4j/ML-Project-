@@ -1,0 +1,6 @@
+test_set,n,accuracy_all,coverage,accuracy_on_accepted
+udhr (other languages),518,0.9903474903474904,0.9517374517374517,0.9979716024340771
+informal English (SMS incl. spam),1025,0.9980487804878049,0.9921951219512195,1.0
+English tweets (unfiltered; some are not English),400,0.9725,0.9425,0.9893899204244032
+real Hinglish (HingLID test),400,0.9725,0.98,0.9795918367346939
+hand-written Hinglish (OOD),78,1.0,0.9871794871794872,1.0
