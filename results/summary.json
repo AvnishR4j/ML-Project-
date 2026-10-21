@@ -1,0 +1,55 @@
+{
+  "language": {
+    "best": "Linear SVM",
+    "train": 1243,
+    "test": 542,
+    "classes": [
+      "de",
+      "el",
+      "en",
+      "es",
+      "fr",
+      "hi",
+      "hinglish",
+      "it",
+      "ja",
+      "nl",
+      "pl",
+      "pt",
+      "ru",
+      "sw",
+      "tr",
+      "vi",
+      "zh"
+    ],
+    "hinglish_test_n": 24,
+    "hinglish_test_acc": 1.0
+  },
+  "spam": {
+    "best": "Naive Bayes",
+    "duplicates_removed": 403,
+    "train": 4135,
+    "test": 1034,
+    "spam_share_test": 0.12669245647969052
+  },
+  "sentiment": {
+    "best": "Linear SVM",
+    "train": 1600,
+    "test": 400
+  },
+  "clustering": {
+    "k_best": 8,
+    "silhouette_by_k": {
+      "4": 0.04657256780784943,
+      "5": 0.05646785264291926,
+      "6": 0.060495203768871415,
+      "7": 0.06782231425649439,
+      "8": 0.07701623705937305,
+      "9": 0.07924783693568005,
+      "10": 0.08913298798918669,
+      "11": 0.08926630568028472,
+      "12": 0.09827284282941959
+    },
+    "n_messages": 4516
+  }
+}
