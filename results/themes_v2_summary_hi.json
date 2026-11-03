@@ -1,0 +1,32 @@
+{
+  "language": "hinglish",
+  "k": 16,
+  "n_fit": 5747,
+  "n_calib": 576,
+  "n_test": 2800,
+  "NMI": 0.6129553736325363,
+  "ARI": 0.49352167877303155,
+  "purity": 0.7460714285714286,
+  "reject_score_candidates_AUROC_validation": {
+    "centroid": 0.7729311342592593,
+    "centroid_scaled": 0.5923755787037037,
+    "prototype10": 0.7777054398148148,
+    "prototype30": 0.7972366898148148,
+    "prototype60": 0.8022280092592592
+  },
+  "reject_score_chosen": "prototype60",
+  "reject_threshold": 0.8840154125284309,
+  "in_topic_accepted": 0.9292857142857143,
+  "out_of_topic_rejected": 0.125,
+  "n_ood_test": 40,
+  "n_ood_validation": 24,
+  "AUROC_test": {
+    "centroid": 0.7481607142857143,
+    "centroid_scaled": 0.5176071428571428,
+    "prototype10": 0.7652767857142857,
+    "prototype30": 0.8045089285714284,
+    "prototype60": 0.8168928571428571
+  },
+  "in_topic_accepted_author_written_only": 0.73,
+  "n_author_written_test": 100
+}

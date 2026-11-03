@@ -131,7 +131,7 @@
       E[k] = { vs, classes: S.classes, scale: f32(S.scale), q: i16(S.w), b: S.b, nrow: S.classes.length === 2 ? 1 : S.classes.length };
     }
     for (const k of ["theme_en", "theme_hi"]) {
-      const T = M[k]; E[k] = { idx: new Map(T.words.map((w, i) => [w, i])), scale: f32(T.scale), q: i8(T.vecs), dim: T.dim, idf: f32(T.idf), centers: f32(T.centers), kk: T.k, names: T.names, labels: T.labels };
+      const T = M[k]; E[k] = { idx: new Map(T.words.map((w, i) => [w, i])), scale: f32(T.scale), q: i8(T.vecs), dim: T.dim, idf: f32(T.idf), pc: T.pc ? Float64Array.from(T.pc) : null, centers: f32(T.centers), kk: T.k, names: T.names, labels: T.labels, rs: T.rs || null, thr: T.thr, cscale: T.cscale ? f32(T.cscale) : null, protos: T.protos ? f32(T.protos) : null, np: T.np || 0 };
     }
     return E;
   }
@@ -180,18 +180,31 @@
     return m.classes[bi];
   }
 
+  const NO_THEME = "No clear theme";
   function theme(E, key, text) {
-    const T = E[key], dim = T.dim, v = new Float64Array(dim); let ws = 0;
+    const T = E[key], dim = T.dim, v = new Float64Array(dim); let ws = 0, known = 0;
     for (const w of (text.toLowerCase().match(/[a-zऀ-ॿ']{2,}/g) || [])) {
       const i = T.idx.get(w); if (i === undefined) continue;
-      const wt = T.idf[i]; ws += wt;
+      known++; const wt = T.idf[i]; ws += wt;
       for (let k = 0; k < dim; k++) v[k] += wt * T.q[i * dim + k] * T.scale[i];
     }
-    let nrm = 0; if (ws) for (let k = 0; k < dim; k++) { v[k] /= ws; nrm += v[k] * v[k]; }
+    if (ws) for (let k = 0; k < dim; k++) v[k] /= ws;
+    if (T.pc) { let pr = 0; for (let k = 0; k < dim; k++) pr += v[k] * T.pc[k]; for (let k = 0; k < dim; k++) v[k] -= pr * T.pc[k]; }
+    let nrm = 0; for (let k = 0; k < dim; k++) nrm += v[k] * v[k];
     nrm = Math.sqrt(nrm) || 1; for (let k = 0; k < dim; k++) v[k] /= nrm;
     let best = 0, bd = Infinity;
     for (let c = 0; c < T.kk; c++) { let s = 0; for (let k = 0; k < dim; k++) { const e = v[k] - T.centers[c * dim + k]; s += e * e; } if (s < bd) { bd = s; best = c; } }
-    return { cluster: best, terms: T.names[best], label: T.labels[String(best)] || null };
+    let rejected = false, score = Math.sqrt(bd);
+    if (T.rs) {
+      if (T.rs === "centroid_scaled") score = Math.sqrt(bd) / T.cscale[best];
+      else if (T.rs !== "centroid") {
+        let m = Infinity;
+        for (let p = 0; p < T.np; p++) { let s = 0; for (let k = 0; k < dim; k++) { const e = v[k] - T.protos[p * dim + k]; s += e * e; } if (s < m) m = s; }
+        score = Math.sqrt(m);
+      }
+      rejected = known === 0 || score > T.thr;
+    }
+    return { cluster: best, terms: T.names[best], label: rejected ? NO_THEME : (T.labels[String(best)] || null), rejected, score };
   }
 
   function analyze(E, text) {
@@ -206,7 +219,7 @@
     if (s.isSpam) return out;
     out.sentiment = sentiment(E, lang === "en" ? "sent_en" : "sent_hi", text);
     const t = theme(E, lang === "en" ? "theme_en" : "theme_hi", text);
-    out.cluster = t.cluster; out.cluster_terms = t.terms; out.cluster_label = t.label;
+    out.cluster = t.cluster; out.cluster_terms = t.terms; out.cluster_label = t.label; out.theme_rejected = t.rejected;
     return out;
   }
 

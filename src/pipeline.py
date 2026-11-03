@@ -7,6 +7,7 @@
   4. theme      : word2vec + K-Means, one model per language (English, Hinglish)
 """
 import json
+import numpy as np
 from functools import lru_cache
 import joblib
 from data import ROOT, LANG_NAMES
@@ -52,11 +53,31 @@ def theme_label(lang, cid):
     return None
 
 
+NO_THEME = "No clear theme"
+
+
+def theme_reject_score(T, z, c):
+    """distance used to decide that a message is outside every learned topic (see final_themes2.py)"""
+    rs = T.get("reject_score", "centroid")
+    d = float(np.linalg.norm(T["km"].cluster_centers_[c] - z[0]))
+    if rs == "centroid":
+        return d
+    if rs == "centroid_scaled":
+        return d / float(T["scale"][c])
+    P = T["protos"]
+    return float(np.sqrt(((P - z[0]) ** 2).sum(1).min()))
+
+
 def theme(text, lang, M=None):
+    """returns (cluster id, top terms, rejected). A message with no known words, or farther from every learned topic than the
+    calibrated threshold, is 'rejected' (no clear theme) instead of being forced into the nearest cluster."""
     M = M or _models()
     T = M["theme_hi" if lang == "hinglish" else "theme_en"]
-    c = int(T["km"].predict(T["emb"]([text]))[0])
-    return c, T["names"][c]
+    z = T["emb"]([text]); c = int(T["km"].predict(z)[0])
+    rejected = False
+    if T.get("version") == 2:
+        rejected = bool(T["emb"].known([text])[0] == 0 or theme_reject_score(T, z, c) > T["reject_threshold"])
+    return c, T["names"][c], rejected
 
 
 def analyze(text: str, force_language: str = None) -> dict:
@@ -102,9 +123,10 @@ def analyze(text: str, force_language: str = None) -> dict:
         s = str(M["sent_hi"].predict([text])[0])
         out["sentiment"] = s
         out["steps"].append(("Sentiment", s, "Hinglish model trained on 3,100 real comments (negative / neutral / positive)."))
-    cid, names = theme(text, lang, M)
+    cid, names, rejected = theme(text, lang, M)
     out["cluster"] = cid
     out["cluster_terms"] = names
-    out["cluster_label"] = theme_label(lang, cid)
-    out["steps"].append(("Theme", out["cluster_label"] or f"#{cid}", f"Top terms: {names}"))
+    out["theme_rejected"] = rejected
+    out["cluster_label"] = NO_THEME if rejected else theme_label(lang, cid)
+    out["steps"].append(("Theme", out["cluster_label"] or f"#{cid}", "Too far from every learned topic to name one." if rejected else f"Top terms: {names}"))
     return out

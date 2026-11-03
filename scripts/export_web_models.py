@@ -64,14 +64,18 @@ def main():
             vs = {"w": vec(f, prep, neg)}
         coef = np.atleast_2d(m.coef_); sc, q = quant(coef, 16)
         dump(name, {"vecs": vs, "classes": [str(c) for c in m.classes_], "scale": b64(sc), "w": b64(q), "b": [float(x) for x in np.atleast_1d(m.intercept_)]})
-    # ---- themes
+    # ---- themes (v2: word2vec-SIF + K-Means with prototype-distance reject option)
     labels = json.loads((ROOT / "results" / "theme_labels.json").read_text())
     for name, fn, key in (("theme_en", "theme_en.joblib", "en"), ("theme_hi", "theme_hinglish.joblib", "hinglish")):
         T = joblib.load(M / fn); e = T["emb"]; words = list(e.w2v.wv.index_to_key)
         V = np.vstack([e.w2v.wv[w] for w in words]); sc, q = quant(V, 8)
+        wts = np.array([e.sif.get(w, 1.0) for w in words], dtype="<f4")
+        rs = T["reject_score"]; protos = T.get("protos")
         dump(name, {"words": words, "scale": b64(sc), "vecs": b64(np.rint(V / sc[:, None]).astype("<i1")), "dim": V.shape[1],
-                    "idf": b64(np.array([e.idf.get(w, 1.0) for w in words], dtype="<f4")), "centers": b64(T["km"].cluster_centers_.astype("<f4")),
-                    "k": int(T["k"]), "names": list(T["names"]), "labels": labels.get(key, {})})
+                    "idf": b64(wts), "pc": [float(x) for x in e.pc], "centers": b64(T["km"].cluster_centers_.astype("<f4")),
+                    "rs": rs, "thr": float(T["reject_threshold"]), "cscale": b64(np.asarray(T["scale"], dtype="<f4")),
+                    "protos": b64(np.asarray(protos, dtype="<f4")) if protos is not None else None, "np": int(len(protos)) if protos is not None else 0,
+                    "k": int(T["k"]), "names": list(T["names"].values()) if isinstance(T["names"], dict) else list(T["names"]), "labels": labels.get(key, {})})
     dump("meta", {"lang_names": LANG_NAMES})
 
 
