@@ -12,6 +12,7 @@ from functools import lru_cache
 import joblib
 from data import ROOT, LANG_NAMES
 from text_norm import normalize as clean_text, fix_spacing
+from translit import deva2roman, has_devanagari
 
 SENT_EN = {"positive": "positive", "negative": "negative"}
 
@@ -80,6 +81,15 @@ def theme(text, lang, M=None):
     return c, T["names"][c], rejected
 
 
+def sentiment_margin(model, text):
+    """distance between the winning class score and the runner-up (small = the model is unsure)"""
+    d = np.atleast_1d(model.decision_function([text])[0])
+    if d.size == 1:
+        return float(abs(d[0]))
+    t = np.sort(d)
+    return float(t[-1] - t[-2])
+
+
 def analyze(text: str, force_language: str = None) -> dict:
     """force_language lets experiments route with the TRUE language (oracle) to measure error propagation."""
     M = _models()
@@ -88,6 +98,16 @@ def analyze(text: str, force_language: str = None) -> dict:
         lang, conf, ok = force_language, 1.0, True
     else:
         lang, conf, ok = detect_language(text, M)
+    model_text, roman = text, None
+    if has_devanagari(text):
+        # Hindi script: convert to Roman letters so the Hinglish models can read it. Code-mixed lines that the language model
+        # does not recognise as Hindi are re-detected on the Roman text (many were being sent to review).
+        roman = deva2roman(text); model_text = roman
+        if not (ok and lang == "hi"):
+            l2, c2, ok2 = detect_language(roman, M)
+            if ok2 and l2 in ("en", "hinglish"):
+                lang, conf, ok = l2, c2, True
+        out["transliterated"] = roman
     out["language_confidence"] = conf
     if not ok:
         out["language"] = "uncertain"
@@ -101,29 +121,35 @@ def analyze(text: str, force_language: str = None) -> dict:
     note = f"Confidence {conf:.0%}." + (" Very short text, so treat with care." if len(text.strip()) < 8 else "")
     out["steps"].append(("Language", out["language_name"], note))
 
-    if lang not in ("en", "hinglish"):
+    mlang = "hinglish" if lang == "hi" else lang          # Hindi script is read through the Hinglish models after transliteration
+    if mlang not in ("en", "hinglish"):
         out["spam"] = None
         out["steps"].append(("Spam filter", "not applied", "The spam model covers English and Hinglish only."))
         return out
+    if roman is not None:
+        out["steps"].append(("Transliteration", roman, "Hindi script converted to Roman letters for the Hinglish models."))
 
-    p, thr, is_spam = spam_score(text, lang, M)
+    p, thr, is_spam = spam_score(model_text, mlang, M)
     out["spam"] = "spam" if is_spam else "ham"
     out["spam_prob"] = p
-    how = "<=0.5% of genuine English messages flagged on validation" if lang == "en" else "<=1% of real genuine Hinglish text flagged; Hinglish scam recall is limited (see Evaluation)"
+    out["spam_threshold"] = thr
+    how = "<=0.5% of genuine English messages flagged on validation" if mlang == "en" else "<=1% of real genuine Hinglish text flagged; Hinglish scam recall is limited (see Evaluation)"
     out["steps"].append(("Spam filter", out["spam"].upper(), f"P(spam)={p:.2f}, threshold {thr:.2f} ({how})."))
     if is_spam:
         out["steps"].append(("Sentiment", "skipped", "Message filtered as spam."))
         return out
 
-    if lang == "en":
-        s = str(M["sent_en"].predict([text])[0])
+    sm = M["sent_en" if mlang == "en" else "sent_hi"]
+    out["sentiment_margin"] = sentiment_margin(sm, model_text)
+    if mlang == "en":
+        s = str(M["sent_en"].predict([model_text])[0])
         out["sentiment"] = SENT_EN.get(s, s)
         out["steps"].append(("Sentiment", out["sentiment"], "English model trained on tweets and short reviews (positive / negative)."))
     else:
-        s = str(M["sent_hi"].predict([text])[0])
+        s = str(M["sent_hi"].predict([model_text])[0])
         out["sentiment"] = s
         out["steps"].append(("Sentiment", s, "Hinglish model trained on 3,100 real comments (negative / neutral / positive)."))
-    cid, names, rejected = theme(text, lang, M)
+    cid, names, rejected = theme(model_text, mlang, M)
     out["cluster"] = cid
     out["cluster_terms"] = names
     out["theme_rejected"] = rejected

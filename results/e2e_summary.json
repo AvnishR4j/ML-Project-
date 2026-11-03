@@ -1,7 +1,7 @@
 {
   "n": 3921,
-  "seconds": 62.4375422000885,
-  "messages_per_second": 62.79875635454533,
+  "seconds": 92.669597864151,
+  "messages_per_second": 42.3116112551604,
   "language": {
     "n": 3044,
     "coverage": 0.9628777923784494,
@@ -53,25 +53,25 @@
     "english": {
       "predicted_routing": {
         "coverage": 0.93,
-        "accuracy": 0.7462365591397849,
-        "macro_F1": 0.7481001263093252
+        "accuracy": 0.7494623655913979,
+        "macro_F1": 0.7510539236237271
       },
       "oracle_routing": {
         "coverage": 0.988,
-        "accuracy": 0.7469635627530364,
-        "macro_F1": 0.7466978423168431
+        "accuracy": 0.75,
+        "macro_F1": 0.7496858713390548
       }
     },
     "hinglish": {
       "predicted_routing": {
         "coverage": 0.9123711340206185,
-        "accuracy": 0.6822033898305084,
-        "macro_F1": 0.6593532059697473
+        "accuracy": 0.6709039548022598,
+        "macro_F1": 0.642354493114215
       },
       "oracle_routing": {
         "coverage": 0.9884020618556701,
-        "accuracy": 0.7170795306388527,
-        "macro_F1": 0.6932373294685097
+        "accuracy": 0.7040417209908736,
+        "macro_F1": 0.6735499847421043
       }
     }
   }
