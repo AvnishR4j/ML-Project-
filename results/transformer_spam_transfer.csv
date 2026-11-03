@@ -1,0 +1,3 @@
+test_set,AUC,spam_recall@0.5,false_alarm@0.5
+English SMS test,0.999,0.985,0.007
+Hinglish challenge (zero-shot),0.977,0.157,0.000

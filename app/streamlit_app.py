@@ -63,7 +63,7 @@ def run_batch(texts: tuple):
         r = analyze(t)
         rows.append({"message": t, "language": r["language_name"], "spam": r.get("spam") or "not checked",
                      "sentiment": r.get("sentiment") or "n/a",
-                     "theme": (f"#{r['cluster']}: " + r["cluster_terms"]) if "cluster" in r else "n/a",
+                     "theme": (r.get("cluster_label") or f"#{r['cluster']}") if "cluster" in r else "n/a",
                      "needs_review": bool(r.get("needs_review"))})
     return pd.DataFrame(rows)
 
@@ -117,7 +117,7 @@ with tabs[1]:
 
 # ------------------------------------------------------------------ Results
 with tabs[2]:
-    task = st.radio("Task", ["Language detection", "Spam detection", "Sentiment", "Themes"], horizontal=True)
+    task = st.radio("Task", ["Language detection", "Spam detection", "Sentiment", "Themes", "Transformers"], horizontal=True)
     if task == "Language detection":
         st.markdown("Character n-gram TF-IDF with three classifiers, scored on separate test sets (one pooled number would hide the hard cases).")
         mc = csv("model_comparison.csv"); lang = mc[mc.task == "Language detection"]
@@ -130,6 +130,15 @@ with tabs[2]:
         c1.markdown("**Accuracy by message length (words)**")
         c1.dataframe(csv("language_by_length_selective.csv").round(3), hide_index=True)
         c2.image(str(R / "language_confusion.png"), caption="Confusion matrix of the baseline model (pooled test sets)")
+    elif task == "Transformers":
+        st.markdown("Five pretrained encoders fine-tuned on the same Hinglish sentiment split (3 seeds each, Colab T4 GPU), scored on the same 776 test messages. "
+                    "Classical reference: linear SVM macro-F1 0.694 (95% CI 0.658 to 0.729).")
+        st.dataframe(csv("transformer_results.csv"), hide_index=True, width="stretch")
+        st.markdown("The two Hinglish-specific models are slightly above the SVM; general multilingual models are below it; MuRIL did not train reliably at this learning rate. "
+                    "The SVM trains in seconds on a CPU, so it stays in the pipeline.")
+        st.markdown("**Zero-shot spam transfer** (XLM-R trained on English SMS only, threshold 0.5): good ranking of Hinglish scams, few caught at the default threshold.")
+        st.dataframe(csv("transformer_spam_transfer.csv"), hide_index=True, width="stretch")
+        st.caption("Scores were copied from the Colab output tables.")
     elif task == "Spam detection":
         j = js("spam_final_summary.json"); e = j["english_test"]; h = j["hinglish"]
         mc = csv("model_comparison.csv")
@@ -187,6 +196,15 @@ with tabs[3]:
     st.caption("Genuine-vs-spam labels for tweets and comments are assumed (public social posts treated as genuine). "
                "The IIIT-H comments and the Hindi challenge set have no reliable language labels, so they are excluded from language accuracy.")
     st.dataframe(csv("e2e_detail.csv").sample(200, random_state=0), hide_index=True, width="stretch")
+    st.markdown("**Labelled set: 250 real held-out messages** labelled for language, spam and sentiment. "
+                "The labels were assigned by Claude, not by independent human annotators, so treat them as machine-labelled until two people verify them.")
+    lab = js("e2e_labelled.json")
+    k = st.columns(4)
+    k[0].metric("Language: answered", f"{lab['language']['coverage']:.1%}"); k[1].metric("Language: correct when answered", f"{lab['language']['accuracy_when_answered']:.1%}")
+    k[2].metric("Spam precision", f"{lab['spam']['precision']:.2f}"); k[3].metric("Spam recall", f"{lab['spam']['recall']:.2f}")
+    st.caption(f"{lab['spam']['genuine_flagged']} of {lab['spam']['n_ham']} genuine messages flagged. Spam recall: English {lab['spam']['en']['recall']:.0%} "
+               f"({lab['spam']['en']['n_spam']} scams), Hinglish {lab['spam']['hinglish']['recall']:.0%} ({lab['spam']['hinglish']['n_spam']} scams). "
+               f"Sentiment accuracy: English {lab['sentiment']['en']['accuracy']:.0%} (n={lab['sentiment']['en']['n']}), Hinglish {lab['sentiment']['hinglish']['accuracy']:.0%} (n={lab['sentiment']['hinglish']['n']}).")
 
 # ------------------------------------------------------------------ Themes
 with tabs[4]:
@@ -194,7 +212,9 @@ with tabs[4]:
     for col, key, title in ((c1, "en", "English (genuine SMS)"), (c2, "hinglish", "Hinglish (real comments)")):
         col.subheader(title)
         col.image(str(R / f"themes_{key}.png"))
-        t = csv(f"themes_{key}.csv"); col.dataframe(t[["cluster", "size", "top_terms"]], hide_index=True, width="stretch")
+        t = csv(f"themes_{key}.csv")
+        names = js("theme_labels.json").get(key, {}); t.insert(1, "name", t.cluster.astype(str).map(names))
+        col.dataframe(t[["cluster", "name", "size", "top_terms"]], hide_index=True, width="stretch")
         with col.expander("Example messages per theme"):
             for r in t.itertuples():
                 st.markdown(f"**#{r.cluster}** " + " | ".join(r.examples.split(" || ")))
@@ -213,10 +233,11 @@ with tabs[5]:
 | Spam transfer test | third-party hand-written Hinglish and Hindi scam lines | 101 unique each | the source files repeat ~100 lines 50 times each, de-duplicated here |
 
 **Known limits**
-- Spam in Hinglish is the weakest part: about a third of Hinglish scams are caught at about 1% false alarms. The fix is real labelled Hinglish spam.
+- Spam in Hinglish is the weakest part: about half of Hinglish scams are caught at about 1% false alarms (the model also learns from synthetic Hinglish scams). The fix is real labelled Hinglish spam.
 - Hindi in Devanagari is detected but not spam-checked, scored for sentiment or grouped into themes.
 - Sentiment labels for English tweets come from emoticons (distant supervision); the Hinglish labels are noisy (typical agreement is low for this task).
-- Themes are unsupervised: the cluster names are read from top terms, not ground truth.
+- Themes are unsupervised: the cluster names were assigned by reading top terms and examples, not ground truth.
+- The 250-message labelled set has machine-assigned labels; independent human verification is pending.
 - Languages outside the 17 trained classes are not covered; very short text (1-3 words) is the hardest case.
-- No transformer results yet: `notebooks/transformer_finetune_colab.ipynb` is ready to run on a free Colab GPU.
+- Transformers (Results tab) were run on Colab and are not part of the deployed pipeline.
 """)

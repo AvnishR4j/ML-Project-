@@ -1,0 +1,18 @@
+{
+ "seed_rows": 120,
+ "repeat": 1,
+ "before": {
+  "model": "before (IIIT-H only)",
+  "iiith_test_macroF1": 0.6944695170764504,
+  "iiith_test_acc": 0.7190721649484536,
+  "fresh_acc": 0.7,
+  "fresh_n": 20
+ },
+ "after": {
+  "model": "after (+120 seed sentences x1)",
+  "iiith_test_macroF1": 0.6748478570417212,
+  "iiith_test_acc": 0.7061855670103093,
+  "fresh_acc": 0.95,
+  "fresh_n": 20
+ }
+}

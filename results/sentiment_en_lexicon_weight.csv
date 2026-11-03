@@ -1,0 +1,6 @@
+lex_weight,tweeteval_val,NLTK tweets,short reviews,movie reviews (cross-domain),TweetEval test (SemEval-2017),fresh everyday (32),negation challenge,fresh everyday #2 (24),handsome
+0.0,0.8337,0.761,0.7695,0.7817,0.7871,1.0,0.8677,0.8748,positive
+0.1,0.8347,0.7594,0.7671,0.7992,0.796,1.0,0.8918,0.9583,positive
+0.25,0.8316,0.761,0.7676,0.8052,0.7992,1.0,0.8918,0.9583,positive
+0.5,0.8343,0.7589,0.7643,0.8004,0.7998,1.0,0.8918,0.9583,positive
+1.0,0.8339,0.7583,0.7605,0.7982,0.8025,1.0,0.8918,0.9583,positive

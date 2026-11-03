@@ -1,0 +1,60 @@
+text,lang,label
+the food is not tasty,en,negative
+the food was not good at all,en,negative
+this phone is not great,en,negative
+i do not like this movie,en,negative
+the service was not helpful,en,negative
+the room is not clean,en,negative
+i am not happy with the delivery,en,negative
+it was not worth the money,en,negative
+the staff are not friendly,en,negative
+this is not a good product,en,negative
+the battery life is not impressive,en,negative
+i never enjoyed this book,en,negative
+the pizza is not delicious,en,negative
+not satisfied with the quality,en,negative
+the movie was not funny,en,negative
+i don't recommend this restaurant,en,negative
+the teacher is not nice,en,negative
+the app is not useful,en,negative
+the hotel was not comfortable,en,negative
+she is not kind to anyone,en,negative
+this is no good,en,negative
+the coffee isn't fresh,en,negative
+the screen doesn't look sharp,en,negative
+the plot wasn't interesting,en,negative
+i can't say it was a pleasant trip,en,negative
+the food is not bad,en,positive
+this phone is not bad at all,en,positive
+the movie was not boring,en,positive
+i am not disappointed,en,positive
+the service was not slow,en,positive
+the room is not dirty,en,positive
+nothing wrong with this product,en,positive
+the food is tasty,en,positive
+the food is delicious and fresh,en,positive
+i love this phone,en,positive
+the staff were friendly and helpful,en,positive
+what a wonderful trip,en,positive
+the movie was amazing,en,positive
+very happy with the quality,en,positive
+the coffee is great,en,positive
+the food is awful,en,negative
+the room was dirty and smelly,en,negative
+this is the worst service ever,en,negative
+i hate this app,en,negative
+the movie was boring and too long,en,negative
+yeh film achhi nahi thi,hi,negative
+khana bilkul achha nahi hai,hi,negative
+mujhe yeh gaana pasand nahi aaya,hi,negative
+tumhari acting achhi nahi hai,hi,negative
+yeh phone theek nahi hai,hi,negative
+service bilkul mast nahi thi,hi,negative
+yeh film bura nahi hai,hi,positive
+khana kharab nahi hai,hi,positive
+yeh film bahut achhi thi,hi,positive
+mujhe yeh gaana bahut pasand aaya,hi,positive
+tumhari acting zabardast hai,hi,positive
+yeh phone ekdum mast hai,hi,positive
+yeh film bahut bekar thi,hi,negative
+khana ekdum ganda tha,hi,negative

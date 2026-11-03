@@ -1,4 +1,4 @@
 attack,recall_no_defence,recall_with_cleanup
 clean,0.96,0.96
-letters spaced,0.912,0.96
-look-alike letters,0.936,0.96
+letters spaced,0.896,0.96
+look-alike letters,0.928,0.96

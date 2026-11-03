@@ -3,3 +3,6 @@ models/
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+web/models/
+web/packed/
+web/parity_in.json

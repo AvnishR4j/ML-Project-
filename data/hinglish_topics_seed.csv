@@ -1,0 +1,541 @@
+text,topic,split
+powerbank me battery bohot kam hai,gadgets,eval
+mera phone bahut jaldi garam ho jata hai,gadgets,eval
+nayi earphones ki sound quality bakwas hai,gadgets,train
+laptop ka charger kharab ho gaya hai,gadgets,train
+is mobile ka camera bahut badhiya hai,gadgets,train
+phone ki screen par scratch aa gaya,gadgets,eval
+battery ek din bhi nahi chalti is phone ki,gadgets,eval
+bluetooth speaker ki awaaz bahut tez hai,gadgets,train
+smartwatch ka strap dheela ho gaya hai,gadgets,train
+mere laptop ka keyboard kaam nahi kar raha,gadgets,train
+wifi router baar baar disconnect ho jata hai,gadgets,eval
+tv ka remote chal nahi raha hai,gadgets,eval
+phone ki storage full ho gayi hai,gadgets,train
+is charger se phone fast charge hota hai,gadgets,train
+headphones ke noise cancellation bahut accha hai,gadgets,train
+mobile hang bahut karta hai ab,gadgets,eval
+pendrive me data copy nahi ho raha,gadgets,eval
+laptop ki battery 2 ghante bhi nahi chalti,gadgets,train
+"naya tablet kharida, display ekdum mast hai",gadgets,train
+printer ka ink khatam ho gaya hai,gadgets,train
+phone ka software update aaya hai,gadgets,eval
+usb cable ka wire toot gaya,gadgets,eval
+speaker se kharkhar ki awaaz aa rahi hai,gadgets,train
+camera ki photo quality low light me kharab hai,gadgets,train
+aaj ka khana bahut tasty tha,food,eval
+biryani me namak bahut zyada tha,food,eval
+pizza thanda aaya aur cheese kam tha,food,train
+chai me cheeni kam hai,food,train
+canteen ka khana bilkul bekar hai,food,train
+mummy ke haath ke parathe sabse badhiya hote hain,food,eval
+restaurant ka service bahut slow tha,food,eval
+dal chawal banane me kitna time lagega,food,train
+aaj lunch me kya banega,food,train
+is dukan ke samose ekdum garam aur crispy hain,food,train
+maine aaj subah poha banaya tha,food,eval
+"dessert me gulab jamun ordered tha, mast tha",food,eval
+cold coffee me ice bahut zyada thi,food,train
+raat ko maggi bana lete hain,food,train
+paneer ki sabzi ekdum kachchi thi,food,train
+mujhe ghar ka khana bahut yaad aa raha hai,food,eval
+burger ka patty bahut dry tha,food,eval
+thali me roti kam padh gayi,food,train
+mithai ki dukan par bahut bheed hai,food,train
+subah ka nashta heavy tha,food,train
+chinese food ke liye table book karna hai,food,eval
+juice me paani zyada milaya hai,food,eval
+lassi ekdum thandi aur meethi thi,food,train
+"khana ready hai, aa jao sab",food,train
+mera order abhi tak nahi aaya,delivery,eval
+"parcel kal tak aana tha, ab tak nahi mila",delivery,eval
+courier wale ne bina bataye order wapas bhej diya,delivery,train
+refund kab tak aayega,delivery,train
+galat size ka shirt bhej diya hai,delivery,train
+order cancel karna hai please,delivery,eval
+delivery boy ka phone band aa raha hai,delivery,eval
+product damage hoke aaya hai,delivery,train
+return pickup ke liye koi nahi aaya,delivery,train
+tracking me abhi bhi shipped dikha raha hai,delivery,train
+"mujhe naya piece chahiye, ye kharab nikla",delivery,eval
+order ki delivery date badal do,delivery,eval
+package bahut late pahuncha,delivery,train
+seller reply hi nahi kar raha,delivery,train
+paise kat gaye par order confirm nahi hua,delivery,train
+jo mangaya tha usse alag item aaya hai,delivery,eval
+cash on delivery ka option kyu nahi dikha raha,delivery,eval
+exchange ka process kya hai,delivery,train
+customer care se baat nahi ho paa rahi,delivery,train
+"box khula hua mila, andar saman kam tha",delivery,train
+free delivery kab milegi,delivery,eval
+"bahut acchi packing thi, saman safe pahuncha",delivery,eval
+discount code kaam nahi kar raha,delivery,train
+cart me daala hua saman gayab ho gaya,delivery,train
+mere account se paise kat gaye par transfer nahi hua,banking,eval
+upi payment fail ho gaya,banking,eval
+emi ki date kab hai meri,banking,train
+credit card ki limit badhani hai,banking,train
+atm se cash nahi nikla par balance kat gaya,banking,train
+loan ka interest rate kitna hai,banking,eval
+mera bank account freeze ho gaya hai,banking,eval
+kyc update karna hai kaise karun,banking,train
+cheque book ke liye apply kiya tha,banking,train
+net banking ka password reset karna hai,banking,train
+statement me ek extra charge dikh raha hai,banking,eval
+salary abhi tak account me nahi aayi,banking,eval
+paise bhejne me bahut time lag raha hai,banking,train
+"debit card block karna hai, kho gaya hai",banking,train
+fixed deposit pe kitna byaj milta hai,banking,train
+google pay se payment pending dikha raha hai,banking,eval
+minimum balance nahi rakha to penalty lagegi,banking,eval
+mujhe 5000 rupaye transfer karne hain,banking,train
+otp nahi aa raha bank ka,banking,train
+insurance premium kab bharna hai,banking,train
+paise wapas aa gaye account me,banking,eval
+credit score kaise badhaye,banking,eval
+sip ke liye kaunsa fund accha hai,banking,train
+bijli ka bill online pay karna hai,banking,train
+train ka ticket confirm nahi hua,travel,eval
+bus kitni der me aayegi,travel,eval
+flight 2 ghante late hai,travel,train
+metro me aaj bahut bheed thi,travel,train
+mujhe station tak ka auto chahiye,travel,train
+shimla jane ka plan bana rahe hain,travel,eval
+hotel ki booking cancel karni hai,travel,eval
+highway par bahut traffic hai,travel,train
+ola ka driver nahi aa raha,travel,train
+rail ka platform number kya hai,travel,train
+visa ke liye kaun se documents lagenge,travel,eval
+sadak par gaddhe bahut hain,travel,eval
+"petrol bharwana hai, pump kaha hai",travel,train
+airport tak pahunchne me kitna time lagega,travel,train
+bike ka tyre puncture ho gaya,travel,train
+goa jaane ka sabse accha mausam kaun sa hai,travel,eval
+sleeper ka ticket available hai kya,travel,eval
+bhai kal subah ki train pakadni hai,travel,train
+cab ka fare bahut zyada hai,travel,train
+luggage kho gaya airport par,travel,train
+"raste me jam lag gaya, late ho jayenge",travel,eval
+tatkal ticket kab khulta hai,travel,eval
+manali ka trip bahut mast tha,travel,train
+gaadi ka insurance expire ho gaya hai,travel,train
+kal exam hai aur kuch padha nahi,study_work,eval
+assignment submit karne ki last date kab hai,study_work,eval
+sir ne aaj class cancel kar di,study_work,train
+office me boss ne bahut kaam de diya hai,study_work,train
+meeting ka time kab hai,study_work,train
+internship ke liye resume bhejna hai,study_work,eval
+project report abhi tak complete nahi hui,study_work,eval
+mera result kab aayega,study_work,train
+lab file jama karni hai kal tak,study_work,train
+college ki fees kab bharni hai,study_work,train
+presentation ki taiyari ho gayi,study_work,eval
+"attendance kam hai mera, kya karun",study_work,eval
+placement ke liye kaunsi company aa rahi hai,study_work,train
+interview kal subah 10 baje hai,study_work,train
+notes share kar do please,study_work,train
+salary me increment kab hoga,study_work,eval
+chutti ke liye application likhni hai,study_work,eval
+quiz me achhe marks aaye mere,study_work,train
+teacher ne bahut accha samjhaya,study_work,train
+group project me koi kaam nahi kar raha,study_work,train
+work from home me bahut distraction hota hai,study_work,eval
+semester ki date sheet aa gayi,study_work,eval
+backlog clear karna hai is baar,study_work,train
+deadline aaj raat tak hai,study_work,train
+mujhe kal se bukhar hai,health,eval
+sar dard ki koi dawai batao,health,eval
+doctor ki appointment leni hai,health,train
+gale me bahut kharash hai,health,train
+pet me dard ho raha hai subah se,health,train
+dawai khane ke baad bhi aaram nahi hua,health,eval
+mere dada ji ka blood pressure high rehta hai,health,eval
+khansi ruk hi nahi rahi,health,train
+aaj gym jaana hai,health,train
+raat ko neend nahi aati,health,train
+aankhon me jalan ho rahi hai,health,eval
+dentist ke paas jaana hai daant me dard hai,health,eval
+vitamin ki goliyan lena bhool gaya,health,train
+subah subah walk par jaana accha rehta hai,health,train
+"chot lag gayi thi, ab sujan aa gayi",health,train
+sugar ki jaanch karwani hai,health,eval
+"thand lag gayi hai, naak band hai",health,eval
+hospital ka bill bahut zyada aaya,health,train
+yoga se bahut fayda hua mujhe,health,train
+weight kam karna hai,health,train
+mummy ko ghutne me dard hai,health,eval
+medical store par ye dawai nahi mil rahi,health,eval
+fever ke saath body pain bhi hai,health,train
+vaccine lagwane ka time kab hai,health,train
+kal ka match kaun jeeta,sports,eval
+virat ne aaj bahut shandaar century maari,sports,eval
+india ki bowling bahut kamzor thi,sports,train
+ipl me kaun si team sabse strong hai,sports,train
+dhoni ka last over finish yaad hai na,sports,train
+football ka match dekhne chalein,sports,eval
+rohit sharma ne chhakka maara,sports,eval
+umpire ka decision galat tha,sports,train
+aaj ka match toss jeet kar bowling li,sports,train
+hockey me india ne gold jeeta,sports,train
+badminton khelne chalte hain shaam ko,sports,eval
+cricket ke liye team banani hai,sports,eval
+wicket giri to match palat gaya,sports,train
+pitch bahut slow thi aaj,sports,train
+world cup ka final kab hai,sports,train
+neeraj chopra ne javelin me medal jeeta,sports,eval
+subah cricket ground pe milte hain,sports,eval
+bumrah ki yorker ka koi jawab nahi,sports,train
+kabaddi league ka naya season shuru ho gaya,sports,train
+match ki ticket kaise milegi,sports,train
+fielding me bahut catch chhut gaye,sports,eval
+tennis ka final dekha kya,sports,eval
+dosto ke saath box cricket khela,sports,train
+run rate bahut kam tha,sports,train
+kal meri behen ki shaadi hai,social,eval
+birthday party ke liye kya gift lun,social,eval
+mama ji ghar aa rahe hain kal,social,train
+doston ke saath movie ka plan hai,social,train
+"bhai tu kaha hai, call utha",social,train
+"happy birthday yaar, party kab de raha hai",social,eval
+diwali par ghar jaa raha hoon,social,eval
+mom ne bola jaldi ghar aao,social,train
+aaj raat ko party hai mere ghar par,social,train
+cousin ki engagement me dance karna hai,social,train
+pados wale uncle bahut noise karte hain,social,eval
+dost se jhagda ho gaya hai,social,eval
+raksha bandhan par behen ko kya du,social,train
+nani ke ghar jaana hai chutti me,social,train
+"sabko shubh ratri, kal milte hain",social,train
+reunion ka plan banate hain,social,eval
+bhabhi ne bahut accha khana banaya,social,eval
+shaadi me kaun kaun aa raha hai,social,train
+holi ki bahut bahut shubhkamnayein,social,train
+mujhe tum sab bahut yaad aate ho,social,train
+"chhote bhai ka exam hai, usko disturb mat karo",social,eval
+anniversary par surprise dena hai,social,eval
+ghar me sab theek hain na,social,train
+papa ka phone aaya tha,social,train
+aaj bahut garmi hai,weather_daily,eval
+kal baarish hone wali hai kya,weather_daily,eval
+subah se hi dhundh chhayi hai,weather_daily,train
+"bahar bahut thand hai, jacket le lena",weather_daily,train
+aaj ka tapman kitna hai,weather_daily,train
+monsoon is saal late aaya,weather_daily,eval
+"bijli kab aayegi, kal se gayab hai",weather_daily,eval
+paani ki supply subah band rahegi,weather_daily,train
+aaj raat ko alarm laga do 6 baje ka,weather_daily,train
+mujhe 5 baje yaad dilana,weather_daily,train
+timer 10 minute ka set karo,weather_daily,eval
+aaj kaun sa din hai,weather_daily,eval
+ghadi me kitne baje hain,weather_daily,train
+kal subah 7 baje uthna hai,weather_daily,train
+"loo chal rahi hai, bahar mat jao",weather_daily,train
+barsaat me road pe pani bhar gaya,weather_daily,eval
+gaon me aaj bahut tez aandhi aayi,weather_daily,eval
+mausam bahut suhana hai aaj,weather_daily,train
+kal ke liye reminder daal do,weather_daily,train
+aaj shaam ko baarish ho sakti hai,weather_daily,train
+sardi me ghar se bahar nikalna mushkil hai,weather_daily,eval
+dopahar me dhoop bahut tez thi,weather_daily,eval
+2 baje ki meeting yaad dila dena,weather_daily,train
+subah 5 baje ka alarm band kar do,weather_daily,train
+phone ka display touch response nahi de raha,gadgets,train
+earbuds ek side se bajna band ho gaye,gadgets,eval
+mere laptop ka fan bahut shor karta hai,gadgets,eval
+"naya phone lena hai, budget 15000 ka hai",gadgets,train
+is power bank se phone sirf ek baar charge hota hai,gadgets,train
+mobile ka network bahut weak aa raha hai,gadgets,train
+charger ka pin dheela ho gaya hai,gadgets,eval
+"phone ko reset karna pada, sab data ud gaya",gadgets,eval
+smart tv me youtube nahi chal raha,gadgets,train
+laptop ki screen par line aa gayi hai,gadgets,train
+bluetooth connect hi nahi ho raha,gadgets,train
+phone ka back cover bahut sundar hai,gadgets,eval
+gaming ke liye kaunsa phone accha rahega,gadgets,eval
+phone speaker me awaaz phat rahi hai,gadgets,train
+hard disk se data recover karna hai,gadgets,train
+mere tablet ka stylus kho gaya,gadgets,train
+is camera me zoom kamaal ka hai,gadgets,eval
+sim card network nahi pakad raha,gadgets,eval
+mouse ka scroll wheel kaam nahi karta,gadgets,train
+android update ke baad battery drain hone lagi,gadgets,train
+airpods ka case charge nahi ho raha,gadgets,train
+laptop shut down ho jata hai achanak,gadgets,eval
+phone ka fingerprint sensor slow hai,gadgets,eval
+ac ka remote kharab ho gaya hai,gadgets,train
+inverter ki battery badalni padegi,gadgets,train
+smartphone ka price bahut zyada hai,gadgets,train
+selfie camera ki quality achhi nahi hai,gadgets,eval
+laptop bag bahut mazboot hai,gadgets,eval
+router ka signal dusre kamre me nahi aata,gadgets,train
+earphone ka jack tut gaya,gadgets,train
+aaj dinner me kya banaye samajh nahi aa raha,food,train
+bhindi ki sabzi ekdum mast bani hai,food,eval
+is hotel ka naan bahut kadak tha,food,eval
+sweet dish me cheeni kam thi,food,train
+chole bhature khane ka mann hai,food,train
+tandoori chicken bahut spicy tha,food,train
+mere liye ek plate momos laana,food,eval
+aloo paratha ke saath dahi chahiye,food,eval
+dhaba ka khana sabse accha lagta hai,food,train
+pani puri khaye hue bahut din ho gaye,food,train
+nashte me idli sambar banaya hai,food,train
+ice cream khane chalte hain raat ko,food,eval
+rajma chawal ghar jaisa swad hai,food,eval
+pasta me sauce bahut zyada tha,food,train
+chai ke saath biscuit chahiye,food,train
+sabzi me mirch bahut tez hai,food,train
+biryani ka rate bahut mehnga hai,food,eval
+garam garam jalebi ka maza hi alag hai,food,eval
+doodh phat gaya subah subah,food,train
+maine aaj pehli baar cake banaya,food,train
+fast food roz khana sehat ke liye theek nahi,food,train
+swiggy se khana mangwa lete hain,food,eval
+khichdi bimar logon ke liye achhi hoti hai,food,eval
+dosa ekdum crispy tha,food,train
+tiffin me kya rakh du,food,train
+fruit chaat bahut fresh thi,food,train
+restaurant me wait karna pada 40 minute,food,eval
+mithai ka dibba pack kar do,food,eval
+pyaz kat te waqt aankhon me paani aa gaya,food,train
+shake me chocolate syrup kam tha,food,train
+amazon ka parcel abhi tak nahi pahuncha,delivery,train
+flipkart pe order cancel hone ke baad refund nahi mila,delivery,eval
+delivery executive ne ghar par aakar bell bhi nahi bajayi,delivery,eval
+mujhe product ka invoice chahiye,delivery,train
+mera order ab tak process me hi hai,delivery,train
+wrong address par delivery ho gayi,delivery,train
+exchange ke liye pickup kab aayega,delivery,eval
+"kapde ka size bada nikla, return karna hai",delivery,eval
+"saman tuta hua mila, photo bhej raha hu",delivery,train
+express delivery bhi 5 din me aayi,delivery,train
+offer wali price par product nahi mil raha,delivery,train
+order ka status update nahi ho raha,delivery,eval
+paisa dedia par saman nahi aaya,delivery,eval
+meesho se mangaya shirt ka color alag hai,delivery,train
+packaging bilkul ghatiya thi,delivery,train
+"return approve ho gaya, paise kab milenge",delivery,train
+seller ne bola stock khatam ho gaya,delivery,eval
+delivery charge bahut zyada lag raha hai,delivery,eval
+delivery ka time slot badalna hai,delivery,train
+product ki warranty card nahi mila,delivery,train
+bhai tracking id se kuch pata nahi chal raha,delivery,train
+delivery bhaiya ne call nahi uthaya,delivery,eval
+saman wapas bhejna hai kaise karun,delivery,eval
+coupon apply karne par error aa raha hai,delivery,train
+order pe galat bill ban gaya hai,delivery,train
+festival sale me bahut saste deals mile,delivery,train
+"cart me do item the, ek hi aaya",delivery,eval
+delivery ek hafte late ho gayi,delivery,eval
+customer support ne ticket close kar diya bina solve kiye,delivery,train
+product ekdum original aur sahi mila,delivery,train
+account me balance kam dikha raha hai,banking,train
+atm card ka pin bhool gaya hu,banking,eval
+phonepe se paise bheje par receiver ko nahi mile,banking,eval
+home loan ki emi kitni banegi,banking,train
+net banking login nahi ho raha,banking,train
+bank wale ne bina bataye charges kaat liye,banking,train
+passbook update karwani hai,banking,eval
+account me nominee add karna hai,banking,eval
+cheque bounce ho gaya,banking,train
+credit card ka bill kitna aaya hai,banking,train
+paytm wallet me paise add nahi ho rahe,banking,train
+bank ki branch kab tak khuli rehti hai,banking,eval
+mera cibil score kam ho gaya,banking,eval
+sip ka paisa har mahine kat jata hai,banking,train
+mutual fund me invest karna chahta hu,banking,train
+ifsc code kya hai meri branch ka,banking,train
+account se do baar paise kat gaye,banking,eval
+bank ka customer care number kya hai,banking,eval
+aadhaar ko bank account se link karna hai,banking,train
+upi pin change karna hai,banking,train
+fd tod du ya chalne du,banking,train
+insurance claim ka paisa aa gaya,banking,eval
+tax bharne ki last date kab hai,banking,eval
+neft me kitna time lagta hai,banking,train
+paise udhaar diye the wapas nahi mile,banking,train
+salary slip chahiye loan ke liye,banking,train
+wallet balance zero ho gaya,banking,eval
+card swipe karne par transaction decline ho gaya,banking,eval
+gold loan par kitna byaj lagta hai,banking,train
+sip band karni hai kaise karun,banking,train
+kal ki flight ka web check in karna hai,travel,train
+train me seat milegi ya waiting rahega,travel,eval
+bus stand se kitni der me bus milti hai,travel,eval
+kedarnath yatra ke liye registration karna hai,travel,train
+uber ka fare surge me bahut zyada hai,travel,train
+ladakh trip ke liye kaun si bike best hai,travel,train
+station par bahut bheed hai aaj,travel,eval
+holiday ke liye hotel bahut mehnge hain,travel,eval
+passport ka renewal karwana hai,travel,train
+train 3 ghante late chal rahi hai,travel,train
+airport par security check me bahut time laga,travel,train
+sadak band hai bhari barish ki wajah se,travel,eval
+mujhe railway station chhod do please,travel,eval
+ghumne ke liye kaun si jagah achhi hai,travel,train
+hotel ka room bahut ganda tha,travel,train
+road trip pe jaane ka mann hai,travel,train
+taxi wale ne extra paise maange,travel,eval
+ac coach ka ticket book karna hai,travel,eval
+nainital me bahut thand hoti hai,travel,train
+metro card recharge karna hai,travel,train
+platform par train aa gayi hai,travel,train
+highway pe toll tax bahut zyada hai,travel,eval
+garhwal ka rasta bahut khubsurat hai,travel,eval
+kal subah ki bus chhut gayi,travel,train
+flight ticket ka refund kab milega,travel,train
+beach par jaane ke liye sunscreen le lena,travel,train
+cab ka driver rasta bhatak gaya,travel,eval
+tourist guide ne bahut accha samjhaya,travel,eval
+bike me petrol khatam ho gaya raste me,travel,train
+ghar se station tak 20 minute lagte hain,travel,train
+kal ka test bahut tough tha,study_work,train
+maths ka syllabus bahut bada hai,study_work,eval
+assignment copy karke jama kar diya,study_work,eval
+office me aaj bahut kaam tha,study_work,train
+manager ne appraisal ke baare me bataya,study_work,train
+college me aaj fest hai,study_work,train
+coding test me sirf ek question hua,study_work,eval
+"lecture miss ho gaya, notes bhej do",study_work,eval
+hostel ki fees bharni hai,study_work,train
+"practical exam kal hai, file complete nahi hui",study_work,train
+sir ne extra class rakhi hai shaam ko,study_work,train
+resume me kya kya likhna chahiye,study_work,eval
+naukri ke liye kaha apply karun,study_work,eval
+internship ka stipend kitna milega,study_work,train
+client ki meeting aaj reschedule ho gayi,study_work,train
+saturday ko bhi office jaana padega,study_work,train
+paper me kafi questions aaye jo padhe nahi the,study_work,eval
+results me back aa gayi,study_work,eval
+library me padhne chalte hain,study_work,train
+project ka demo kal hai,study_work,train
+exam me cheating karte pakda gaya,study_work,train
+company ne layoffs kar diye,study_work,eval
+teacher ne homework bahut diya hai,study_work,eval
+online class me network issue aa raha hai,study_work,train
+career ke liye kaun sa course karun,study_work,train
+assignment ki deadline badha di gayi,study_work,train
+boss ka mood aaj kharab hai,study_work,eval
+group study karte hain raat ko,study_work,eval
+college ki bus late aayi,study_work,train
+mock interview me achha perform kiya,study_work,train
+aaj subah se chakkar aa rahe hain,health,train
+doctor ne rest karne ko kaha hai,health,eval
+dawai ka course khatam ho gaya,health,eval
+bachche ko bukhar hai aur ulti ho rahi hai,health,train
+kamar dard bahut ho raha hai,health,train
+ankhon ka checkup karwana hai,health,train
+mujhe allergy ho gayi hai,health,eval
+blood test ki report aa gayi,health,eval
+dant saaf karne ke baad bhi badbu aati hai,health,train
+subah subah juice peena sehat ke liye acha hai,health,train
+pair me moch aa gayi,health,train
+"ghar par kadha pee liya, thoda aaram hai",health,eval
+protein shake lena shuru kiya hai,health,eval
+exercise ke baad body pain hota hai,health,train
+mujhe acidity ho jati hai khane ke baad,health,train
+eye drops kaha milenge,health,train
+fitness ke liye roz dauda karta hu,health,eval
+doctor ne tablet badal di hai,health,eval
+thakan bahut rehti hai aajkal,health,train
+bachche ka vaccination due hai,health,train
+skin par daane ho gaye hain,health,train
+cough syrup se aaram nahi mila,health,eval
+"paani zyada piyo, doctor ne kaha hai",health,eval
+nind poori nahi hoti raat me,health,train
+bp check karwana hai,health,train
+dawakhana subah 9 baje khulta hai,health,train
+"sar me bhari dard hai, migraine lag raha hai",health,eval
+diet plan banwana hai,health,eval
+operation ke baad dard kam hai,health,train
+thanda paani peene se gala kharab ho gaya,health,train
+aaj ka match bahut romanchak tha,sports,train
+kohli ne 50 poore kiye,sports,eval
+pant ne last ball par chauka maara,sports,eval
+india ne toss jeet liya,sports,train
+bowler ne teen wicket jhatke,sports,train
+ipl auction me kaun kitne me bika,sports,train
+football me messi ka goal dekha kya,sports,eval
+cricket coaching join karni hai,sports,eval
+final me india ne pakistan ko haraya,sports,train
+match ke beech me barish aa gayi,sports,train
+"umpire ne wide nahi diya, galat hai",sports,train
+t20 me sabse tez fifty kisne maari,sports,eval
+captain ne bowler change kiya,sports,eval
+stadium me bahut bheed thi,sports,train
+dhoni ki captaincy ka jawab nahi,sports,train
+kal subah gully cricket khelte hain,sports,train
+sania mirza ne tennis se sanyas le liya,sports,eval
+shami ne swing se batsman ko dara diya,sports,eval
+kushti me india ko medal mila,sports,train
+asia cup ki team announce ho gayi,sports,train
+saare catch chhod diye fielders ne,sports,train
+bumrah ne maiden over daala,sports,eval
+badminton me sindhu ne point jeeta,sports,eval
+match ka live score kya hai,sports,train
+free hit par chhakka laga diya,sports,train
+chess me gukesh ne jeet haasil ki,sports,train
+team me naye khiladi ko mauka mila,sports,eval
+over rate slow hone par penalty lagi,sports,eval
+ground staff ne pitch dhak di,sports,train
+olympics me India ke medal kitne aaye,sports,train
+tujhe birthday wish karna bhool gaya sorry,social,train
+mummy papa ke saath mandir gaya tha,social,eval
+shaadi ke card baant diye,social,eval
+kal sab dost milke trip pe chalte hain,social,train
+bhai ne mujhe party nahi di,social,train
+chacha ji ka phone aaya tha,social,train
+neighbour ki beti ki shaadi hai,social,eval
+aaj bahut miss kar raha hu tumhe,social,eval
+pariwar ke saath dinner kiya,social,train
+bhaiya ne naya ghar liya hai,social,train
+"ladai ho gayi dost se, ab baat nahi karte",social,train
+diwali ki safai chal rahi hai,social,eval
+dadi ne kahani sunayi,social,eval
+sabko happy new year,social,train
+ghar me mehman aaye hain,social,train
+rakhi ke liye shopping karni hai,social,train
+bua ji ki tabiyat kaisi hai,social,eval
+meri behen ka rishta pakka ho gaya,social,eval
+dost ka phone nahi lag raha,social,train
+kal mere ghar aa jana khana khane,social,train
+sali ka birthday hai kal,social,train
+chhote bachche ne pehli baar chalna seekha,social,eval
+puja ka prasad lo,social,eval
+chaar log aayenge ghar par,social,train
+tum sabko bahut shubh deepawali,social,train
+mere dost ki bike khoi gayi,social,train
+naye saal par resolution banaye hain,social,eval
+family group me sabne wish kiya,social,eval
+mama ne bhej di mithai,social,train
+subah subah mummy ki awaaz se neend khuli,social,train
+aaj raat ko tapman gir jayega,weather_daily,train
+kal subah dhup niklegi ya nahi,weather_daily,eval
+bahut humidity hai aaj,weather_daily,eval
+tez hawa chal rahi hai,weather_daily,train
+alarm 6:30 par lagana,weather_daily,train
+10 minute baad bata dena,weather_daily,train
+aaj shaam 5 baje ka reminder set kar do,weather_daily,eval
+"bijli ka bill kal bharna hai, yaad dilana",weather_daily,eval
+kal ka mausam kaisa rahega,weather_daily,train
+"bahut zyada garmi hai, ac chalana padega",weather_daily,train
+snowfall ki khabar hai pahaadon me,weather_daily,train
+kal subah 5 baje jagana mujhe,weather_daily,eval
+barish ke baad mausam suhana ho gaya,weather_daily,eval
+2 ghante baad meeting yaad dilana,weather_daily,train
+dopahar me alarm laga do,weather_daily,train
+aaj ka din bahut thanda hai,weather_daily,train
+kitne baje hain abhi,weather_daily,eval
+aandhi toofan ka alert aaya hai,weather_daily,eval
+raat ko 9 baje dawai ka reminder,weather_daily,train
+weather forecast me kya bataya hai,weather_daily,train
+tapman 40 degree tak jayega,weather_daily,train
+kal holiday hai kya,weather_daily,eval
+agle hafte barish ki sambhavna hai,weather_daily,eval
+paani garam karne ka timer laga do,weather_daily,train
+fog ki wajah se gaadiyan late hain,weather_daily,train
+subah ka alarm snooze ho gaya,weather_daily,train
+dhoop me bahut chubhan hai,weather_daily,eval
+kal sunday hai na,weather_daily,eval
+sham ko halka phulka baadal hain,weather_daily,train
+chhutti wale din barish ho gayi,weather_daily,train

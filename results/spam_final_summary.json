@@ -1,22 +1,22 @@
 {
   "english_test": {
-    "precision": 0.9523809523809523,
+    "precision": 0.96,
     "recall": 0.96,
-    "F1": 0.9561752988047809,
-    "AUC": 0.995262222222222,
-    "genuine_flagged": 6,
+    "F1": 0.96,
+    "AUC": 0.9929866666666666,
+    "genuine_flagged": 5,
     "genuine_total": 900,
-    "threshold": 0.19029599364660008,
-    "ECE": 0.01080002941944897,
-    "Brier": 0.009267663068592655
+    "threshold": 0.129866349820967,
+    "ECE": 0.0066880517514353735,
+    "Brier": 0.010099604651523068
   },
   "hinglish": {
-    "recall": 0.35294117647058826,
-    "AUC": 0.9952941176470589,
+    "recall": 0.5294117647058824,
+    "AUC": 0.9662745098039215,
     "challenge_genuine_flagged": 0,
     "challenge_genuine_total": 50,
-    "real_genuine_flagged_rate": 0.0125,
-    "threshold": 0.7964873340270987,
+    "real_genuine_flagged_rate": 0.0115,
+    "threshold": 0.13017745057282454,
     "n_spam": 51
   },
   "robustness": [
@@ -27,14 +27,14 @@
     },
     {
       "attack": "letters spaced",
-      "recall_no_defence": 0.912,
+      "recall_no_defence": 0.896,
       "recall_with_cleanup": 0.96
     },
     {
       "attack": "look-alike letters",
-      "recall_no_defence": 0.936,
+      "recall_no_defence": 0.928,
       "recall_with_cleanup": 0.96
     }
   ],
-  "model": "TF-IDF(word+char) + structural cues + scam lexicon -> LinearSVC -> Platt calibration"
+  "model": "TF-IDF(word+char) + structural cues + scam lexicon -> LinearSVC -> Platt calibration; trained with synthetic Hinglish augmentation"
 }

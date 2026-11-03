@@ -28,7 +28,11 @@ def main():
     tr, te, _ = load_spam(); ch = load_scam_challenge()["hinglish"]
     fit, val = train_test_split(tr, test_size=0.2, stratify=tr.label, random_state=SEED)
     base = build("+ structural + lexicon")
-    model = CalibratedClassifierCV(base, method="sigmoid", cv=5).fit(fit.text.map(normalize), fit.label.map({"ham": 0, "spam": 1}))
+    # augmentation: SYNTHETIC Hinglish scams/genuine + real genuine Hinglish tweets (training only; see exp_spam_synth.py)
+    from exp_spam_synth import real_genuine_hinglish
+    syn = pd.read_csv(ROOT / "data" / "synthetic" / "hinglish_spam_synthetic.csv"); gen = real_genuine_hinglish()
+    X = fit.text.tolist() + syn.text.tolist() + gen; y = fit.label.tolist() + syn.label.tolist() + ["ham"] * len(gen)
+    model = CalibratedClassifierCV(base, method="sigmoid", cv=5).fit([normalize(t) for t in X], pd.Series(y).map({"ham": 0, "spam": 1}))
     # --- thresholds
     en_thr = float(np.quantile(proba(model, val[val.label == "ham"].text), 1 - EN_FPR))
     sents = _read_hinglid(RAW / "hinglid" / "validation.txt")
@@ -64,7 +68,7 @@ def main():
         rob.append({"attack": name, "recall_no_defence": float((proba(model, att, False) >= en_thr).mean()),
                     "recall_with_cleanup": float((proba(model, att, True) >= en_thr).mean())})
     pd.DataFrame(rob).to_csv(R / "spam_final_robustness.csv", index=False)
-    out = {"english_test": en, "hinglish": hi, "robustness": rob, "model": "TF-IDF(word+char) + structural cues + scam lexicon -> LinearSVC -> Platt calibration"}
+    out = {"english_test": en, "hinglish": hi, "robustness": rob, "model": "TF-IDF(word+char) + structural cues + scam lexicon -> LinearSVC -> Platt calibration; trained with synthetic Hinglish augmentation"}
     (R / "spam_final_summary.json").write_text(json.dumps(out, indent=2))
     joblib.dump({"model": model, "thresholds": {"en": en_thr, "hinglish": hi_thr}, "defend": True}, ROOT / "models" / "spam_final.joblib")
     print(json.dumps(out, indent=2))
