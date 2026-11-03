@@ -46,7 +46,7 @@ html[data-book] .book{display:none}                    /* the old scrolling page
 
 /* edge bookmarks */
 .btabs{position:absolute;left:100%;top:44px;display:flex;flex-direction:column;gap:7px;z-index:40;margin-left:-4px}
-.bt2{border:0;cursor:pointer;width:38px;height:var(--th,128px);padding:0;border-radius:0 9px 9px 0;font:600 var(--tf,17px)/1 'Kalam',cursive;color:#3a2f20;writing-mode:vertical-rl;letter-spacing:.04em;
+.bt2{border:0;cursor:pointer;width:38px;height:var(--th,128px);padding:0;border-radius:0 9px 9px 0;font:600 var(--tf,17px)/1 'Kalam',cursive;color:#3a2f20;writing-mode:vertical-rl;letter-spacing:0;
   box-shadow:2px 2px 5px rgba(15,6,1,.4);transition:transform .25s,filter .25s;transform:translateX(-6px)}
 .bt2:hover{transform:translateX(2px)}.bt2[aria-current=true]{transform:translateX(8px);filter:brightness(1.06)}
 .bt2:nth-child(1){background:#f1d98a}.bt2:nth-child(2){background:#e7a89b}.bt2:nth-child(3){background:#9fc3dd}.bt2:nth-child(4){background:#b4d29a}.bt2:nth-child(5){background:#d6bfe0}

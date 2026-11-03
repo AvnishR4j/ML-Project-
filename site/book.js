@@ -76,7 +76,7 @@
   function size() {
     var W = innerWidth - 150, H = innerHeight - 96, ratio = 0.8;
     PW = Math.floor(Math.min(W / 2, H * ratio, 820)); PH = Math.floor(PW / ratio);
-    bk.style.setProperty('--pw', PW + 'px'); bk.style.setProperty('--ph', PH + 'px'); var th = Math.floor((PH - 60) / 5 - 7); bk.style.setProperty('--th', th + 'px'); bk.style.setProperty('--tf', Math.min(17, Math.floor(th / 7.2)) + 'px'); cover._in.style.zoom = Math.min(1, PH / 760);
+    bk.style.setProperty('--pw', PW + 'px'); bk.style.setProperty('--ph', PH + 'px'); var th = Math.floor((PH - 60) / 5 - 7); bk.style.setProperty('--th', th + 'px'); bk.style.setProperty('--tf', Math.min(17, Math.max(12, Math.floor(th / 6.2))) + 'px'); cover._in.style.zoom = Math.min(1, PH / 760);
   }
   size();
 
