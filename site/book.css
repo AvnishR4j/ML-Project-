@@ -74,7 +74,7 @@ html[data-book] .book{display:none}                    /* the old scrolling page
 .pg .sh .t{flex:1 1 220px}
 .pg .intro{font-size:15px}
 .pg .demo{margin-top:20px;display:block}.pg .demo .a,.pg .demo .b{flex:none}
-.pg .cells{margin-top:22px;grid-template-columns:1fr;gap:20px}
+.pg .cells{margin-top:22px;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
 .pg .two2{margin-top:30px}.pg .two2>div{flex:1 1 100%}
 .pg .stats.first{margin-top:22px}
 .pg .rob{margin-top:22px;display:block}.pg .rob .a,.pg .rob .b{flex:none}
