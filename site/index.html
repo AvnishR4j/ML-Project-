@@ -123,7 +123,7 @@ background:rgba(255,253,240,.55) repeating-linear-gradient(180deg,transparent 0 
 .batch select{font:inherit;font-size:13px}.batch tr.cor td{background:rgba(31,125,69,.1)}
 .xl{margin:10px 0 0;font-size:13px;line-height:1.5;color:#6b665a}
 .msg .hw{border-radius:3px;padding:0 2px;cursor:help}
-.msg .hw.f{background:rgba(196,48,43,.26)}.msg .hw.a{background:rgba(31,125,69,.24)}.msg .hw.n{background:rgba(120,120,120,.16)}
+.msg .hw.f{background:rgba(196,48,43,.34);font-weight:700;border-bottom:2px solid #c4302b}.msg .hw.a{background:rgba(31,125,69,.24)}.msg .hw.n{background:rgba(120,120,120,.16)}
 .own textarea::placeholder{color:#998d74}
 .own textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(31,67,160,.15)}
 .own .row{display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;margin-top:14px}
@@ -551,13 +551,14 @@ loadEngine().then(function (E) {
 if (cur !== mine) return;
 var a = window.MIEngine.analyze(E, r.message), x = window.MIEngine.explain(E, r.message, a);
 if (!x) return;
-var big = Math.max.apply(null, x.words.map(function (w) { return Math.abs(w.d); })), cut = Math.max(0.02, big * 0.25), body = x.words.map(function (w) {
+var big = Math.max.apply(null, x.words.map(function (w) { return Math.abs(w.d); })), cut = Math.max(0.02, big * (x.kind === 'spam' ? 0.12 : 0.25)), body = x.words.map(function (w) {
 var d = w.d, k = Math.abs(d) < cut ? '' : (d > 0 ? (x.kind === 'spam' ? 'f' : 'a') : 'n');
 return k ? '<span class="hw ' + k + '" title="' + (d > 0 ? '+' : '') + d.toFixed(2) + ' ' + (x.kind === 'spam' ? 'spam score' : 'sentiment margin') + '">' + esc(w.w) + '</span>' : esc(w.w);
 }).join(' ');
 var xl = $('w-x'); xl.hidden = false;
 if (r.translit) $('w-msg').textContent = r.message; else $('w-msg').innerHTML = body;
-xl.innerHTML = (r.translit ? 'Read as Roman letters by the models: <span class="tl2">' + body + '</span><br>' : '') + 'Highlighted words moved the ' + (x.kind === 'spam' ? 'spam score towards spam (red); grey words pulled the other way.' : 'sentiment result: ' + 'green words supported it, grey words argued against it.') + ' Found by removing each word in turn and re-scoring.';
+var top = x.kind === 'spam' ? x.words.filter(function (w) { return w.d >= cut; }).sort(function (a, b) { return b.d - a.d; }).slice(0, 5).map(function (w) { return w.w.replace(/^[^\w]+|[^\w]+$/g, ''); }) : [];
+xl.innerHTML = (top.length ? '<b>Called spam mainly because of: ' + esc(top.join(', ')) + '.</b><br>' : '') + (r.translit ? 'Read as Roman letters by the models: <span class="tl2">' + body + '</span><br>' : '') + 'Highlighted words moved the ' + (x.kind === 'spam' ? 'spam score towards spam (red); grey words pulled the other way.' : 'sentiment result: ' + 'green words supported it, grey words argued against it.') + ' Found by removing each word in turn and re-scoring.';
 })['catch'](function () {});
 }
 function replay() {
