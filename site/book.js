@@ -200,7 +200,7 @@
   // pictures are only taken while the reader is not touching anything, one at a time with a pause between them
   var lastActive = 0;
   ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (t) { document.addEventListener(t, function () { lastActive = performance.now(); }, { passive: true, capture: true }); });
-  function quiet(first) { return !anim && !drag && performance.now() - lastActive > (first ? 250 : 1200); }
+  function quiet(first) { var t = performance.now(); return !anim && !drag && t - lastActive > (first ? 250 : 1200) && t > (window.__animBusy || 0); }
   // keep photographs fresh: any change inside a page marks it stale, and stale pages near the open spread are re-shot when the browser is idle
   var idle = window.requestIdleCallback || function (f) { return setTimeout(function () { f({ timeRemaining: function () { return 8; } }); }, 120); };
   var queued = false;
@@ -211,7 +211,8 @@
       var missing = shots.some(function (x) { return !x.cv; });
       queued = false; if (!quiet(missing)) { setTimeout(pumpShots, missing ? 250 : 600); return; }
       var list = nearby().concat(PG.map(function (p, i) { return i; }));
-      for (var k = 0; k < list.length; k++) { var i = list[k]; if (i === 0 && s === 0 && shots[0].cv) continue; if ((shots[i].dirty || !shots[i].cv) && !shots[i].busy) { snap(i).then(function () { setTimeout(pumpShots, 400); }, function () { setTimeout(pumpShots, 400); }); return; } }
+      for (var k = 0; k < list.length; k++) { var i = list[k]; if (i === 0 && s === 0 && shots[0].cv) continue; if (shots[i].cv && isShown(PG[i]) && performance.now() - lastActive < 3000) continue;   // the open pages wait for a longer pause, so a picture never lands between two clicks
+        if ((shots[i].dirty || !shots[i].cv) && !shots[i].busy) { snap(i).then(function () { setTimeout(pumpShots, 400); }, function () { setTimeout(pumpShots, 400); }); return; } }
       preUpload();
     }, { timeout: 4000 });
   }
@@ -382,7 +383,7 @@
       setPage(pg, turned < 0.5 ? 'R' : 'L'); hideOther(pg === a.front ? a.back : a.front);
       pg.style.transformOrigin = turned < 0.5 ? '0 50%' : '100% 50%';
       pg.style.transform = 'perspective(2400px) rotateY(' + (turned < 0.5 ? -turned * 180 : (1 - turned) * 180) + 'deg)';
-    } else drawGL(turned);
+    } else if (gl) drawGL(turned);
     var strength = Math.sin(turned * Math.PI), reach = Math.abs(Math.cos(turned * Math.PI)), side = turned < 0.5 ? 'R' : 'L';
     if (cast._side !== side) {                            // the shadow the lifted leaf throws on the page below; only transform and opacity change per frame
       cast._side = side; cast.style.width = (PW + 60) + 'px';
@@ -509,12 +510,10 @@
       end: function () { if (!cur) return; var d = []; for (var k = 1; k < cur.length; k++) d.push(cur[k] - cur[k - 1]); cur = null; if (!d.length) return; d.sort(function (x, y) { return x - y; }); turns.push({ n: d.length, med: d[d.length >> 1], p95: d[Math.floor(d.length * 0.95)], max: d[d.length - 1], slow: d.filter(function (x) { return x > 20; }).length }); }
     };
     setInterval(function () {
-      var gl2 = null; try { var c = document.createElement('canvas').getContext('webgl'), x = c && c.getExtension('WEBGL_debug_renderer_info'); gl2 = x ? c.getParameter(x.UNMASKED_RENDERER_WEBGL) : (c ? 'webgl' : 'none'); } catch (e) {}
       box.textContent = 'engine ' + eng + '  dpr ' + (window.devicePixelRatio || 1) + '  ' + innerWidth + 'x' + innerHeight + '  leaf ' + (gl === false ? 'flat' : (gl ? 'webgl' : 'not yet')) +
         '\npage pictures ms: ' + st(snaps) + '\nwait before turn ms: ' + st(waits) +
         '\nturns (frame ms): ' + turns.slice(-6).map(function (t) { return t.n + 'f med' + t.med.toFixed(0) + ' p95 ' + t.p95.toFixed(0) + ' max ' + t.max.toFixed(0) + ' slow' + t.slow; }).join('\n   ') +
         '\nfreezes >50ms: ' + gaps.length + '  last: ' + gaps.slice(-8).map(function (g) { return g[0] + (g[1] === 'turn' ? 't' : ''); }).join(' ');
-      PERF.gl = gl2;
     }, 500);
   })();
 

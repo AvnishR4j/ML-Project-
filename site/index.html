@@ -1048,6 +1048,7 @@ function pose(c, t, wob) {
 function play(c, to) {
   var g = c._gl; if (!g || c._busy) return; c._busy = true;
   var from = g.t, dur = to === 0 ? 2100 : 1500, t0 = performance.now();
+  window.__animBusy = Math.max(window.__animBusy || 0, t0 + dur + 400);   // the book takes no page pictures while a note moves
   c.classList.add('anim');
   if (to === 1) { c.classList.add('crum'); }
   else { c.classList.remove('crum'); }
@@ -1071,6 +1072,7 @@ function wobble(c, on) {
   if (c._hov) return; c._hov = true; var t0 = performance.now();
   (function loop(now) {
     if (!c._hov || c._busy || !c.classList.contains('crum')) { if (!c._busy && c.classList.contains('crum')) pose(c, 1, 0); return; }
+    window.__animBusy = Math.max(window.__animBusy || 0, now + 400);
     var s = (now - t0) / 1000; pose(c, 1 - 0.035 * (0.5 - 0.5 * Math.cos(s * 3.2)), 0.06 * Math.sin(s * 2.1)); requestAnimationFrame(loop);
   })(t0);
 }
