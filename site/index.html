@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>(function(){var d=document.documentElement;try{var q=/[?&]classic/.test(location.search),ok=!q&&innerWidth>=900&&innerHeight>=520&&window.CSS&&CSS.supports&&CSS.supports('transform-style','preserve-3d')&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);if(ok)d.setAttribute('data-book','1');else location.replace('classic.html'+location.hash);}catch(e){}})();</script>
+<link rel="stylesheet" href="book.css">
 <title>Multilingual Message Intelligence</title>
 <meta name="description" content="Language identification, spam detection, sentiment analysis and theme discovery for short English, Hindi and Hinglish messages.">
 <meta name="theme-color" content="#5a331c">
@@ -471,6 +473,7 @@ var MODELS = ['language', 'spam', 'sent_hi', 'sent_en', 'theme_en', 'theme_hi', 
 var $ = function (id) { return document.getElementById(id); };
 var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
 var fmtN = function (n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); };
+var BOOK = !!document.documentElement.getAttribute('data-book');
 var reduced = false; try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
 
 var W = [
@@ -623,7 +626,7 @@ loadEngine().then(function (E) {
 var a = window.MIEngine.analyze(E, t);
 showWalk(toRow(a, t)); renderChips(null);
 note.textContent = NOTE; go.disabled = false;
-$('w-msg').scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' });
+if (!BOOK) $('w-msg').scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' });
 })['catch'](function () { note.textContent = 'Could not load the models. Check your connection and try again.'; go.disabled = false; });
 }
 $('own-go').addEventListener('click', runOwn);
@@ -859,7 +862,7 @@ $(id).classList.add('in');
 if (id === 's4') { grow($('cmp')); grow($('trf')); growMix(); countUp(); }
 if (id === 's5') { grow($('cols')); setTimeout(function () { setClean(true); }, 900); }
 }
-if (reduced || !('IntersectionObserver' in window)) {
+if (BOOK) { window.__reveal = reveal; } else if (reduced || !('IntersectionObserver' in window)) {
 ids.forEach(function (i) { $(i).classList.add('in'); vis[i] = true; });
 setTimeout(function () { grow($('cmp')); grow($('trf')); growMix(); grow($('cols')); setClean(true); }, 80);
 } else {
@@ -900,7 +903,7 @@ cells.forEach(function (c, k) {
   c.dataset.title = title;
 });
 function flatAll() { box.classList.remove('balls'); cells.forEach(function (c) { c.style.height = ''; c.classList.remove('crum', 'anim'); c.removeAttribute('role'); c.removeAttribute('tabindex'); }); if (all) all.style.display = 'none'; }
-if (reduce || !window.WebGLRenderingContext) { flatAll(); return; }
+if (reduce || !window.WebGLRenderingContext || document.documentElement.getAttribute('data-book')) { flatAll(); return; }
 box.classList.add('balls');
 cells.forEach(function (c) { c.classList.add('crum'); c.setAttribute('role', 'button'); c.setAttribute('tabindex', '0'); c.setAttribute('aria-label', c.dataset.title + ' (crumpled note, press to smooth it out)'); });
 
@@ -1090,5 +1093,6 @@ Promise.all([load('vendor/three-r128.min.js'), load('vendor/html2canvas-1.4.1.mi
   .catch(function (err) { if (window.console) console.warn('crumple effect unavailable', err); flatAll(); });
 })();
 </script>
+<script src="book.js"></script>
 </body>
 </html>
