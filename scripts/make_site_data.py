@@ -27,7 +27,7 @@ pd.DataFrame(rows).to_csv(out / "messages.csv", index=False)
 spamline = "Congratulations! You have won a free prize, call 09061701461 now to claim"
 ch = pd.read_csv(ROOT / "data/raw/hinglish_scam_challenge_raw.csv", encoding="utf-8-sig").drop_duplicates("text")
 caught = next(t for t in ch[ch.label == "spam"].text if analyze(t).get("spam") == "spam")
-W = [("W1", "Everyday English complaint", "My order has not arrived yet and nobody is replying to my emails", "negative"),
+W = [("W1", "Everyday English complaint", "Is the refund processed yet, my card was charged twice", "negative"),
      ("W2", "English praise", "Really happy with the service, the delivery was quick and the staff were helpful", "positive"),
      ("W3", "English spam", spamline, None),
      ("W4", "Spam with spaced-out letters", attack_spacing(spamline), None),
@@ -36,7 +36,9 @@ W = [("W1", "Everyday English complaint", "My order has not arrived yet and nobo
      ("W7", "Hinglish scam", caught, None),
      ("W8", "Hindi in Devanagari", "यह फ़ोन बहुत अच्छा है", None),
      ("W9", "German", "Der Film war wirklich gut, ich habe ihn sehr genossen", None),
-     ("W10", "Unclear language, sent to review", "Merci beaucoup pour votre aide, a bientot", None)]
+     ("W10", "Unclear language, sent to review", "Merci beaucoup pour votre aide, a bientot", None),
+     ("W11", "Hinglish product complaint", "powerbank me battery bohot kam hai", "neutral"),
+     ("W12", "Topic the model never saw", "I have a headache, should I see a doctor", "negative")]
 rows = []
 for id_, title, msg, want in W:
     r = analyze(msg); lang = "Uncertain" if r["language"] == "uncertain" else r["language_name"].split(" (")[0]

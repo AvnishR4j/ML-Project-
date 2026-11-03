@@ -15,9 +15,32 @@
     "prototype60": 0.8251888574126535
   },
   "reject_score_chosen": "prototype60",
-  "reject_threshold": 0.9487849536913198,
-  "in_topic_accepted": 0.9767080745341615,
-  "out_of_topic_rejected": 0.025,
+  "operating_points_by_calibration_quantile": {
+    "0.8": {
+      "threshold": 0.904211986459129,
+      "in_topic_accepted": 0.9400621118012422,
+      "out_of_topic_rejected": 0.1
+    },
+    "0.9": {
+      "threshold": 0.9393356334428439,
+      "in_topic_accepted": 0.9704968944099379,
+      "out_of_topic_rejected": 0.05
+    },
+    "0.95": {
+      "threshold": 0.9487849536913198,
+      "in_topic_accepted": 0.9767080745341615,
+      "out_of_topic_rejected": 0.025
+    },
+    "0.98": {
+      "threshold": 0.9593049435026193,
+      "in_topic_accepted": 0.9829192546583851,
+      "out_of_topic_rejected": 0.025
+    }
+  },
+  "reject_threshold": 0.9393356334428439,
+  "calibration_quantile": 0.9,
+  "in_topic_accepted": 0.9704968944099379,
+  "out_of_topic_rejected": 0.05,
   "n_ood_test": 40,
   "n_ood_validation": 24,
   "AUROC_test": {
@@ -27,6 +50,6 @@
     "prototype30": 0.7944642857142857,
     "prototype60": 0.8118090062111801
   },
-  "in_topic_accepted_author_written_only": 0.9272727272727272,
+  "in_topic_accepted_author_written_only": 0.9181818181818182,
   "n_author_written_test": 220
 }

@@ -341,8 +341,8 @@ footer::before{content:"sources \2014";display:block;color:var(--red);font-size:
 <div class="bd"><div><div class="m">How</div>Word and letter patterns feed a linear classifier. One model for English (positive or negative) and one for Hinglish (negative, neutral or positive).</div><div><div class="m">Learned from</div>English: about 41,000 tweets and short reviews, plus a human-rated word list for rarer words like &ldquo;handsome&rdquo;. Hinglish: IIIT-H comments plus 120 everyday sentences written by us.</div><div><div class="m">What changed</div>English rose from 63% to 79% macro F1 on 6,339 unseen tweets. Hinglish dipped from 69.4 to 67.5 on its comment test (within the margin of error) but rose from 70% to 95% on 20 new everyday sentences.</div><div><div class="m">CodeChef idea</div>Movie Review Sentiment Analyzer</div></div>
 <div class="sc"><div class="two"><span class="d">67.5%</span><span class="m">Hinglish macro F1 (3 classes)</span></div><div class="two"><span class="d">78.7%</span><span class="m">English macro F1 (unseen SemEval tweets)</span></div></div></div>
 <div class="cell"><span class="d big">4</span><h3 class="d">What are people talking about?</h3>
-<div class="bd"><div><div class="m">How</div>Each message becomes a vector of numbers from word embeddings, and K-Means groups similar messages into 6 themes per language. No labels needed.</div><div><div class="m">Learned from</div>Genuine English SMS and real Hinglish comments.</div><div><div class="m">CodeChef idea</div>Clustering and Dimensionality Reduction</div></div>
-<div class="sc"><div class="m">Chosen over TF-IDF with PCA for stability</div></div></div>
+<div class="bd"><div><div class="m">How</div>Each message becomes a vector from word embeddings, and K-Means groups similar messages into 20 themes per language. If a message is too far from every theme, it says &ldquo;No clear theme&rdquo; instead of guessing.</div><div><div class="m">Learned from</div>English: CLINC150, Banking77, product and movie reviews, tweets and SMS. Hinglish: Hinglish-TOP, YouTube comments, tweets and 540 everyday messages written by us.</div><div><div class="m">What changed</div>Themes grew from 6 to 20 per language. Agreement with held-out topic labels (NMI) rose from 0.10 to 0.48 in English and from 0.09 to 0.61 in Hinglish. The off-topic check is weak: it catches 55% of off-topic English messages and almost none in Hinglish.</div><div><div class="m">CodeChef idea</div>Clustering and Dimensionality Reduction</div></div>
+<div class="sc"><div class="two"><span class="d">0.61</span><span class="m">Hinglish topic agreement (NMI, unseen)</span></div><div class="two"><span class="d">0.48</span><span class="m">English topic agreement (NMI, unseen)</span></div></div></div>
 </div>
 <div class="two2">
 <div><h3 class="d">The comparison behind stages 1 to 3</h3><p>For each of these stages we trained three kinds of model on the same data: Naive Bayes, a linear SVM and KNN. Then we compared them fairly. This is the algorithm comparison from the CodeChef Iris project.</p></div>
@@ -434,16 +434,18 @@ var fmtN = function (n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 var reduced = false; try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
 
 var W = [
-{ id: 'W1', title: 'Everyday English complaint', message: 'My order has not arrived yet and nobody is replying to my emails', language: 'English', spam: 'ham', p: '0.02', sentiment: 'negative', theme: 'Requests and calls' },
-{ id: 'W2', title: 'English praise', message: 'Really happy with the service, the delivery was quick and the staff were helpful', language: 'English', spam: 'ham', p: '0.04', sentiment: 'positive', theme: 'Opinions and advice' },
+{ id: 'W1', title: 'Everyday English complaint', message: 'Is the refund processed yet, my card was charged twice', language: 'English', spam: 'ham', p: '0.03', sentiment: 'negative', theme: 'Bank accounts and cards' },
+{ id: 'W2', title: 'English praise', message: 'Really happy with the service, the delivery was quick and the staff were helpful', language: 'English', spam: 'ham', p: '0.04', sentiment: 'positive', theme: 'Product reviews (gadgets and software)' },
 { id: 'W3', title: 'English spam', message: 'Congratulations! You have won a free prize, call 09061701461 now to claim', language: 'English', spam: 'spam', p: '1.0' },
 { id: 'W4', title: 'Spam with spaced-out letters', message: 'Congratulations!  You  h a v e  won  a  f r e e  prize,  c a l l  09061701461  now  to  c l a i m', language: 'English', spam: 'spam', p: '1.0' },
-{ id: 'W5', title: 'Hinglish negative comment', message: 'ye film bilkul bekar thi, paisa barbad ho gaya', language: 'Hinglish', spam: 'ham', p: '0.0', sentiment: 'negative', theme: 'General fan comments' },
-{ id: 'W6', title: 'Hinglish positive comment', message: 'salman bhai ki nayi film ka trailer bahut zabardast hai, eid par dekhne jayenge', language: 'Hinglish', spam: 'ham', p: '0.0', sentiment: 'positive', theme: 'Film and festival buzz' },
+{ id: 'W5', title: 'Hinglish negative comment', message: 'ye film bilkul bekar thi, paisa barbad ho gaya', language: 'Hinglish', spam: 'ham', p: '0.0', sentiment: 'negative', theme: 'Open social-media comments (politics, opinions)' },
+{ id: 'W6', title: 'Hinglish positive comment', message: 'salman bhai ki nayi film ka trailer bahut zabardast hai, eid par dekhne jayenge', language: 'Hinglish', spam: 'ham', p: '0.0', sentiment: 'positive', theme: 'Film fan comments (Salman Khan)' },
 { id: 'W7', title: 'Hinglish scam', message: 'Dost PM Awas Yojana mein tera naam hai - 2.5 lakh ki subsidy ke liye register kar aaj.', language: 'Hinglish', spam: 'spam', p: '0.56' },
 { id: 'W8', title: 'Hindi in Devanagari', message: 'यह फ़ोन बहुत अच्छा है', language: 'Hindi', spam: 'none' },
 { id: 'W9', title: 'German', message: 'Der Film war wirklich gut, ich habe ihn sehr genossen', language: 'German', spam: 'none' },
-{ id: 'W10', title: 'Unclear language, sent to review', message: 'Merci beaucoup pour votre aide, a bientot', language: 'Uncertain', spam: 'none' }
+{ id: 'W10', title: 'Unclear language, sent to review', message: 'Merci beaucoup pour votre aide, a bientot', language: 'Uncertain', spam: 'none' },
+{ id: 'W11', title: 'Hinglish product complaint', message: 'powerbank me battery bohot kam hai', language: 'Hinglish', spam: 'ham', p: '0.0', sentiment: 'neutral', theme: 'Everyday comments (food, health, gadgets)' },
+{ id: 'W12', title: 'Topic the model never saw', message: 'I have a headache, should I see a doctor', language: 'English', spam: 'ham', p: '0.0', sentiment: 'negative', theme: 'No clear theme' }
 ];
 var CMP = {
 lang: [['UN texts (other languages)', 'accuracy %', 99.8, 98.8, 97.1], ['Informal English (SMS incl. spam)', 'accuracy %', 100.0, 99.8, 98.2], ['English tweets (unfiltered; some are not English)', 'accuracy %', 97.8, 97.5, 94.5], ['Real Hinglish (HingLID test)', 'accuracy %', 97.2, 97.5, 96.8], ['Hand-written Hinglish (OOD)', 'accuracy %', 100.0, 100.0, 93.6]],
@@ -472,7 +474,7 @@ S.push({ name: 'Sentiment', res: 'Skipped', skip: 1, why: 'Spam is removed befor
 S.push({ name: 'Theme', res: 'Skipped', skip: 1, why: 'Spam is removed before grouping.' });
 } else {
 S.push({ name: 'Sentiment', res: c.sentiment, why: c.language === 'Hinglish' ? 'Hinglish model: negative, neutral or positive.' : 'English model: positive or negative.' });
-S.push({ name: 'Theme', res: c.theme, why: 'Closest of 6 themes learned for ' + c.language + ' messages.' });
+S.push({ name: 'Theme', res: c.theme, why: c.theme === 'No clear theme' ? 'Too far from every theme learned for ' + c.language + ' messages, so none is named.' : 'Closest of 20 themes learned for ' + c.language + ' messages.' });
 }
 }
 return S;

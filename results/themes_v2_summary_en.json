@@ -15,9 +15,32 @@
     "prototype60": 0.8152974358974359
   },
   "reject_score_chosen": "prototype30",
-  "reject_threshold": 0.8233075631319259,
-  "in_topic_accepted": 0.9494230769230769,
-  "out_of_topic_rejected": 0.336,
+  "operating_points_by_calibration_quantile": {
+    "0.8": {
+      "threshold": 0.6808596614436837,
+      "in_topic_accepted": 0.7813461538461538,
+      "out_of_topic_rejected": 0.751
+    },
+    "0.9": {
+      "threshold": 0.7575391618547491,
+      "in_topic_accepted": 0.8919230769230769,
+      "out_of_topic_rejected": 0.546
+    },
+    "0.95": {
+      "threshold": 0.823437029159673,
+      "in_topic_accepted": 0.9494230769230769,
+      "out_of_topic_rejected": 0.336
+    },
+    "0.98": {
+      "threshold": 0.8802513802811848,
+      "in_topic_accepted": 0.979423076923077,
+      "out_of_topic_rejected": 0.181
+    }
+  },
+  "reject_threshold": 0.7575391618547491,
+  "calibration_quantile": 0.9,
+  "in_topic_accepted": 0.8919230769230769,
+  "out_of_topic_rejected": 0.546,
   "n_ood_test": 1000,
   "n_ood_validation": 200,
   "AUROC_test": {

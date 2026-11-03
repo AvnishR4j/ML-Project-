@@ -5,7 +5,7 @@ Reads a short message in **English, Hindi or Hinglish** (Hindi typed in English 
 
 ```
 message -> [1 language ID, with a reject option] -> [2 spam filter, per-language threshold]
-        -> [3 sentiment: English | Hinglish]     -> [4 theme: word2vec + K-Means, English | Hinglish]
+        -> [3 sentiment: English | Hinglish]     -> [4 theme: word2vec + K-Means with a no-clear-theme option, English | Hinglish]
 ```
 
 Combines five CodeChef ML project ideas: Language Detection System, Email Spam Classifier, Movie Review Sentiment Analyzer,
@@ -21,7 +21,7 @@ Clustering and Dimensionality Reduction, and the KNN / SVM / Naive Bayes compari
 | Sentiment, Hinglish (3 classes) | macro-F1 **0.694** (95% CI 0.658 to 0.729); majority baseline 0.223 |
 
 > **Update.** The deployed Hinglish sentiment model is now retrained with 120 hand-written everyday sentences (`data/hinglish_sentiment_seed.csv`, `src/final_sentiment_hi.py`, results in `results/sentiment_hinglish_seed.json`) because the IIIT-H comments are mostly about films and missed everyday feeling words (e.g. "dil bekar hai" was predicted positive). IIIT-H test macro-F1 moves 0.694 to 0.675 (inside the CI); 20 fresh everyday sentences go from 70% to 95% (small, author-written, so optimistic). The tables below describe the IIIT-H-only models; the end-to-end numbers were not re-run.
-| Themes | word2vec + K-Means is the most stable representation on both corpora |
+| Themes | word2vec (SIF) + K-Means, 20 themes per language, scored on held-out topic labels (NMI 0.48 English, 0.61 Hinglish, up from about 0.10) |
 | Full pipeline | 3,921 real held-out messages, 63 messages per second on one CPU core |
 
 ## Run it
@@ -193,41 +193,100 @@ Zero-shot spam transfer (XLM-R trained on English SMS only, threshold 0.5, 101-l
 
 It ranks Hinglish scams well (AUC 0.977) but at the default threshold catches few (16%), the same calibration problem seen with the classical model; the per-language threshold fix was not applied here. The scores in `results/transformer_*.csv` were copied from the Colab output tables (the per-seed file was not saved).
 
-### 4. Themes
-Representations compared by silhouette, stability under resampling (ARI), topic coherence (NPMI) and agreement with a label the clustering never saw (mean over k = 4 to 12):
+### 4. Themes (v2)
+**Why it was rebuilt.** The first version (6 clusters, English SMS only and Hinglish comments about one actor only) forced every message into one of those groups, so a Hinglish complaint about a power bank was filed under "General fan comments". Scored against topic labels it never saw, it was barely better than chance.
 
-| corpus                       | method           |   silhouette |   stability_ARI |   coherence_NPMI |   NMI vs held-out label |
-|:-----------------------------|:-----------------|-------------:|----------------:|-----------------:|------------------------:|
-| English SMS (genuine + spam) | NMF topics       |      nan     |           0.561 |            0.013 |                   0.133 |
-| English SMS (genuine + spam) | tfidf+SVD+KMeans |        0.074 |           0.5   |            0.026 |                   0.214 |
-| English SMS (genuine + spam) | word2vec+KMeans  |        0.077 |           0.786 |            0.073 |                   0.252 |
-| Hinglish (IIIT-H comments)   | NMF topics       |      nan     |           0.479 |           -0.153 |                   0.042 |
-| Hinglish (IIIT-H comments)   | tfidf+SVD+KMeans |        0.082 |           0.556 |           -0.173 |                   0.045 |
-| Hinglish (IIIT-H comments)   | word2vec+KMeans  |        0.05  |           0.729 |           -0.069 |                   0.089 |
+**How it is measured.** Clustering has no answer key, so we score it on *held-out messages that carry a topic label the clustering never sees*: each held-out message is assigned to its nearest cluster, then compared with its label using NMI (0 = chance, 1 = perfect), ARI and purity. English labels: the 9 CLINC150 domains, BANKING77, product reviews, movie reviews, tweets and SMS (13 topics, 5,200 messages). Hinglish labels: the 8 Hinglish-TOP domains, film-fan comments, Hinglish tweets and 10 everyday topics written by us (20 topics, 3,220 messages).
 
-Deployed: word2vec trained on in-domain text (IDF-weighted average) + K-Means, k = 6.
+| language | model | clusters | NMI | ARI | purity |
+|:--|:--|--:|--:|--:|--:|
+| English | v1 (SMS only) | 6 | 0.104 | 0.040 | 0.183 |
+| English | **v2 (deployed)** | 20 | **0.476** | 0.331 | 0.607 |
+| Hinglish | v1 (comments only) | 6 | 0.095 | 0.016 | 0.175 |
+| Hinglish | **v2 (deployed)** | 20 | **0.612** | 0.507 | 0.717 |
 
-English themes (genuine SMS):
+**Choices made by measurement** (`src/exp_themes2.py`, `results/themes_v2_selection_*.csv`): word2vec averages beat TF-IDF plus SVD by a wide margin (English NMI about 0.45 against 0.15 at k = 16 to 20); the smooth-inverse-frequency average with the common component removed (SIF) was equal or slightly better than the IDF average; NMI stops improving around 16 to 24 clusters, so k = 20 was used for both languages (best stability among the plateau). `themes_v2_selection_hi.csv` is the first Hinglish sweep (before the extra everyday messages and tweets were added); `themes_v2_selection_hi_w2v-SIF.csv` repeats it on the final training pool (NMI 0.59 to 0.61 for k = 16 to 24). The sweep used the held-out set, so the final NMI is slightly optimistic; the differences between k = 16 and 24 are within about 0.02.
 
-|   cluster |   size | top_terms                               |
-|----------:|-------:|:----------------------------------------|
-|         0 |    686 | lor, wat, ok, wan, dun, thk             |
-|         1 |   1267 | i'm, yeah, i'll, want, you're, gonna    |
-|         2 |    816 | like, life, does, that's, world, people |
-|         3 |    768 | send, pls, number, dont, ur, hi         |
-|         4 |    763 | good, love, day, dear, great, hope      |
-|         5 |    199 | gt, lt, min, decimal, mins, rs          |
+**Training data.** English: CLINC150 (Larson et al., 2019), BANKING77 (Casanueva et al., 2020), Hu and Liu product reviews, Rotten Tomatoes sentences, TweetEval tweets, genuine UCI SMS, at most 1,500 messages per topic. Hinglish: Hinglish-TOP (Agarwal et al., 2022, human-written), IIIT-H comments, L3Cube-HingLID tweets and 540 everyday messages written by us (10 topics x 54; 60 % used for training, repeated 5 times because they are few; 40 % held out). **No public Hinglish dataset covers products, food, delivery, banking or health in everyday messages**, so those topics rest on our own small set and are the least reliable part.
 
-Hinglish themes (real comments):
+**"No clear theme" option.** A message with no known words, or farther from every learned topic than a calibrated cut-off, is not forced into a cluster. The distance is measured to many small prototypes (a local-density score chosen on a validation set). The cut-off is calibrated on held-out in-topic messages (each topic weighted equally) and the rejection rate is measured on messages from topics the model never saw: CLINC150 out-of-scope queries (1,000) for English and 40 messages we wrote on astronomy, animals, gardening, history, science, philosophy, nature and maths for Hinglish. The deployed operating point accepts about 90 % of in-topic messages.
 
-|   cluster |   size | top_terms                                      |
-|----------:|-------:|:-----------------------------------------------|
-|         0 |    252 | jai, bharat, pm, hind, jay, bihar              |
-|         1 |    343 | baj, gaye, gye, jao, jaldi, aao                |
-|         2 |   1203 | musalman, sale, tere, teri, mat, muslim        |
-|         3 |    311 | love, ur, luv, yes, gud, uuuu                  |
-|         4 |   1026 | plz, reply, apka, wait, fan, meri              |
-|         5 |    741 | bhaijaan, khan, sallu, bajrangi, jaan, bhaijan |
+English (AUROC 0.84):
+
+| in-topic messages accepted | off-topic messages rejected |
+|--:|--:|
+| 78.1% | 75.1% |
+| 89.2% | 54.6% |
+| 94.9% | 33.6% |
+| 97.9% | 18.1% |
+
+Hinglish (AUROC 0.81, only 40 off-topic messages):
+
+| in-topic messages accepted | off-topic messages rejected |
+|--:|--:|
+| 94.0% | 10.0% |
+| 97.0% | 5.0% |
+| 97.7% | 2.5% |
+| 98.3% | 2.5% |
+
+**Honest reading:** the check helps in English (it catches about half of off-topic messages at a cost of about 10 % of in-topic ones) but it is **almost useless in Hinglish**, where unfamiliar topics are not far from the everyday cluster. Treat "No clear theme" as a safety net, not a guarantee.
+
+**Other limits.**
+- The topic labels are the datasets' own groupings. CLINC150 domains mix unrelated requests (for example "home" holds music, calendar and shopping lists), so NMI cannot reach 1 even for a perfect topic model; several clusters follow meaning better than the labels do.
+- Some English clusters are mixed and named accordingly (for example cluster 0 mixes card problems, lost luggage and package tracking). A message about a topic that is not in the training data can still land in a wrong cluster: "photosynthesis converts sunlight into energy" is filed under movies.
+- The Hinglish test set for everyday topics is small (220 messages, written by us, with training and test messages from the same author), so its scores are optimistic.
+- Cluster names are written by reading top terms and nearest messages; the clusters are unsupervised.
+
+English themes (20):
+
+| cluster | name (written by us) | size | top terms | main topics inside |
+|--:|:--|--:|:--|:--|
+| 0 | Cards, lost items and status checks | 921 | phone, card, help, luggage, lost, credit | banking_cards 30%; travel 13%; work_pay 13% |
+| 1 | Yes/no answers and chit-chat | 1116 | say, ai, person, answer, know, yes | small_talk 41%; meta_assistant 28%; sms_chat 9% |
+| 2 | Travel rules, visas and plugs | 539 | travel, visa, need, shots, alerts, plug | travel 82%; banking_cards 8%; auto_commute 2% |
+| 3 | Coin flips, dice, calls and texts | 648 | roll, dice, coin, text, flip, talk | utility_time 53%; meta_assistant 25%; home_assistant 6% |
+| 4 | Shopping lists and reminders | 497 | list, shopping, add, reminders, reminder, todo | home_assistant 92%; kitchen_dining 4%; small_talk 1% |
+| 5 | Casual chat (SMS style) | 1384 | i'm, ok, tomorrow, come, got, gt | sms_chat 62%; tweets 17%; small_talk 5% |
+| 6 | Car care and maintenance | 791 | oil, change, tires, date, changed, car | auto_commute 54%; work_pay 19%; utility_time 7% |
+| 7 | Product reviews (gadgets and software) | 1254 | camera, player, great, ipod, 's, quality | product_reviews 79%; sms_chat 6%; movie_reviews 6% |
+| 8 | Bank accounts and cards | 956 | account, card, transfer, money, payment, cash | banking_cards 84%; work_pay 8%; home_assistant 2% |
+| 9 | Calendar and booking flights | 793 | calendar, meeting, march, schedule, th, meetings | travel 36%; work_pay 27%; home_assistant 23% |
+| 10 | Tweets about events and days | 1063 | th, tomorrow, day, night, sunday, friday | tweets 80%; sms_chat 8%; movie_reviews 4% |
+| 11 | Movies and film opinions | 1642 | movie, film, it's, story, comedy, director | movie_reviews 72%; tweets 10%; product_reviews 8% |
+| 12 | Car, time-zone and money questions | 859 | car, gas, timezone, taxes, what's, pay | auto_commute 48%; utility_time 17%; work_pay 17% |
+| 13 | Food, recipes and calories | 907 | calories, carry, long, ingredients, dollars, spell | kitchen_dining 52%; travel 19%; utility_time 17% |
+| 14 | Assistant settings (voice, volume, alarms) | 818 | set, settings, timer, whisper, volume, alarm | meta_assistant 56%; utility_time 18%; home_assistant 9% |
+| 15 | Music and playlists | 363 | song, playlist, play, add, playing, skip | home_assistant 93%; meta_assistant 2%; tweets 1% |
+| 16 | Restaurant reservations and rides | 938 | reservation, pm, reservations, uber, cancel, traffic | kitchen_dining 57%; auto_commute 30%; utility_time 3% |
+| 17 | Insurance, location and the assistant itself | 664 | insurance, location, plan, current, change, tell | work_pay 25%; meta_assistant 23%; small_talk 19% |
+| 18 | Work leave and vacation days | 548 | vacation, days, request, pto, day, taken | work_pay 64%; utility_time 9%; kitchen_dining 8% |
+| 19 | Fun facts, jokes and the meaning of life | 849 | meaning, tell, life, things, pets, fun | small_talk 53%; kitchen_dining 18%; utility_time 11% |
+
+Hinglish themes (20):
+
+| cluster | name (written by us) | size | top terms | main topics inside |
+|--:|:--|--:|:--|:--|
+| 0 | Traffic and route questions | 266 | traffic, kaisa, kitni, highway, abhi, drive | top_navigation 92%; top_weather 3%; travel 2% |
+| 1 | Messages and texts to send | 246 | message, text, bhejo, video, chat, bolo | top_messaging 86%; top_music 3%; hinglish_tweets 3% |
+| 2 | Phone, bank and order problems | 507 | karna, gaya, phone, aaya, card, bank | banking 26%; delivery 20%; gadgets 13% |
+| 3 | Setting alarms | 450 | alarm, set, pm, karen, snooze, minutes | top_alarm 90%; top_reminder 6%; weather_daily 3% |
+| 4 | Sports and match talk | 260 | match, team, jeet, medal, saath, final | sports 51%; hinglish_tweets 26%; top_weather 5% |
+| 5 | Open social-media comments (politics, opinions) | 1210 | modi, apna, party, rhe, itna, di | hinglish_tweets 57%; film_fan_comments 36%; social 2% |
+| 6 | Checking or deleting alarms and reminders | 227 | alarms, reminders, sabhi, kardo, saarey, dikhao | top_alarm 66%; top_reminder 31%; top_timer 3% |
+| 7 | Music and songs | 392 | song, play, music, bajao, skip, track | top_music 94%; top_timer 3%; top_messaging 1% |
+| 8 | Timers | 368 | timer, minutes, set, shuru, karen, add | top_timer 94%; top_alarm 4%; weather_daily 2% |
+| 9 | Alarms for tomorrow morning | 250 | baje, subah, alarm, set, bajhe, kal | top_alarm 47%; weather_daily 19%; top_reminder 7% |
+| 10 | Reminders and appointments | 426 | yaad, reminder, dilaye, remind, appointment, karaye | top_reminder 86%; weather_daily 6%; top_alarm 2% |
+| 11 | How long will it take (travel time) | 180 | kitna, bacha, lagega, samay, timer, drive | top_navigation 38%; top_timer 32%; banking 10% |
+| 12 | Casual tweets and chat | 400 | happy, body, just, pain, pucho, don | hinglish_tweets 54%; top_messaging 14%; film_fan_comments 14% |
+| 13 | Leaving times and everyday plans | 403 | kab, chahiye, jaana, college, umbrella, karni | top_navigation 23%; top_weather 15%; study_work 15% |
+| 14 | Health, injuries and daily life | 408 | gayi, rahi, gaya, chal, lag, bike | social 16%; gadgets 12%; travel 12% |
+| 15 | Weather and rain tonight | 384 | hone, aj, raat, baarish, wali, wala | top_weather 71%; top_event 7%; top_navigation 4% |
+| 16 | Film fan comments (Salman Khan) | 515 | salman, khan, bhaijaan, sallu, bajrangi, plz | film_fan_comments 94%; hinglish_tweets 6%; top_music 0% |
+| 17 | Everyday comments (food, health, gadgets) | 366 | bahut, zyada, tez, thanda, bheed, ekdum | food 26%; health 13%; gadgets 11% |
+| 18 | Weekend events | 289 | weekend, events, concerts, mei, new, york | top_event 64%; top_weather 19%; top_navigation 13% |
+| 19 | Weather and temperature | 300 | weather, mausam, kaisa, temperature, forecast, rahega | top_weather 91%; weather_daily 6%; top_navigation 1% |
+
 
 ### 5. End-to-end evaluation
 A mixed stream of **3,921 real held-out messages** (no model saw any of them) from seven sources. Language: answered **96.3%** of messages, **99.1%** correct when answered.
@@ -269,6 +328,8 @@ Genuine-vs-spam labels for the large stream above (tweets and comments) are assu
 | Language, spam, themes | UCI SMS Spam Collection | English |
 | Sentiment (Hinglish) | IIIT-H Hindi-English code-mixed corpus (Prabhu et al., 2016) | 3,876 comments after de-duplication |
 | Sentiment (English) | NLTK twitter_samples, sentence_polarity, movie_reviews | tweet labels come from emoticons (removed from the text) |
+| Themes (English) | CLINC150 (CC BY 3.0, Larson et al., 2019); BANKING77 (CC BY 4.0, Casanueva et al., 2020); Hu and Liu product reviews; Rotten Tomatoes sentences; TweetEval tweets | topic labels used for evaluation only |
+| Themes (Hinglish) | Hinglish-TOP (Apache 2.0, Agarwal et al., 2022); 540 everyday messages and 64 off-topic messages written by us (`data/hinglish_topics_*.csv`) | small, author-written |
 | Spam transfer test | github.com/gupta7050/multilingual-phishing-detection | 5,000 rows per file but only ~101 unique lines, de-duplicated; used for testing only |
 
 ## Limitations (read before quoting numbers)
@@ -277,7 +338,7 @@ Genuine-vs-spam labels for the large stream above (tweets and comments) are assu
 - Sentiment still misreads some negation (for example not boring), sarcasm and mixed opinions; it is a bag-of-words model with a negation patch.
 - Hindi in Devanagari is detected but not spam-checked, scored for sentiment or grouped into themes.
 - Hinglish sentiment labels are noisy and from one domain (mostly comments on videos and political posts); expect lower scores elsewhere.
-- Themes are unsupervised: cluster names are read from top terms and examples, not ground truth.
+- Themes are unsupervised: cluster names are read from top terms and examples, not ground truth. The "no clear theme" check works for English but barely for Hinglish (see section 4).
 - The language model covers 17 classes; other languages are forced into the nearest class or rejected.
 - Transformer scores were copied by hand from the Colab output; the transformers are not part of the deployed pipeline (the classical model is within 0.03 macro-F1 and runs on a CPU in seconds).
 - The 250-message labelled set has machine-assigned labels; independent human verification is still pending.
