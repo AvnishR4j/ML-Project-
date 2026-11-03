@@ -90,6 +90,7 @@ clip-path:polygon(3% 0,97% 4%,100% 50%,97% 100%,4% 96%,0 52%)}
 /* circled marker "stamps" */
 .stamp{display:inline-block;font-size:17px;padding:4px 14px;border:2.5px solid;border-radius:var(--wob);white-space:nowrap;opacity:0;transform:rotate(-8deg) scale(1.6);transition:opacity .3s,transform .4s cubic-bezier(.3,1.6,.5,1)}
 .stamp.show{opacity:1;transform:rotate(-3deg) scale(1)}
+#h-msg,#h-rows,#h-ct{transition:opacity .35s ease}.hfade{opacity:0}
 .stamp.ink{color:var(--blue)}.stamp.ok{color:var(--green)}.stamp.bad{color:var(--red)}.stamp.skip{color:#8a8070;border-style:dashed;text-decoration:line-through}
 .dots{display:flex;gap:8px;margin-top:26px;justify-content:center}.dots i{display:block;width:10px;height:10px;border:2px solid var(--pencil);border-radius:50% 45% 55% 40%;transition:all .3s}.dots i.on{background:var(--red);border-color:var(--red);transform:scale(1.2)}
 /* ---------- sections */
@@ -526,7 +527,9 @@ $('h-dots').innerHTML = HERO.map(function (h, k) { return '<i class="' + (k === 
 }
 function heroStep() {
 var cyc = 10, i = Math.floor(hTick / cyc) % HERO.length, t = hTick % cyc;
-if (i !== hIdx) { hIdx = i; heroBuild(i); }
+var fade = function (on) { ['h-msg', 'h-rows', 'h-ct'].forEach(function (id) { $(id).classList.toggle('hfade', on); }); };
+if (i !== hIdx) { hIdx = i; heroBuild(i); if (hTick > 0) requestAnimationFrame(function () { fade(false); }); }
+if (t === cyc - 1) fade(true);        // fade the note out before the next message is swapped in, so it never blinks
 var st = $('h-rows').querySelectorAll('.stamp');
 for (var k = 0; k < st.length; k++) st[k].classList.toggle('show', k < Math.min(4, t));
 hTick++;
@@ -857,7 +860,14 @@ setTimeout(function () { ids.forEach(reveal); }, 9000);
 }
 
 renderChips('W1'); showWalk(W[0]); renderTabs(); renderCmp(); renderTrf(); renderLens(); renderDb(); renderFilters();
-if (!reduced) { heroStep(); setInterval(heroStep, 650); } else { hTick = 6; heroStep(); }
+if (!reduced) {
+heroStep(); var hTimer = setInterval(heroStep, 650);
+// Browsers slow timers in background tabs; stop the loop while hidden and resume where it was, so nothing jumps or blanks on return.
+document.addEventListener('visibilitychange', function () {
+if (document.hidden) { clearInterval(hTimer); hTimer = null; }
+else if (!hTimer) { hTimer = setInterval(heroStep, 650); }
+});
+} else { hTick = 6; heroStep(); }
 loadRows();
 })();
 </script>
