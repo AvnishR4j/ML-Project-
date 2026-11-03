@@ -134,6 +134,31 @@
   var shots = [];                                   // per page: { cv: canvas, dirty: bool, busy: promise, gen: n }
   PG.forEach(function (p, i) { shots[i] = { cv: null, dirty: true, busy: null, gen: 0 }; });
   function sideOf(i) { return i === 0 ? 'R' : (i % 2 ? 'L' : 'R'); }
+  // the fonts are put into every page picture from one prepared stylesheet (only the Latin letters the pictures need),
+  // instead of being collected and encoded again for each picture; this is most of a picture's cost in Safari
+  var FONTCSS = (function () {
+    var files = ['kalam-latin-400-normal', 'kalam-latin-700-normal', 'caveat-latin-500-normal', 'caveat-latin-600-normal', 'caveat-latin-700-normal', 'permanent-marker-latin-400-normal'];
+    var fam = { kalam: 'Kalam', caveat: 'Caveat', permanent: 'Permanent Marker' };
+    return Promise.all(files.map(function (f) {
+      return fetch('fonts/' + f + '.woff2').then(function (r) { return r.blob(); }).then(function (b) {
+        return new Promise(function (res) { var fr = new FileReader(); fr.onload = function () { res("@font-face{font-family:'" + fam[f.split('-')[0]] + "';font-style:normal;font-weight:" + f.match(/-(\d+)-normal/)[1] + ";src:url(" + fr.result + ") format('woff2')}"); }; fr.readAsDataURL(b); });
+      });
+    })).then(function (l) { return l.join(''); }, function () { return null; });
+  })();
+  // a plain sheet of paper, used only if a page has not been photographed yet, so a turn never has to wait
+  var plain = {};
+  function plainPage(i) {
+    var key = i === 0 ? 'cover' : 'paper'; if (plain[key]) return plain[key];
+    var c = document.createElement('canvas'); c.width = Math.round(PW * SCALE); c.height = Math.round(PH * SCALE);
+    var g = c.getContext('2d'); g.scale(SCALE, SCALE);
+    if (i === 0) { g.fillStyle = '#27403a'; g.fillRect(0, 0, PW, PH); g.strokeStyle = 'rgba(224,190,110,.55)'; g.setLineDash([6, 5]); g.lineWidth = 2; g.strokeRect(16, 16, PW - 32, PH - 32); }
+    else {
+      g.fillStyle = '#f3e8cb'; g.fillRect(0, 0, PW, PH);
+      g.fillStyle = 'rgba(74,112,186,.28)'; for (var y = 87; y < PH; y += 32) g.fillRect(0, y, PW, 1);
+      g.fillStyle = 'rgba(205,60,60,.5)'; g.fillRect(46, 0, 2, PH); g.fillStyle = 'rgba(205,60,60,.4)'; g.fillRect(52, 0, 1, PH);
+    }
+    c._plain = true; return (plain[key] = c);
+  }
   function snap(i) {
     var sh = shots[i];
     if (sh.busy) return sh.busy;
@@ -144,12 +169,14 @@
     var heldHere = false;
     if (i === 0 && window.__heroHold) { if (s === 0 && !anim) { window.__heroHold(true); heldHere = true; } sh.tickNext = window.__heroAt(); }
     var tS = performance.now();
-    sh.busy = MS.domToCanvas(p, {
+    sh.busy = FONTCSS.then(function (fcss) { return MS.domToCanvas(p, {
       width: PW, height: PH, scale: SCALE, backgroundColor: null,
       style: { left: '0px', top: '0px', position: 'static', visibility: 'visible', transform: 'none' },
       filter: function (n) { return !(n.tagName === 'TR' && n.parentNode && n.parentNode.tagName === 'TBODY' && n.sectionRowIndex > 30); },
-      features: { restoreScrollPosition: true, copyScrollbar: false }, timeout: 8000
-    }).then(function (cv) {
+      font: fcss ? false : undefined,
+      onCreateForeignObjectSvg: fcss ? function (svg) { var st = document.createElementNS('http://www.w3.org/2000/svg', 'style'); st.textContent = fcss; svg.insertBefore(st, svg.firstChild); } : null,
+      features: { restoreScrollPosition: true, copyScrollbar: false, fixSvgXmlDecode: false }, timeout: 8000
+    }); }).then(function (cv) {
       // a browser that cannot draw the page into a picture returns an empty one; treat that as a failure so the plain flip is used instead
       var g = cv.getContext('2d'), seen = 0;
       [[0.5, 0.1], [0.5, 0.5], [0.5, 0.9], [0.1, 0.5], [0.9, 0.5]].forEach(function (q) { if (g.getImageData(Math.floor(cv.width * q[0]), Math.floor(cv.height * q[1]), 1, 1).data[3] > 0) seen++; });
@@ -168,11 +195,11 @@
   var shown = [];
   function isShown(p) { return shown.indexOf(p) >= 0; }
   // a turn never waits for a new picture: if the page has one (even slightly old) it is used at once
-  function ready(i) { var sh = shots[i]; return sh.cv ? Promise.resolve(sh.cv) : (sh.busy || snap(i)); }
+  function ready(i) { var sh = shots[i]; return Promise.resolve(sh.cv || plainPage(i)); }
   // pictures are only taken while the reader is not touching anything, one at a time with a pause between them
   var lastActive = 0;
   ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (t) { document.addEventListener(t, function () { lastActive = performance.now(); }, { passive: true, capture: true }); });
-  function quiet() { return !anim && !drag && performance.now() - lastActive > 1200; }
+  function quiet(first) { return !anim && !drag && performance.now() - lastActive > (first ? 250 : 1200); }
   // keep photographs fresh: any change inside a page marks it stale, and stale pages near the open spread are re-shot when the browser is idle
   var idle = window.requestIdleCallback || function (f) { return setTimeout(function () { f({ timeRemaining: function () { return 8; } }); }, 120); };
   var queued = false;
@@ -180,7 +207,8 @@
   function pumpShots() {
     if (queued) return; queued = true;
     idle(function () {
-      queued = false; if (!quiet()) { setTimeout(pumpShots, 600); return; }
+      var missing = shots.some(function (x) { return !x.cv; });
+      queued = false; if (!quiet(missing)) { setTimeout(pumpShots, missing ? 250 : 600); return; }
       var list = nearby().concat(PG.map(function (p, i) { return i; }));
       for (var k = 0; k < list.length; k++) { var i = list[k]; if (i === 0 && s === 0 && shots[0].cv) continue; if ((shots[i].dirty || !shots[i].cv) && !shots[i].busy) { snap(i).then(function () { setTimeout(pumpShots, 400); }, function () { setTimeout(pumpShots, 400); }); return; } }
       preUpload();
@@ -243,7 +271,8 @@
   }
   var texc = {};                                    // page index -> GPU texture of its current photograph
   function texFor(i) {
-    var sh = shots[i]; if (!sh.cv) return null;
+    var sh = shots[i];
+    if (!sh.cv) { var pc = plainPage(i), k = 'p' + (i === 0 ? 'c' : 'p'); if (!texc[k]) { texc[k] = { t: gl.createTexture(), cv: null }; } if (texc[k].cv !== pc) { upload(texc[k].t, pc); texc[k].cv = pc; } return texc[k].t; }
     var e = texc[i]; if (e && e.cv === sh.cv) return e.t;
     if (!e) e = texc[i] = { t: gl.createTexture(), cv: null };
     upload(e.t, sh.cv); e.cv = sh.cv; return e.t;
@@ -251,7 +280,7 @@
   function preUpload() {
     if (!initGL() || anim) return;
     [2 * s, 2 * s + 1, 2 * s - 2, 2 * s - 1].forEach(function (i) { if (i >= 0 && i < PG.length && shots[i].cv && !shots[i].dirty) texFor(i); });
-    var keep = nearby(); Object.keys(texc).forEach(function (k) { if (keep.indexOf(+k) < 0) { gl.deleteTexture(texc[k].t); delete texc[k]; } });
+    var keep = nearby(); Object.keys(texc).forEach(function (k) { if (k.charAt(0) !== 'p' && keep.indexOf(+k) < 0) { gl.deleteTexture(texc[k].t); delete texc[k]; } });
   }
   var VW = 0, VH = 0;
   function sizeGL() {
@@ -441,7 +470,7 @@
   modes.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; bk.setAttribute('data-demo', b.dataset.m); qa('button', modes).forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); }); });
   // choosing a file or the sample switches the demo page to the file view
   ['b-file', 'b-sample', 'b-go'].forEach(function (id) { var n = $(id); if (n) n.addEventListener('click', function () { bk.setAttribute('data-demo', 'file'); qa('button', modes).forEach(function (x) { x.setAttribute('aria-pressed', String(x.dataset.m === 'file')); }); }, true); });
-  window.addEventListener('resize', function () { size(); if (anim) { endTurn(false); } setV(s); shots.forEach(function (x) { x.dirty = true; }); pumpShots(); });
+  window.addEventListener('resize', function () { plain = {}; size(); if (anim) { endTurn(false); } setV(s); shots.forEach(function (x) { x.dirty = true; }); pumpShots(); });
   window.addEventListener('hashchange', function () { var i = SLUG.indexOf(location.hash.slice(1)); if (i >= 0) goTo(i); });
 
 
