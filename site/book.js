@@ -73,10 +73,20 @@
 
   // ---------------------------------------------------------------- size
   var PW = 600, PH = 760;
+  // the cover's contents are scaled to fit its height (measured, so it holds for any font or window size)
+  function fitCover() {
+    var inn = cover._in, off = cover.classList.contains('off');
+    if (off) { cover.classList.remove('off'); cover.style.visibility = 'hidden'; }
+    inn.style.zoom = 1; inn.style.justifyContent = 'flex-start';
+    var h = inn.scrollHeight;
+    inn.style.justifyContent = '';
+    inn.style.zoom = Math.min(1, 0.97 * (PH - 6) / h).toFixed(3);
+    if (off) { cover.classList.add('off'); cover.style.visibility = ''; }
+  }
   function size() {
     var W = innerWidth - 150, H = innerHeight - 96, ratio = 0.8;
     PW = Math.floor(Math.min(W / 2, H * ratio, 820)); PH = Math.floor(PW / ratio);
-    bk.style.setProperty('--pw', PW + 'px'); bk.style.setProperty('--ph', PH + 'px'); var th = Math.floor((PH - 60) / 5 - 7); bk.style.setProperty('--th', th + 'px'); bk.style.setProperty('--tf', Math.min(17, Math.max(12, Math.floor(th / 6.2))) + 'px'); cover._in.style.zoom = Math.min(1, PH / 760);
+    bk.style.setProperty('--pw', PW + 'px'); bk.style.setProperty('--ph', PH + 'px'); var th = Math.floor((PH - 60) / 5 - 7); bk.style.setProperty('--th', th + 'px'); bk.style.setProperty('--tf', Math.min(17, Math.max(12, Math.floor(th / 6.2))) + 'px'); fitCover();
   }
   size();
 
@@ -118,7 +128,7 @@
   // leaf that turns is a lit WebGL mesh bent with the portfolio's own formula (scene.ts, deformPage). Nothing in the
   // page itself is touched while it moves, so the turn costs one small draw call per frame.
   var reduceMotion = false, MS = window.modernScreenshot;
-  var SCALE = Math.min(2, window.devicePixelRatio || 1);
+  var SCALE = Math.min(1.5, window.devicePixelRatio || 1);       // the picture is only seen while it moves; 1.5x keeps it sharp and cheap
 
   // ---- page photographs
   var shots = [];                                   // per page: { cv: canvas, dirty: bool, busy: promise, gen: n }
@@ -131,6 +141,8 @@
     var p = PG[i], wasOff = p.classList.contains('off'), wasInert = p.inert;
     if (wasOff) { p.classList.remove('off'); p.classList.add('snapping', sideOf(i)); }   // laid out off-screen so it can be photographed
     var gen = ++sh.gen; sh.dirty = false;
+    var heldHere = false;
+    if (i === 0 && window.__heroHold) { if (s === 0 && !anim) { window.__heroHold(true); heldHere = true; } sh.tickNext = window.__heroAt(); }
     var tS = performance.now();
     sh.busy = MS.domToCanvas(p, {
       width: PW, height: PH, scale: SCALE, backgroundColor: null,
@@ -144,17 +156,23 @@
       if (!seen) throw new Error('blank page picture');
       if (window.__dbg) console.log('snap', i, cv.width, cv.height);
       if (PERF) PERF.snap(i, performance.now() - tS);
-      if (gen === sh.gen) { sh.cv = cv; sh.tex = null; }
+      if (gen === sh.gen) { sh.cv = cv; sh.tex = null; if (i === 0) sh.tick = sh.tickNext; }
       return cv;
     }).finally(function () {
       sh.busy = null;
+      if (heldHere && s === 0 && !anim && !drag) window.__heroHold(false);
       if (p.classList.contains('snapping')) { p.classList.remove('snapping'); if (!isShown(p)) { p.classList.add('off'); p.inert = true; } }
     });
     return sh.busy;
   }
   var shown = [];
   function isShown(p) { return shown.indexOf(p) >= 0; }
-  function ready(i) { var sh = shots[i]; return sh.cv && !sh.dirty ? Promise.resolve(sh.cv) : (sh.busy && !sh.dirty ? sh.busy : snap(i)); }
+  // a turn never waits for a new picture: if the page has one (even slightly old) it is used at once
+  function ready(i) { var sh = shots[i]; return sh.cv ? Promise.resolve(sh.cv) : (sh.busy || snap(i)); }
+  // pictures are only taken while the reader is not touching anything, one at a time with a pause between them
+  var lastActive = 0;
+  ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (t) { document.addEventListener(t, function () { lastActive = performance.now(); }, { passive: true, capture: true }); });
+  function quiet() { return !anim && !drag && performance.now() - lastActive > 1200; }
   // keep photographs fresh: any change inside a page marks it stale, and stale pages near the open spread are re-shot when the browser is idle
   var idle = window.requestIdleCallback || function (f) { return setTimeout(function () { f({ timeRemaining: function () { return 8; } }); }, 120); };
   var queued = false;
@@ -162,9 +180,9 @@
   function pumpShots() {
     if (queued) return; queued = true;
     idle(function () {
-      queued = false; if (anim) { setTimeout(pumpShots, 300); return; }
+      queued = false; if (!quiet()) { setTimeout(pumpShots, 600); return; }
       var list = nearby().concat(PG.map(function (p, i) { return i; }));
-      for (var k = 0; k < list.length; k++) { var i = list[k]; if (i === 0 && s === 0 && shots[0].cv) continue; if ((shots[i].dirty || !shots[i].cv) && !shots[i].busy) { snap(i).then(pumpShots, function () {}); return; } }
+      for (var k = 0; k < list.length; k++) { var i = list[k]; if (i === 0 && s === 0 && shots[0].cv) continue; if ((shots[i].dirty || !shots[i].cv) && !shots[i].busy) { snap(i).then(function () { setTimeout(pumpShots, 400); }, function () { setTimeout(pumpShots, 400); }); return; } }
       preUpload();
     }, { timeout: 4000 });
   }
@@ -235,7 +253,6 @@
     [2 * s, 2 * s + 1, 2 * s - 2, 2 * s - 1].forEach(function (i) { if (i >= 0 && i < PG.length && shots[i].cv && !shots[i].dirty) texFor(i); });
     var keep = nearby(); Object.keys(texc).forEach(function (k) { if (keep.indexOf(+k) < 0) { gl.deleteTexture(texc[k].t); delete texc[k]; } });
   }
-  function warm() { [2 * s, 2 * s + 1, 2 * s - 2, 2 * s - 1].forEach(function (i) { if (i >= 0 && i < PG.length && (shots[i].dirty || !shots[i].cv) && !shots[i].busy) snap(i).catch(function () {}); }); }
   var VW = 0, VH = 0;
   function sizeGL() {
     VW = innerWidth; VH = innerHeight;
@@ -294,7 +311,7 @@
   // ---- turn lifecycle
   function beginTurn(leaf, forward) {
     var front = PG[2 * leaf], back = PG[2 * leaf + 1];
-    if (leaf === 0 && window.__heroHold) window.__heroHold(true);
+    if (leaf === 0 && window.__heroHold) { window.__heroHold(true); if (forward && shots[0].tick !== undefined) window.__heroAt(shots[0].tick); }
     anim = { leaf: leaf, forward: forward, p: 0, front: front, back: back, ready: false, dead: false, t0: performance.now() };
     var a = anim;
     if (!initGL()) { a.ready = true; a.flat = true; showUnder(a); return; }
@@ -386,7 +403,6 @@
     if (e.target.closest && e.target.closest('.bt2')) { drag = null; return; }
     drag = { x: e.clientX, y: e.clientY, active: false, id: e.pointerId };
     if (s === 0 && window.__heroHold) window.__heroHold(true);
-    warm();
   });
   bk.addEventListener('pointermove', function (e) {
     if (!drag) return;
@@ -412,8 +428,6 @@
     var go = function () { runTo(ok ? 1 : 0, dur); };
     if (anim.ready) go(); else anim.after = go;
   }
-  bk.addEventListener('pointerenter', function () { if (s === 0 && !anim && window.__heroHold) { window.__heroHold(true); } warm(); });
-  bk.addEventListener('pointerleave', function () { if (s === 0 && !anim && !drag && window.__heroHold) window.__heroHold(false); });
   bk.addEventListener('pointerup', release); bk.addEventListener('pointercancel', release);
   document.addEventListener('click', function (e) { if (justDragged) { e.stopPropagation(); e.preventDefault(); } }, true);
   document.addEventListener('keydown', function (e) {
@@ -460,6 +474,6 @@
   var start = Math.max(0, SLUG.indexOf(location.hash.slice(1)));
   s = target = start; showSpread(s); setV(s); opened(s);
   // photograph the pages once the fonts are in, nearest pages first
-  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { setTimeout(pumpShots, 400); });
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { fitCover(); setTimeout(pumpShots, 400); });
   try { reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
 })();

@@ -879,6 +879,12 @@ if (document.hidden) { clearInterval(hTimer); hTimer = null; }
 else if (!hTimer && !hHold) { hTimer = setInterval(heroStep, 650); }
 });
 // the book holds the cover still while it is closed over or being turned, so the photographed cover matches the real one
+// the book photographs the cover at one moment of this loop; __heroAt puts the note back to exactly that moment
+window.__heroAt = function (tick) {
+if (tick === undefined) return hTick - 1;
+hTick = tick; hIdx = -1; heroStep();
+['h-msg', 'h-rows', 'h-ct'].forEach(function (id) { $(id).classList.remove('hfade'); });
+};
 window.__heroHold = function (on) {
 if (on === hHold) return; hHold = on;
 if (on) { clearInterval(hTimer); hTimer = null; ['h-msg', 'h-rows', 'h-ct'].forEach(function (id) { $(id).classList.remove('hfade'); }); }
