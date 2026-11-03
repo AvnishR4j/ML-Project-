@@ -23,7 +23,7 @@
 
   var PG = [];
   // 0 cover
-  var cover = mk('R', 'cover'); put(cover, hero); cover._in.appendChild(el('div', 'cover-foot', 'Avnish Raj &nbsp;·&nbsp; open me'));
+  var cover = mk('R', 'cover'); put(cover, hero); cover._in.appendChild(el('div', 'cover-foot', 'open me'));
   // 1 + 2  Demo (one message, or a whole file)
   var d1 = mk('L'), d2 = mk('R');
   var modes = el('div', 'modes', '<button type="button" data-m="single" aria-pressed="true">One message</button><button type="button" data-m="file" aria-pressed="false">A whole file</button>');
