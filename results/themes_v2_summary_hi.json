@@ -1,32 +1,32 @@
 {
   "language": "hinglish",
-  "k": 16,
-  "n_fit": 5747,
-  "n_calib": 576,
-  "n_test": 2800,
-  "NMI": 0.6129553736325363,
-  "ARI": 0.49352167877303155,
-  "purity": 0.7460714285714286,
+  "k": 20,
+  "n_fit": 7847,
+  "n_calib": 706,
+  "n_test": 3220,
+  "NMI": 0.6122240448365981,
+  "ARI": 0.5065154209888507,
+  "purity": 0.7167701863354037,
   "reject_score_candidates_AUROC_validation": {
-    "centroid": 0.7729311342592593,
-    "centroid_scaled": 0.5923755787037037,
-    "prototype10": 0.7777054398148148,
-    "prototype30": 0.7972366898148148,
-    "prototype60": 0.8022280092592592
+    "centroid": 0.7709513692162417,
+    "centroid_scaled": 0.6909230406043437,
+    "prototype10": 0.7831090651558074,
+    "prototype30": 0.8174575070821529,
+    "prototype60": 0.8251888574126535
   },
   "reject_score_chosen": "prototype60",
-  "reject_threshold": 0.8840154125284309,
-  "in_topic_accepted": 0.9292857142857143,
-  "out_of_topic_rejected": 0.125,
+  "reject_threshold": 0.9487849536913198,
+  "in_topic_accepted": 0.9767080745341615,
+  "out_of_topic_rejected": 0.025,
   "n_ood_test": 40,
   "n_ood_validation": 24,
   "AUROC_test": {
-    "centroid": 0.7481607142857143,
-    "centroid_scaled": 0.5176071428571428,
-    "prototype10": 0.7652767857142857,
-    "prototype30": 0.8045089285714284,
-    "prototype60": 0.8168928571428571
+    "centroid": 0.7581599378881987,
+    "centroid_scaled": 0.6390295031055901,
+    "prototype10": 0.7659161490683231,
+    "prototype30": 0.7944642857142857,
+    "prototype60": 0.8118090062111801
   },
-  "in_topic_accepted_author_written_only": 0.73,
-  "n_author_written_test": 100
+  "in_topic_accepted_author_written_only": 0.9272727272727272,
+  "n_author_written_test": 220
 }

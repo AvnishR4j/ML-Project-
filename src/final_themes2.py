@@ -22,11 +22,17 @@ import themes_data as TD
 
 warnings.filterwarnings("ignore")
 R = ROOT / "results"; SEED = 42
+ACCEPT_Q = 0.90                                   # operating point: accept 90 % of in-topic messages (topics weighted equally)
 SEED_TOPICS = ["gadgets", "food", "delivery", "banking", "travel", "study_work", "health", "sports", "social", "weather_daily"]
 
 
 def purity(y, c):
     df = pd.DataFrame({"y": y, "c": c}); return float(df.groupby("c").y.agg(lambda s: s.value_counts().iloc[0]).sum() / len(df))
+
+
+def wquantile(x, w, q):
+    """quantile with sample weights (here 1/size of the sample's topic, so every topic counts equally)"""
+    o = np.argsort(x); x, w = x[o], w[o]; c = np.cumsum(w) / w.sum(); return float(x[min(np.searchsorted(c, q), len(x) - 1)])
 
 
 def dist_to_nearest(km, Z):
@@ -79,7 +85,13 @@ def main(which, K):
     S_cal, k_cal, _ = scores(cal.text.tolist()); S_ev, k_ev, _ = scores(ev.text.tolist()); S_ov, k_ov, _ = scores(ood_val.text.tolist()); S_ot, k_ot, _ = scores(ood_test.text.tolist())
     aur = {m: float(roc_auc_score(np.r_[np.zeros(len(cal)), np.ones(len(ood_val))], np.r_[S_cal[m], S_ov[m]])) for m in S_cal}
     best = max(aur, key=aur.get); res["reject_score_candidates_AUROC_validation"] = aur; res["reject_score_chosen"] = best
-    thr = float(np.quantile(S_cal[best][k_cal], 0.95)); res["reject_threshold"] = thr
+    wcal = 1.0 / pd.Series(cal.topic.values[k_cal]).map(pd.Series(cal.topic.values[k_cal]).value_counts()).values
+    ops = {}
+    for q in (0.80, 0.90, 0.95, 0.98):
+        t_ = wquantile(S_cal[best][k_cal], wcal, q); ops[str(q)] = {"threshold": t_, "in_topic_accepted": float(((S_ev[best] <= t_) & k_ev).mean()),
+                                                                    "out_of_topic_rejected": float((~((S_ot[best] <= t_) & k_ot)).mean())}
+    res["operating_points_by_calibration_quantile"] = ops
+    thr = ops[str(ACCEPT_Q)]["threshold"]; res["reject_threshold"] = thr; res["calibration_quantile"] = ACCEPT_Q
     acc_in = (S_ev[best] <= thr) & k_ev; rej_out = ~((S_ot[best] <= thr) & k_ot)
     res.update({"in_topic_accepted": float(acc_in.mean()), "out_of_topic_rejected": float(rej_out.mean()), "n_ood_test": len(ood_test), "n_ood_validation": len(ood_val),
                 "AUROC_test": {m: float(roc_auc_score(np.r_[np.zeros(len(ev)), np.ones(len(ood_test))], np.r_[S_ev[m], S_ot[m]])) for m in S_ev}})
