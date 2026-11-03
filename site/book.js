@@ -35,8 +35,9 @@
   var bout = $('b-out'); put(d2, wrap('batch only-file', bout, el('p', 'ph', 'Your results will appear here.')));
   // 3 + 4  Pipeline
   var p1 = mk('L'), p2 = mk('R'); var cells = qa('.cell', s2);
-  put(p1, q1('.sh', s2), wrap('cells', cells[0], cells[1]));
-  put(p2, wrap('cells', cells[2], cells[3]), q1('.two2', s2));
+  var cellCls = q1('.cells', s2).className;          // keeps 'balls' when the crumpled notes are on
+  put(p1, q1('.sh', s2), wrap(cellCls, cells[0], cells[1]));
+  put(p2, wrap(cellCls, cells[2], cells[3]), q1('.two2', s2));
   // 5 + 6  Performance
   var f1 = mk('L'), f2 = mk('R'), blks = qa('.blk', s4);
   put(f1, q1('.sh', s4), q1('.stats.first', s4), q1('.stats:not(.first)', s4), blks[0]);
@@ -520,6 +521,8 @@
   // ---------------------------------------------------------------- start
   var start = Math.max(0, SLUG.indexOf(location.hash.slice(1)));
   s = target = start; showSpread(s); setV(s); opened(s);
+  // the crumpled notes on the Pipeline pages are built while those pages are laid out off-screen, then the pages go back
+  if (window.__crumpleStart) { p1.classList.add('prep'); p2.classList.add('prep'); window.__crumpleStart(function () { p1.classList.remove('prep'); p2.classList.remove('prep'); shots[3].dirty = shots[4].dirty = true; pumpShots(); }); }
   // photograph the pages once the fonts are in, nearest pages first
   (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { fitCover(); setTimeout(pumpShots, 400); });
   try { reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}

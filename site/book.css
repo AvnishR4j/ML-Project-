@@ -97,3 +97,4 @@ html[data-book] .book{display:none}                    /* the old scrolling page
 /* the turning leaf is drawn by WebGL on this canvas; page photographs are taken from pages laid out off-screen */
 .leafgl{position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:60;display:none}
 .pg.snapping{position:fixed!important;left:-40000px!important;top:0!important;display:block}
+.pg.off.prep{display:block!important;position:fixed!important;left:-40000px!important;top:0!important}

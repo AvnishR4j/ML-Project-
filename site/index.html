@@ -912,8 +912,12 @@ cells.forEach(function (c, k) {
     '<div class="bhint" aria-hidden="true">tap to smooth it out</div><button class="recrum" type="button">crumple it again</button>';
   c.dataset.title = title;
 });
-function flatAll() { box.classList.remove('balls'); cells.forEach(function (c) { c.style.height = ''; c.classList.remove('crum', 'anim'); c.removeAttribute('role'); c.removeAttribute('tabindex'); }); if (all) all.style.display = 'none'; }
-if (reduce || !window.WebGLRenderingContext || document.documentElement.getAttribute('data-book')) { flatAll(); return; }
+function flatAll() { [].forEach.call(document.querySelectorAll('.cells'), function (b) { b.classList.remove('balls'); }); cells.forEach(function (c) { c.style.height = ''; c.classList.remove('crum', 'anim'); c.removeAttribute('role'); c.removeAttribute('tabindex'); }); if (all) all.style.display = 'none'; }
+var BOOKM = !!document.documentElement.getAttribute('data-book'), doneCb = null;
+function done() { if (doneCb) { var f = doneCb; doneCb = null; f(); } }
+// in the book the notes sit on pages that are not shown yet; the book lays them out off-screen and then says go
+var go = BOOKM ? new Promise(function (res) { window.__crumpleStart = function (cb) { doneCb = cb; res(); }; }) : Promise.resolve();
+if (reduce || !window.WebGLRenderingContext) { flatAll(); if (BOOKM) window.__crumpleStart = function (cb) { cb(); }; return; }
 box.classList.add('balls');
 cells.forEach(function (c) { c.classList.add('crum'); c.setAttribute('role', 'button'); c.setAttribute('tabindex', '0'); c.setAttribute('aria-label', c.dataset.title + ' (crumpled note, press to smooth it out)'); });
 
@@ -996,7 +1000,7 @@ function setup(c, k) {
     var T = window.THREE, cv = c.querySelector('.ball'), PAD = 70;
     var W = tex.w + PAD * 2, H = tex.h + PAD * 2; cv.style.width = W + 'px'; cv.style.height = H + 'px';
     if (c._gl) { c._gl.dispose(); }
-    var r = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, premultipliedAlpha: true });
+    var r = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: BOOKM });   // kept in the book so the page picture can include the ball
     r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); r.setSize(W, H, false); r.setClearColor(0x000000, 0);
     var fov = 30, d = (H / 2) / Math.tan(fov * Math.PI / 360);
     var cam = new T.PerspectiveCamera(fov, W / H, 1, d * 4); cam.position.set(0, 0, d);
@@ -1097,10 +1101,10 @@ function wire() {
 }
 
 var ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-Promise.all([load('vendor/three-r128.min.js'), load('vendor/html2canvas-1.4.1.min.js'), ready])
+Promise.all([load('vendor/three-r128.min.js'), load('vendor/html2canvas-1.4.1.min.js'), ready, go])
   .then(function () { return cells.reduce(function (pr, c, k) { return pr.then(function () { return setup(c, k); }); }, Promise.resolve()); })
-  .then(wire)
-  .catch(function (err) { if (window.console) console.warn('crumple effect unavailable', err); flatAll(); });
+  .then(wire).then(done)
+  .catch(function (err) { if (window.console) console.warn('crumple effect unavailable', err); flatAll(); done(); });
 })();
 </script>
 <script src="vendor/modern-screenshot.js"></script>
