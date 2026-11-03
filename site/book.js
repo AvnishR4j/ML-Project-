@@ -439,20 +439,38 @@
     if (!drag.active) {
       if (Math.abs(dx) < 12 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
       var fwd = dx < 0; if ((fwd && s >= 6) || (!fwd && s <= 0)) { drag = null; return; }
-      drag.active = true; drag.fwd = fwd; target = s + (fwd ? 1 : -1);
+      drag.active = true; drag.fwd = fwd; drag.hist = []; drag.goal = 0; target = s + (fwd ? 1 : -1);
       try { bk.setPointerCapture(drag.id); } catch (er) {}
       beginTurn(fwd ? s : s - 1, fwd);
       getSelection && getSelection().removeAllRanges && getSelection().removeAllRanges();
     }
-    var span = Math.min(350, PW * 0.62);
-    renderTurn(clamp((drag.fwd ? -dx : dx) / span, 0, 0.99));
+    // the page follows the hand: dragging across about one page width turns it fully, and it eases towards the pointer
+    // instead of jumping, so a short flick of the trackpad only lifts the corner
+    var pull = (drag.fwd ? -dx : dx) - 12, now = performance.now();
+    drag.goal = clamp(pull / (PW * 1.05), 0, 0.99);
+    drag.hist.push([now, pull]); while (drag.hist.length > 2 && now - drag.hist[0][0] > 120) drag.hist.shift();
+    if (!drag.loop) followLoop(drag);
   });
+  function followLoop(d) {
+    var last = performance.now();
+    d.loop = true;
+    (function step(t) {
+      if (drag !== d || !anim) { d.loop = false; return; }
+      var k = 1 - Math.exp(-(t - last) / 70); last = t;
+      var p = anim.p + (d.goal - anim.p) * k;
+      if (Math.abs(d.goal - p) < 0.0005) p = d.goal;
+      if (p !== anim.p) renderTurn(p);
+      requestAnimationFrame(step);
+    })(last);
+  }
   function release(e) {
     if (!drag) return;
     var d = drag; drag = null;
     if (!d.active) { if (s === 0 && !anim && window.__heroHold) window.__heroHold(false); return; }
     justDragged = true; setTimeout(function () { justDragged = false; }, 60);
-    var p = anim.p, ok = p > 0.22, dur = 780 * (0.4 + 0.6 * Math.abs((ok ? 1 : 0) - p));
+    // it completes if it is past halfway, or if it was flicked firmly in the turning direction
+    var h = d.hist, v = h.length > 1 ? (h[h.length - 1][1] - h[0][1]) / Math.max(1, h[h.length - 1][0] - h[0][0]) : 0;
+    var p = anim.p, g = Math.max(p, d.goal || 0), ok = g > 0.4 || (v > 0.6 && g > 0.12), dur = 820 * (0.45 + 0.55 * Math.abs((ok ? 1 : 0) - p));
     if (!ok) target = s;
     var go = function () { runTo(ok ? 1 : 0, dur); };
     if (anim.ready) go(); else anim.after = go;
