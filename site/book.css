@@ -29,10 +29,10 @@ html[data-book] .book{display:none}                    /* the old scrolling page
 .pg::after{content:"";position:absolute;top:0;bottom:0;width:70px;pointer-events:none;z-index:5}
 .pg.R::after,.pgc.R::after{left:0;background:linear-gradient(90deg,rgba(60,35,5,.34),rgba(60,35,5,.08) 40%,transparent)}
 .pg.L::after,.pgc.L::after{right:0;background:linear-gradient(270deg,rgba(60,35,5,.34),rgba(60,35,5,.08) 40%,transparent)}
-.pgin{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:34px 34px 54px 66px;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(74,70,57,.35) transparent;user-select:text;-webkit-user-select:text}
-.pg.L .pgin{padding:34px 58px 54px 40px}
+.pgin{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:34px 34px 54px 74px;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(74,70,57,.35) transparent;user-select:text;-webkit-user-select:text}
+.pg.L .pgin{padding:34px 56px 54px 74px}
 .pgin::-webkit-scrollbar{width:7px}.pgin::-webkit-scrollbar-thumb{background:rgba(74,70,57,.3);border-radius:4px}
-.pn{position:absolute;bottom:16px;font-size:15px;color:#8a7d60;z-index:6;pointer-events:none}.pg.R .pn{right:30px}.pg.L .pn{left:30px}
+.pn{position:absolute;bottom:16px;font-size:15px;color:#8a7d60;z-index:6;pointer-events:none}.pg.R .pn{right:30px}.pg.L .pn{left:66px}
 .pgc{position:absolute;top:0;margin:0}
 
 /* a page-turn in progress: strips of the real page, bent along an arc (same bend as the portfolio's 3D sketchbook) */
