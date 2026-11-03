@@ -131,6 +131,7 @@
     var p = PG[i], wasOff = p.classList.contains('off'), wasInert = p.inert;
     if (wasOff) { p.classList.remove('off'); p.classList.add('snapping', sideOf(i)); }   // laid out off-screen so it can be photographed
     var gen = ++sh.gen; sh.dirty = false;
+    var tS = performance.now();
     sh.busy = MS.domToCanvas(p, {
       width: PW, height: PH, scale: SCALE, backgroundColor: null,
       style: { left: '0px', top: '0px', position: 'static', visibility: 'visible', transform: 'none' },
@@ -142,6 +143,7 @@
       [[0.5, 0.1], [0.5, 0.5], [0.5, 0.9], [0.1, 0.5], [0.9, 0.5]].forEach(function (q) { if (g.getImageData(Math.floor(cv.width * q[0]), Math.floor(cv.height * q[1]), 1, 1).data[3] > 0) seen++; });
       if (!seen) throw new Error('blank page picture');
       if (window.__dbg) console.log('snap', i, cv.width, cv.height);
+      if (PERF) PERF.snap(i, performance.now() - tS);
       if (gen === sh.gen) { sh.cv = cv; sh.tex = null; }
       return cv;
     }).finally(function () {
@@ -306,6 +308,7 @@
       drawGL(forward ? a.p : 1 - a.p);               // draw first, then hide the real pages in the same frame
       showUnder(a);
       a.ready = true; renderTurn(a.p); if (a.after) a.after();
+      if (PERF) PERF.wait(performance.now() - a.t0);
       if (window.__dbg) console.log('turn ready after', Math.round(performance.now() - a.t0), 'ms', shots.map(function (x) { return x.dirty ? 'D' : (x.cv ? '.' : '-'); }).join(''));
       } catch (err) { if (window.__dbg) console.log('glfail', err && err.stack); a.ready = true; a.flat = true; showUnder(a); if (a.after) a.after(); }
     }, function (err) {
@@ -359,11 +362,11 @@
   function runTo(goal, dur, done) {
     var from = anim.p, t0 = performance.now(), a = anim;
     if (reduceMotion) dur = 40;
-    cancelAnimationFrame(raf);
+    cancelAnimationFrame(raf); if (PERF) PERF.start();
     (function tick(now) {
       var t = Math.min(1, (now - t0) / dur), e = t * t * (3 - 2 * t);
       renderTurn(from + (goal - from) * e);
-      if (t < 1) raf = requestAnimationFrame(tick); else { endTurn(goal === 1); if (done) done(); pump(); }
+      if (t < 1) raf = requestAnimationFrame(tick); else { if (PERF) PERF.end(); endTurn(goal === 1); if (done) done(); pump(); }
     })(t0);
   }
   function turn(forward, dur) {
@@ -426,6 +429,32 @@
   ['b-file', 'b-sample', 'b-go'].forEach(function (id) { var n = $(id); if (n) n.addEventListener('click', function () { bk.setAttribute('data-demo', 'file'); qa('button', modes).forEach(function (x) { x.setAttribute('aria-pressed', String(x.dataset.m === 'file')); }); }, true); });
   window.addEventListener('resize', function () { size(); if (anim) { endTurn(false); } setV(s); shots.forEach(function (x) { x.dirty = true; }); pumpShots(); });
   window.addEventListener('hashchange', function () { var i = SLUG.indexOf(location.hash.slice(1)); if (i >= 0) goTo(i); });
+
+
+  // ---------------------------------------------------------------- ?perf: an on-screen meter (only when the address has ?perf)
+  var PERF = null;
+  if (/[?&]perf\b/.test(location.search)) (function () {
+    var box = el('div', ''); box.style.cssText = 'position:fixed;left:8px;top:8px;z-index:99;background:rgba(0,0,0,.82);color:#9f9;font:12px/1.45 monospace;padding:8px 10px;border-radius:6px;white-space:pre;pointer-events:none;max-width:46vw';
+    document.body.appendChild(box);
+    var snaps = [], waits = [], turns = [], gaps = [], cur = null, lastT = 0, ua = navigator.userAgent;
+    var eng = /Firefox/.test(ua) ? 'Firefox' : (/Chrome|Chromium|Edg/.test(ua) ? 'Chromium' : (/Safari/.test(ua) ? 'Safari' : '?'));
+    (function loop(t) { if (lastT && t - lastT > 50) gaps.push([Math.round(t - lastT), anim ? 'turn' : 'rest']); lastT = t; if (cur) cur.push(t); requestAnimationFrame(loop); })(0);
+    function st(a) { if (!a.length) return '-'; var b = a.slice().sort(function (x, y) { return x - y; }); return 'n' + b.length + ' med ' + Math.round(b[b.length >> 1]) + ' max ' + Math.round(b[b.length - 1]); }
+    PERF = {
+      snap: function (i, ms) { snaps.push(ms); },
+      wait: function (ms) { waits.push(ms); },
+      start: function () { cur = []; },
+      end: function () { if (!cur) return; var d = []; for (var k = 1; k < cur.length; k++) d.push(cur[k] - cur[k - 1]); cur = null; if (!d.length) return; d.sort(function (x, y) { return x - y; }); turns.push({ n: d.length, med: d[d.length >> 1], p95: d[Math.floor(d.length * 0.95)], max: d[d.length - 1], slow: d.filter(function (x) { return x > 20; }).length }); }
+    };
+    setInterval(function () {
+      var gl2 = null; try { var c = document.createElement('canvas').getContext('webgl'), x = c && c.getExtension('WEBGL_debug_renderer_info'); gl2 = x ? c.getParameter(x.UNMASKED_RENDERER_WEBGL) : (c ? 'webgl' : 'none'); } catch (e) {}
+      box.textContent = 'engine ' + eng + '  dpr ' + (window.devicePixelRatio || 1) + '  ' + innerWidth + 'x' + innerHeight + '  leaf ' + (gl === false ? 'flat' : (gl ? 'webgl' : 'not yet')) +
+        '\npage pictures ms: ' + st(snaps) + '\nwait before turn ms: ' + st(waits) +
+        '\nturns (frame ms): ' + turns.slice(-6).map(function (t) { return t.n + 'f med' + t.med.toFixed(0) + ' p95 ' + t.p95.toFixed(0) + ' max ' + t.max.toFixed(0) + ' slow' + t.slow; }).join('\n   ') +
+        '\nfreezes >50ms: ' + gaps.length + '  last: ' + gaps.slice(-8).map(function (g) { return g[0] + (g[1] === 'turn' ? 't' : ''); }).join(' ');
+      PERF.gl = gl2;
+    }, 500);
+  })();
 
   // ---------------------------------------------------------------- start
   var start = Math.max(0, SLUG.indexOf(location.hash.slice(1)));
