@@ -110,6 +110,20 @@ background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
 .own label{display:block;color:var(--blue);font-size:21px;margin-bottom:6px}
 .own textarea{width:100%;min-height:110px;resize:vertical;font:inherit;font-size:17px;line-height:32px;color:var(--blue);padding:0 14px;border:2px solid var(--pencil);border-radius:var(--wob2);
 background:rgba(255,253,240,.55) repeating-linear-gradient(180deg,transparent 0 31px,var(--line) 31px 32px);background-attachment:local}
+
+.batch{margin-top:0}.batch .row2{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:12px 0}.batch input[type=file]{font:inherit;font-size:15px;max-width:100%}
+.batch .lk2{background:none;border:0;border-bottom:1px dashed currentColor;font:inherit;cursor:pointer;color:var(--blue);padding:0}
+.batch .prog{height:8px;background:rgba(0,0,0,.08);border-radius:4px;overflow:hidden;margin:8px 0}.batch .prog i{display:block;height:100%;width:0;background:var(--blue);transition:width .15s}
+.batch .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:22px;margin:22px 0}
+.batch .bar{display:grid;grid-template-columns:minmax(80px,38%) 1fr 54px;gap:8px;align-items:center;font-size:14px;margin:5px 0}.batch .bar b{display:block;height:12px;background:var(--blue);border-radius:3px}
+.batch .kpis{display:flex;flex-wrap:wrap;gap:12px 28px;margin:16px 0}.batch .kpis div{min-width:110px}.batch .kpis .d{font-size:30px;display:block;line-height:1.1}
+.batch table{width:100%;border-collapse:collapse;font-size:14px}.batch th,.batch td{text-align:left;padding:6px 8px;border-bottom:1px solid rgba(0,0,0,.12);vertical-align:top}
+.batch td.tx{max-width:380px;overflow-wrap:anywhere}.batch .tw{margin-bottom:16px;overflow-x:auto;max-height:380px;overflow-y:auto}
+.batch .fl{display:inline-block;font-size:12px;border:1px solid #b36b00;color:#8a5200;border-radius:10px;padding:0 7px;margin:0 4px 3px 0}
+.batch select{font:inherit;font-size:13px}.batch tr.cor td{background:rgba(31,125,69,.1)}
+.xl{margin:10px 0 0;font-size:13px;line-height:1.5;color:#6b665a}
+.msg .hw{border-radius:3px;padding:0 2px;cursor:help}
+.msg .hw.f{background:rgba(196,48,43,.26)}.msg .hw.a{background:rgba(31,125,69,.24)}.msg .hw.n{background:rgba(120,120,120,.16)}
 .own textarea::placeholder{color:#998d74}
 .own textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(31,67,160,.15)}
 .own .row{display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;margin-top:14px}
@@ -315,16 +329,32 @@ footer::before{content:"sources \2014";display:block;color:var(--red);font-size:
 <div class="own">
 <label class="m" for="own-t">Your own message</label>
 <textarea id="own-t" maxlength="600" placeholder="For example: Congratulations! You have won a free prize, click the link to claim"></textarea>
-<div class="row"><button class="go" id="own-go" type="button">Analyze</button><span class="note" id="own-note">Works for English, Hinglish and 13 other languages. It runs in your browser with the same trained models, and nothing you type is sent anywhere.</span></div>
+<div class="row"><button class="go" id="own-go" type="button">Analyze</button><span class="note" id="own-note">Works for English, Hinglish, Hindi in Devanagari script and 13 other languages. It runs in your browser with the same trained models, and nothing you type is sent anywhere.</span></div>
 </div>
 <p class="m exh">Or pick an example</p>
 <div class="exl" role="group" aria-label="Example messages" id="chips"></div>
 <button class="m lk" id="replay" type="button">↻ Replay</button>
 </div>
 <div class="b">
-<div class="slip w"><div class="m" id="w-title" style="color:#6b665a"></div><p class="msg" id="w-msg"></p></div>
+<div class="slip w"><div class="m" id="w-title" style="color:#6b665a"></div><p class="msg" id="w-msg"></p><p class="xl" id="w-x" hidden></p></div>
 <ol class="tl" id="tl"></ol>
 </div>
+</div>
+</section>
+
+<section id="s3b" class="rv sec batch">
+<div class="sh"><p class="m no">01b — Batch</p><div class="t"><h2 class="d h2d">Analyze a whole file</h2><p class="intro">Upload a CSV of messages (one column, or a column called "message" or "text"). Everything runs in your browser; the file is not uploaded anywhere.</p></div></div>
+<div class="row2"><input type="file" id="b-file" accept=".csv,.txt,text/csv,text/plain" aria-label="CSV file"><button class="go" id="b-go" type="button" style="display:none">Analyze file</button><button class="lk2" id="b-sample" type="button">or try a sample file (80 messages)</button><a class="lk2" href="sample_batch.csv" download>download sample</a></div>
+<div class="prog" id="b-prog" hidden><i></i></div><p class="note" id="b-note"></p>
+<div id="b-out" hidden>
+<div class="kpis" id="b-k"></div>
+<div class="grid"><div><h3 class="d">Languages</h3><div id="b-lang"></div></div><div><h3 class="d">Spam and sentiment</h3><div id="b-ss"></div></div><div><h3 class="d">What people talk about</h3><div id="b-th"></div></div></div>
+<h3 class="d">Needs a person to look</h3>
+<p class="hint" id="b-rhint"></p>
+<div class="tw"><table id="b-rev"></table></div>
+<div class="row2"><button class="go" id="b-dl" type="button">Download all results (CSV)</button><button class="go" id="b-dlc" type="button" style="background:var(--blue)">Download my corrections (CSV)</button></div>
+<h3 class="d">All results</h3>
+<div class="tw"><table id="b-all"></table></div>
 </div>
 </section>
 
@@ -441,7 +471,7 @@ var W = [
 { id: 'W5', title: 'Hinglish negative comment', message: 'ye film bilkul bekar thi, paisa barbad ho gaya', language: 'Hinglish', spam: 'ham', p: '0.0', sentiment: 'negative', theme: 'Open social-media comments (politics, opinions)' },
 { id: 'W6', title: 'Hinglish positive comment', message: 'salman bhai ki nayi film ka trailer bahut zabardast hai, eid par dekhne jayenge', language: 'Hinglish', spam: 'ham', p: '0.0', sentiment: 'positive', theme: 'Film fan comments (Salman Khan)' },
 { id: 'W7', title: 'Hinglish scam', message: 'Dost PM Awas Yojana mein tera naam hai - 2.5 lakh ki subsidy ke liye register kar aaj.', language: 'Hinglish', spam: 'spam', p: '0.56' },
-{ id: 'W8', title: 'Hindi in Devanagari', message: 'यह फ़ोन बहुत अच्छा है', language: 'Hindi', spam: 'none' },
+{ id: 'W8', title: 'Hindi in Devanagari', message: 'यह फ़ोन बहुत अच्छा है', language: 'Hindi', spam: 'ham', p: '0.0', sentiment: 'positive', theme: 'Everyday comments (food, health, gadgets)', translit: 'yeh phone bahut acha hai' },
 { id: 'W9', title: 'German', message: 'Der Film war wirklich gut, ich habe ihn sehr genossen', language: 'German', spam: 'none' },
 { id: 'W10', title: 'Unclear language, sent to review', message: 'Merci beaucoup pour votre aide, a bientot', language: 'Uncertain', spam: 'none' },
 { id: 'W11', title: 'Hinglish product complaint', message: 'powerbank me battery bohot kam hai', language: 'Hinglish', spam: 'ham', p: '0.0', sentiment: 'neutral', theme: 'Everyday comments (food, health, gadgets)' },
@@ -460,7 +490,7 @@ var GRAYS = ['#a8966c', '#7f8c6a'];
 var vis = {}, rows = [], colorOf = {}, langCount = {}, order = [];
 
 function stagesFor(c) {
-var unsure = c.language === 'Uncertain', supported = c.language === 'English' || c.language === 'Hinglish', isSpam = c.spam === 'spam', S = [];
+var unsure = c.language === 'Uncertain', supported = c.language === 'English' || c.language === 'Hinglish' || (c.language === 'Hindi' && c.spam !== 'none'), isSpam = c.spam === 'spam', S = [];
 S.push({ name: 'Language', res: unsure ? 'Not sure' : c.language, tag: unsure ? 'sent to review' : '', tagK: '', why: unsure ? 'Confidence is below the threshold, so a person reviews it instead of the system guessing.' : 'Identified from character patterns.' });
 if (!supported) {
 var why = unsure ? 'Waits for the language to be confirmed.' : 'Spam filtering applies to English and Hinglish.', word = unsure ? 'Waiting' : 'Not applied';
@@ -473,7 +503,7 @@ if (isSpam) {
 S.push({ name: 'Sentiment', res: 'Skipped', skip: 1, why: 'Spam is removed before sentiment.' });
 S.push({ name: 'Theme', res: 'Skipped', skip: 1, why: 'Spam is removed before grouping.' });
 } else {
-S.push({ name: 'Sentiment', res: c.sentiment, why: c.language === 'Hinglish' ? 'Hinglish model: negative, neutral or positive.' : 'English model: positive or negative.' });
+S.push({ name: 'Sentiment', res: c.sentiment, why: c.language !== 'English' ? 'Hinglish model: negative, neutral or positive.' + (c.language === 'Hindi' ? ' Hindi script was converted to Roman letters first.' : '') : 'English model: positive or negative.' });
 S.push({ name: 'Theme', res: c.theme, why: c.theme === 'No clear theme' ? 'Too far from every theme learned for ' + c.language + ' messages, so none is named.' : 'Closest of 20 themes learned for ' + c.language + ' messages.' });
 }
 }
@@ -505,13 +535,30 @@ hTick++;
 var timer = null, cur = W[0];
 function showWalk(r) {
 cur = r;
-$('w-title').textContent = r.title; $('w-msg').textContent = r.message;
+$('w-title').textContent = r.title; $('w-msg').textContent = r.message; $('w-x').hidden = true;
+if (r.translit) { $('w-x').hidden = false; $('w-x').textContent = 'Read as Roman letters by the models: ' + r.translit; }
+explainRow(r);
 $('tl').innerHTML = stagesFor(r).map(function (s, i) {
 return '<li class="' + (s.skip ? 'skip' : '') + '"><span class="d n">' + (i + 1) + '</span><div><div class="m nm">' + s.name + '</div><div class="rs"><span class="d res ' + (s.resK || '') + '">' + esc(s.res) + '</span>' + (s.tag ? '<span class="m tag ' + s.tagK + '">' + s.tag + '</span>' : '') + '</div>' +
 (s.meter !== undefined ? '<div class="meter" aria-hidden="true"><i data-w="' + Math.max(2, Math.round(s.meter * 100)) + '" style="background:' + (s.spam ? '#c4302b' : '#1f7d45') + '"></i></div>' : '') +
 '<p class="why">' + esc(s.why) + '</p></div></li>';
 }).join('');
 replay();
+}
+function explainRow(r) {
+var mine = r;
+loadEngine().then(function (E) {
+if (cur !== mine) return;
+var a = window.MIEngine.analyze(E, r.message), x = window.MIEngine.explain(E, r.message, a);
+if (!x) return;
+var big = Math.max.apply(null, x.words.map(function (w) { return Math.abs(w.d); })), cut = Math.max(0.02, big * 0.25), body = x.words.map(function (w) {
+var d = w.d, k = Math.abs(d) < cut ? '' : (d > 0 ? (x.kind === 'spam' ? 'f' : 'a') : 'n');
+return k ? '<span class="hw ' + k + '" title="' + (d > 0 ? '+' : '') + d.toFixed(2) + ' ' + (x.kind === 'spam' ? 'spam score' : 'sentiment margin') + '">' + esc(w.w) + '</span>' : esc(w.w);
+}).join(' ');
+var xl = $('w-x'); xl.hidden = false;
+if (r.translit) $('w-msg').textContent = r.message; else $('w-msg').innerHTML = body;
+xl.innerHTML = (r.translit ? 'Read as Roman letters by the models: <span class="tl2">' + body + '</span><br>' : '') + 'Highlighted words moved the ' + (x.kind === 'spam' ? 'spam score towards spam (red); grey words pulled the other way.' : 'sentiment result: ' + 'green words supported it, grey words argued against it.') + ' Found by removing each word in turn and re-scoring.';
+})['catch'](function () {});
 }
 function replay() {
 clearInterval(timer);
@@ -551,7 +598,7 @@ function toRow(a, text) {
 var cap = function (x) { return x ? x.charAt(0).toUpperCase() + x.slice(1) : x; };
 var lang = a.language === 'uncertain' ? 'Uncertain' : (a.language === 'hinglish' ? 'Hinglish' : a.language_name);
 return { id: '__own', title: 'Your message', message: text, language: lang, spam: a.spam === 'spam' ? 'spam' : (a.spam === 'ham' ? 'ham' : 'none'),
-p: a.spam_prob == null ? '' : a.spam_prob.toFixed(3), sentiment: cap(a.sentiment || ''), theme: a.cluster_label || (a.cluster != null ? '#' + a.cluster : '') };
+p: a.spam_prob == null ? '' : a.spam_prob.toFixed(3), translit: a.transliterated || '', sentiment: cap(a.sentiment || ''), theme: a.cluster_label || (a.cluster != null ? '#' + a.cluster : '') };
 }
 var NOTE = $('own-note').textContent;
 function runOwn() {
@@ -568,6 +615,96 @@ $('w-msg').scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smoo
 $('own-go').addEventListener('click', runOwn);
 $('own-t').addEventListener('focus', function () { loadEngine()['catch'](function () {}); }, { once: true });
 $('own-t').addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) runOwn(); });
+
+
+/* ---- batch mode + review queue ---- */
+var BATCH = [], BCOR = {};
+var MARGIN_CUT = { hinglish: 0.159, en: 0.175 };      // 15th percentile of sentiment margins on held-out test data (accuracy there: Hinglish 40% vs 76% above, English 61% vs 81%)
+function parseCSV(txt) {
+var rows = [], row = [], f = '', q = false, i = 0, c;
+txt = txt.replace(/^﻿/, '');
+for (; i < txt.length; i++) { c = txt[i];
+if (q) { if (c === '"') { if (txt[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+else if (c === '"') q = true; else if (c === ',') { row.push(f); f = ''; }
+else if (c === '\n' || c === '\r') { if (c === '\r' && txt[i + 1] === '\n') i++; row.push(f); f = ''; rows.push(row); row = []; }
+else f += c; }
+if (f !== '' || row.length) { row.push(f); rows.push(row); }
+return rows.filter(function (r) { return r.some(function (x) { return x.trim() !== ''; }); });
+}
+function csvOut(rows) { return '﻿' + rows.map(function (r) { return r.map(function (x) { x = x == null ? '' : String(x); return /[",\n\r]/.test(x) ? '"' + x.replace(/"/g, '""') + '"' : x; }).join(','); }).join('\r\n'); }
+function saveFile(name, txt) { var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/csv;charset=utf-8' })); a.download = name; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+function flagsFor(a) {
+var f = [];
+if (a.language === 'uncertain') f.push('language unsure');
+if (a.spam_prob != null && a.spam_threshold) { var r = a.spam_prob / a.spam_threshold; if (r >= 0.6 && r <= 1.5) f.push('spam score near the line'); }
+if (a.sentiment_margin != null) { var cut = MARGIN_CUT[a.language === 'en' ? 'en' : 'hinglish']; if (a.sentiment_margin <= cut) f.push('sentiment unsure'); }
+if (a.theme_rejected) f.push('no clear theme');
+return f;
+}
+var B_TEXT_COLS = ['message', 'text', 'msg', 'comment', 'review', 'content', 'sms'];
+function loadBatchText(txt) {
+var rows = parseCSV(txt); if (!rows.length) { $('b-note').textContent = 'The file looks empty.'; return; }
+var head = rows[0].map(function (x) { return x.trim().toLowerCase(); }), col = -1, hasHead = false;
+B_TEXT_COLS.some(function (n) { var j = head.indexOf(n); if (j >= 0) { col = j; hasHead = true; return true; } });
+if (col < 0) { col = 0; if (rows[0].length > 1) { hasHead = true; var best = 0; for (var j = 0; j < rows[0].length; j++) { var l = 0; rows.slice(1, 40).forEach(function (r) { l += (r[j] || '').length; }); if (l > best) { best = l; col = j; } } } }
+var data = rows.slice(hasHead ? 1 : 0).map(function (r) { return (r[col] || '').trim(); }).filter(Boolean);
+if (!data.length) { $('b-note').textContent = 'No message text found in the file.'; return; }
+var cap = 5000, cut = data.length > cap; if (cut) data = data.slice(0, cap);
+runBatch(data, cut ? 'Only the first ' + cap + ' messages were analyzed.' : '');
+}
+function runBatch(msgs, extra) {
+var note = $('b-note'), pr = $('b-prog'); $('b-out').hidden = true; BATCH = []; BCOR = {}; pr.hidden = false; pr.firstChild.style.width = '0';
+note.textContent = 'Loading the models (about 11 MB, first time only)…';
+loadEngine().then(function (E) {
+var i = 0, t0 = performance.now();
+(function step() {
+var end = Math.min(i + 40, msgs.length);
+for (; i < end; i++) { var a = window.MIEngine.analyze(E, msgs[i]); BATCH.push({ i: i + 1, text: msgs[i], a: a, flags: flagsFor(a) }); }
+pr.firstChild.style.width = Math.round(100 * i / msgs.length) + '%'; note.textContent = 'Analyzing ' + i + ' of ' + msgs.length + '…';
+if (i < msgs.length) setTimeout(step, 0); else { pr.hidden = true; note.textContent = 'Done: ' + msgs.length + ' messages in ' + ((performance.now() - t0) / 1000).toFixed(1) + ' s. ' + (extra || ''); renderBatch(); }
+})();
+})['catch'](function () { pr.hidden = true; note.textContent = 'Could not load the models. Check your connection and try again.'; });
+}
+function barsHTML(counts, total, cls) {
+return Object.keys(counts).sort(function (x, y) { return counts[y] - counts[x]; }).slice(0, 8).map(function (k) { var p = total ? counts[k] / total : 0;
+return '<div class="bar"><span>' + esc(k) + '</span><b style="width:' + Math.max(2, Math.round(p * 100)) + '%"></b><span>' + (p * 100).toFixed(0) + '%</span></div>'; }).join('');
+}
+function outLabel(x) { var a = x.a; return { lang: a.language === 'uncertain' ? 'Uncertain' : a.language_name, spam: a.spam === 'spam' ? 'spam' : (a.spam === 'ham' ? 'genuine' : 'not checked'), sent: a.sentiment || '', theme: a.cluster_label || '' }; }
+function renderBatch() {
+var n = BATCH.length, L = {}, SS = {}, TH = {}, spam = 0, rev = [];
+BATCH.forEach(function (x) { var o = outLabel(x); L[o.lang] = (L[o.lang] || 0) + 1; if (o.spam === 'spam') { spam++; SS['Spam'] = (SS['Spam'] || 0) + 1; } else if (o.sent) SS[o.sent.charAt(0).toUpperCase() + o.sent.slice(1)] = (SS[o.sent.charAt(0).toUpperCase() + o.sent.slice(1)] || 0) + 1; if (o.theme) TH[o.theme] = (TH[o.theme] || 0) + 1; if (x.flags.length) rev.push(x); });
+$('b-k').innerHTML = '<div><span class="d">' + n + '</span>messages</div><div><span class="d">' + spam + '</span>flagged as spam</div><div><span class="d">' + rev.length + '</span>need a look (' + (100 * rev.length / n).toFixed(0) + '%)</div>';
+$('b-lang').innerHTML = barsHTML(L, n); $('b-ss').innerHTML = barsHTML(SS, n); $('b-th').innerHTML = barsHTML(TH, Object.keys(TH).reduce(function (s, k) { return s + TH[k]; }, 0));
+$('b-rhint').textContent = rev.length ? 'These messages are the ones the models are least sure about (language unsure, spam score near the line, sentiment margin in the lowest 15%, or no clear theme). If a result is wrong, change it below; your corrections can be downloaded as a CSV for retraining.' : 'Nothing was flagged for review.';
+var sel = function (id, opts, cur) { return '<select data-id="' + id + '">' + opts.map(function (o) { return '<option' + (o === cur ? ' selected' : '') + '>' + o + '</option>'; }).join('') + '</select>'; };
+$('b-rev').innerHTML = '<tr><th>#</th><th>Message</th><th>Why flagged</th><th>Language</th><th>Spam?</th><th>Sentiment</th></tr>' + rev.sort(function (a, b) { return b.flags.length - a.flags.length || a.i - b.i; }).slice(0, 300).map(function (x) { var o = outLabel(x);
+return '<tr id="r' + x.i + '"><td>' + x.i + '</td><td class="tx">' + esc(x.text.slice(0, 220)) + '</td><td>' + x.flags.map(function (f) { return '<span class="fl">' + f + '</span>'; }).join('') + '</td><td>' + esc(o.lang) + '</td><td>' + (o.spam === 'not checked' ? '–' : sel('s' + x.i, ['genuine', 'spam'], o.spam)) + '</td><td>' + (o.sent ? sel('t' + x.i, ['Negative', 'Neutral', 'Positive'], o.sent.charAt(0).toUpperCase() + o.sent.slice(1)) : '–') + '</td></tr>'; }).join('');
+$('b-all').innerHTML = '<tr><th>#</th><th>Message</th><th>Language</th><th>Spam</th><th>Sentiment</th><th>Theme</th></tr>' + BATCH.slice(0, 200).map(function (x) { var o = outLabel(x); return '<tr><td>' + x.i + '</td><td class="tx">' + esc(x.text.slice(0, 160)) + '</td><td>' + esc(o.lang) + '</td><td>' + o.spam + '</td><td>' + esc(o.sent) + '</td><td>' + esc(o.theme) + '</td></tr>'; }).join('') + (n > 200 ? '<tr><td colspan="6">Showing the first 200 of ' + n + ' rows. The download has all of them.</td></tr>' : '');
+$('b-out').hidden = false;
+}
+$('b-rev').addEventListener('change', function (e) {
+var el = e.target; if (!el.dataset.id) return; var kind = el.dataset.id.charAt(0), id = +el.dataset.id.slice(1), x = BATCH[id - 1], o = outLabel(x), c = BCOR[id] || {};
+if (kind === 's') c.spam = el.value; else c.sent = el.value;
+var sp0 = o.spam, st0 = o.sent ? o.sent.charAt(0).toUpperCase() + o.sent.slice(1) : '';
+if ((c.spam || sp0) === sp0) delete c.spam; if ((c.sent || st0) === st0) delete c.sent;
+if (c.spam || c.sent) BCOR[id] = c; else delete BCOR[id];
+$('r' + id).className = BCOR[id] ? 'cor' : '';
+});
+$('b-dl').addEventListener('click', function () {
+var rows = [['id', 'message', 'language', 'spam', 'spam_probability', 'sentiment', 'theme', 'needs_review', 'why_flagged']];
+BATCH.forEach(function (x) { var o = outLabel(x); rows.push([x.i, x.text, o.lang, o.spam, x.a.spam_prob == null ? '' : x.a.spam_prob.toFixed(4), o.sent, o.theme, x.flags.length ? 'yes' : 'no', x.flags.join('; ')]); });
+saveFile('message_intelligence_results.csv', csvOut(rows));
+});
+$('b-dlc').addEventListener('click', function () {
+var ids = Object.keys(BCOR); if (!ids.length) { $('b-note').textContent = 'No corrections yet. Change a spam or sentiment value in the review table first.'; return; }
+var rows = [['id', 'message', 'model_spam', 'corrected_spam', 'model_sentiment', 'corrected_sentiment']];
+ids.forEach(function (id) { var x = BATCH[id - 1], o = outLabel(x), c = BCOR[id]; rows.push([x.i, x.text, o.spam, c.spam || o.spam, o.sent, c.sent || o.sent]); });
+saveFile('my_corrections.csv', csvOut(rows));
+});
+var bFile = null;
+$('b-file').addEventListener('change', function () { bFile = this.files[0] || null; $('b-go').style.display = bFile ? '' : 'none'; if (bFile) $('b-note').textContent = bFile.name + ' selected. Press "Analyze file".'; });
+$('b-go').addEventListener('click', function () { if (!bFile) return; var fr = new FileReader(); fr.onload = function () { loadBatchText(String(fr.result)); }; fr.readAsText(bFile, 'utf-8'); });
+$('b-sample').addEventListener('click', function () { fetch('sample_batch.csv').then(function (r) { return r.text(); }).then(loadBatchText)['catch'](function () { $('b-note').textContent = 'Could not load the sample file.'; }); });
 
 var tab = 'lang';
 function grow(root) {

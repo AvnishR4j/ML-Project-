@@ -304,10 +304,10 @@ Sentiment, same comparison:
 
 | language   | routing           |   answered |   accuracy |   macro-F1 |
 |:-----------|:------------------|-----------:|-----------:|-----------:|
-| english    | predicted routing |      0.93  |      0.746 |      0.748 |
-| english    | oracle routing    |      0.988 |      0.747 |      0.747 |
-| hinglish   | predicted routing |      0.912 |      0.682 |      0.659 |
-| hinglish   | oracle routing    |      0.988 |      0.717 |      0.693 |
+| english    | predicted routing |      0.93  |      0.749 |      0.751 |
+| english    | oracle routing    |      0.988 |      0.750 |      0.750 |
+| hinglish   | predicted routing |      0.912 |      0.671 |      0.642 |
+| hinglish   | oracle routing    |      0.988 |      0.704 |      0.674 |
 
 **Labelled set.** 250 real held-out messages (English and Hinglish messages, 11 other languages, scams) were labelled for language, spam and sentiment, and the whole pipeline was scored on them. The labels were assigned by Claude reading each message, not by independent human annotators, so call this set machine-labelled until two people verify it (`data/eval/e2e_labelled_machine.csv`, `src/eval_labelled.py`). One chain message with no clear language was excluded from the language score.
 
@@ -316,9 +316,28 @@ Sentiment, same comparison:
 | Language | answered 94.8%, correct 97.5% when answered |
 | Spam (English and Hinglish) | precision 1.00, recall 0.54, F1 0.70; 0 genuine messages flagged out of 193 |
 | Spam recall by language | English 75% (8 scams), Hinglish 44% (18 scams) |
-| Sentiment | English accuracy 71% (n=34), Hinglish accuracy 64% (n=95) |
+| Sentiment | English accuracy 74% (n=34), Hinglish accuracy 62% (n=95) |
 
 Genuine-vs-spam labels for the large stream above (tweets and comments) are assumed (public social posts treated as genuine). The IIIT-H comments and the Hindi challenge set have no reliable language ground truth, so they are excluded from the language accuracy.
+
+### 6. Hindi script (Devanagari)
+Hindi written in Devanagari used to fall outside the pipeline: the language model often could not decide (about half of the Hindi-script challenge messages went to "uncertain") and, when it did say Hindi, no spam or sentiment model was applied. `src/translit.py` now converts Devanagari to informal Roman letters (a dictionary of frequent words, spelled the way real Hinglish writers spell them, plus letter rules with schwa deletion), and the message is then read by the Hinglish models. Mixed lines such as "Bhai, शादी की shopping कब करने जाएं?" keep their Latin words. The JavaScript copy in the browser is generated from the same tables (`scripts/gen_translit_js.py`) and gives identical output to Python on 3,000 random Devanagari strings plus the parity set.
+
+Measured on 1,500 messages from the Hindi scam challenge set (1,050 genuine, 450 spam; `results/devanagari_before_after.json`):
+
+| | before | after |
+|---|---:|---:|
+| genuine sent to "uncertain" | 54.8% | 10.4% |
+| spam sent to "uncertain" | 52.9% | 22.2% |
+| spam caught | 40.0% | 54.4% |
+| genuine flagged as spam | 0.0% | 0.0% |
+
+Limits: the labels come from the challenge file; the transliteration is rule-based, so unusual words are spelled approximately; and **no labelled Hindi-script sentiment data exists, so sentiment on transliterated text is not measured**.
+
+### 7. Explanations, batch mode and review queue (browser demo)
+* **Why this result.** Each word is removed in turn and the message is re-scored (leave-one-word-out). Words that moved the spam score, or the sentiment margin, are highlighted. This explains what the model used, not what is true: it can highlight a word for a wrong reason.
+* **Batch mode.** Upload a CSV (up to 5,000 messages), see language, spam, sentiment and theme summaries, and download every result. It runs entirely in the browser.
+* **Review queue.** A message is flagged when the language is uncertain, the spam score is within 0.6x to 1.5x of the threshold, the sentiment margin is in the lowest 15%, or no theme fits. The margin flag is measured (`results/sentiment_margin_flag.json`): accuracy is 40% at or below the cut against 76% above it for Hinglish, and 61% against 81% for English. The other flags are rules of thumb that have not been validated. Corrections made in the queue can be downloaded as a CSV; nothing is retrained automatically.
 
 ## Data
 | Used for | Dataset | Licence / note |
@@ -336,7 +355,7 @@ Genuine-vs-spam labels for the large stream above (tweets and comments) are assu
 - **Hinglish spam is the weakest part.** No public dataset of real Hinglish scams exists (the repositories checked either hand-write or template-generate them). About half of Hinglish scams are caught at about 1% false alarms (up from a third before the synthetic augmentation); real labelled examples would still help most.
 - The scam vocabulary list is hand-written domain knowledge and was shaped while looking at the challenge set, so its gain is indicative.
 - Sentiment still misreads some negation (for example not boring), sarcasm and mixed opinions; it is a bag-of-words model with a negation patch.
-- Hindi in Devanagari is detected but not spam-checked, scored for sentiment or grouped into themes.
+- Hindi in Devanagari is transliterated and read by the Hinglish models (section 6); the transliteration is approximate and Hindi-script sentiment is unmeasured because no labelled data exists.
 - Hinglish sentiment labels are noisy and from one domain (mostly comments on videos and political posts); expect lower scores elsewhere.
 - Themes are unsupervised: cluster names are read from top terms and examples, not ground truth. The "no clear theme" check works for English but barely for Hinglish (see section 4).
 - The language model covers 17 classes; other languages are forced into the nearest class or rejected.

@@ -292,6 +292,28 @@
     return out;
   }
 
-  const api = { Engine, analyze, deva2roman, hasDeva, sentScores, detectLanguage, spamScore, sentiment, theme, normalize, fixSpacing, structural, vectorize };
+  // Which words drove the decision? Leave-one-word-out: remove each word, re-score, and see how far the score moves.
+  function sentSigned(E, key, text, label) {
+    const m = E[key], d = sentScores(E, key, text), nr = m.nrow;
+    if (nr === 1) return m.classes[1] === label ? d[0] : -d[0];
+    const li = m.classes.indexOf(label); let best = -Infinity;
+    for (let r = 0; r < nr; r++) if (r !== li && d[r] > best) best = d[r];
+    return d[li] - best;
+  }
+  function explain(E, text, a) {
+    const modelText = a.transliterated || text, parts = modelText.split(/(\s+)/), idx = [];
+    parts.forEach((t, i) => { if (t.trim()) idx.push(i); });
+    if (idx.length < 2 || idx.length > 60 || !a.spam) return null;
+    const lang = a.language === "en" ? "en" : "hinglish", spam = a.spam === "spam", key = lang === "en" ? "sent_en" : "sent_hi";
+    const base = spam ? spamScore(E, modelText, lang).p : sentSigned(E, key, modelText, a.sentiment);
+    const words = idx.map((i) => {
+      const rest = parts.filter((_, j) => j !== i).join("").replace(/\s+/g, " ").trim();
+      const v = spam ? spamScore(E, rest, lang).p : sentSigned(E, key, rest, a.sentiment);
+      return { w: parts[i], d: base - v };            // positive = this word pushed towards the decision
+    });
+    return { kind: spam ? "spam" : "sentiment", words, base };
+  }
+
+  const api = { explain, Engine, analyze, deva2roman, hasDeva, sentScores, detectLanguage, spamScore, sentiment, theme, normalize, fixSpacing, structural, vectorize };
   if (typeof module !== "undefined" && module.exports) module.exports = api; else root.MIEngine = api;
 })(typeof self !== "undefined" ? self : this);

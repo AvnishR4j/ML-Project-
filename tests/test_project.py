@@ -129,3 +129,19 @@ def test_recorded_results_are_sane():
     assert e["spam"]["english_predicted_routing"]["recall"] > 0.9
     s = json.loads((r / "sentiment_summary.json").read_text())
     assert s["hinglish"]["test_macro_F1"] > s["hinglish"]["majority_baseline_macroF1"] + 0.3
+
+
+# ---------------------------------------------------------------- Devanagari support
+def test_transliteration_basics():
+    from translit import deva2roman, has_devanagari
+    assert deva2roman("नमस्ते दोस्तों") == "namaste dostom" or deva2roman("नमस्ते दोस्तों").startswith("namaste")
+    assert deva2roman("यह फ़ोन बहुत अच्छा है") == "yeh phone bahut acha hai"
+    assert deva2roman("Bhai, शादी की shopping") .startswith("Bhai, shadi ki shopping")      # Latin words are left alone
+    assert has_devanagari("कल") and not has_devanagari("kal")
+
+
+def test_devanagari_is_routed_to_hinglish_models():
+    from pipeline import analyze
+    o = analyze("यह फ़ोन बहुत अच्छा है")
+    assert o["language"] in ("hi", "hinglish") and o["transliterated"] and o["spam"] in ("ham", "spam") and o["sentiment"] in ("positive", "neutral", "negative")
+    assert o["sentiment_margin"] >= 0

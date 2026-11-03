@@ -30,6 +30,7 @@ for t, e, g in zip(texts, exp, got):
     if "spam_prob" in e and "spam_prob" in g: maxd["spam_prob"] = max(maxd["spam_prob"], abs(e["spam_prob"] - g["spam_prob"]))
     if e.get("sentiment") != g.get("sentiment"): bad["sentiment"] += 1
     if e.get("cluster") != g.get("cluster"): bad["cluster"] += 1
+    if e.get("cluster_label") != g.get("cluster_label"): bad["label"] = bad.get("label", 0) + 1
     if e.get("transliterated") != g.get("transliterated"): bad["translit"] = bad.get("translit", 0) + 1
     if "sentiment_margin" in e and "sentiment_margin" in g: maxd["margin"] = max(maxd.get("margin", 0.0), abs(e["sentiment_margin"] - g["sentiment_margin"]))
     if bool(e.get("theme_rejected")) != bool(g.get("theme_rejected")): bad["theme_rejected"] += 1

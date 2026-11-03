@@ -153,6 +153,6 @@ def analyze(text: str, force_language: str = None) -> dict:
     out["cluster"] = cid
     out["cluster_terms"] = names
     out["theme_rejected"] = rejected
-    out["cluster_label"] = NO_THEME if rejected else theme_label(lang, cid)
+    out["cluster_label"] = NO_THEME if rejected else theme_label(mlang, cid)
     out["steps"].append(("Theme", out["cluster_label"] or f"#{cid}", "Too far from every learned topic to name one." if rejected else f"Top terms: {names}"))
     return out
