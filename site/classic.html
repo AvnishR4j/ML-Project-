@@ -297,6 +297,7 @@ footer::before{content:"sources \2014";display:block;color:var(--red);font-size:
 .tl li{grid-template-columns:48px minmax(0,1fr)}.tl .n{width:40px;height:40px;font-size:20px}.tl .res{font-size:22px}
 .nav{gap:0 14px}.nav a{font-size:19px}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}.rv{opacity:1;transform:none}}
+.slip.w.stale,#tl.stale{opacity:.32;transition:opacity .15s}
 </style>
 </head>
 <body>
@@ -376,7 +377,7 @@ footer::before{content:"sources \2014";display:block;color:var(--red);font-size:
 <div class="bd"><div><div class="m">How</div>Words, letter chunks and scam cues (links, phone numbers, money symbols) feed a classifier. The score is a true probability, and each language has its own cut-off so genuine messages are rarely blocked.</div><div><div class="m">Learned from</div>The UCI SMS Spam Collection, with duplicate messages removed.</div><div><div class="m">CodeChef idea</div>Email Spam Classifier</div></div>
 <div class="sc"><div class="d">96.3%</div><div class="m">spam F1 on English SMS</div></div></div>
 <div class="cell"><span class="d big">3</span><h3 class="d">Is the sender happy or upset?</h3>
-<div class="bd"><div><div class="m">How</div>Word and letter patterns feed a linear classifier. One model for English (positive or negative) and one for Hinglish (negative, neutral or positive).</div><div><div class="m">Learned from</div>English: about 41,000 tweets and short reviews, plus a human-rated word list for rarer words like &ldquo;handsome&rdquo;. Hinglish: IIIT-H comments plus 120 everyday sentences written by us.</div><div><div class="m">What changed</div>English rose from 63% to 79% macro F1 on 6,339 unseen tweets. Hinglish dipped from 69.4 to 67.5 on its comment test (within the margin of error) but rose from 70% to 95% on 20 new everyday sentences.</div><div><div class="m">CodeChef idea</div>Movie Review Sentiment Analyzer</div></div>
+<div class="bd"><div><div class="m">How</div>Word and letter patterns feed a linear classifier. One model for English (positive or negative) and one for Hinglish (negative, neutral or positive).</div><div><div class="m">Learned from</div>English: about 48,000 real tweets and short reviews, plus a human-rated word list for rarer words like &ldquo;handsome&rdquo; and everyday customer-service sentences (delivery, staff, support). Hinglish: IIIT-H comments plus 120 everyday sentences written by us.</div><div><div class="m">What changed</div>English rose from 63% to 81% macro F1 on 6,339 unseen tweets, and from 90% to 92.5% on 40 unseen customer messages. Hinglish dipped from 69.4 to 67.5 on its comment test (within the margin of error) but rose from 70% to 95% on 20 new everyday sentences.</div><div><div class="m">CodeChef idea</div>Movie Review Sentiment Analyzer</div></div>
 <div class="sc"><div class="two"><span class="d">67.5%</span><span class="m">Hinglish macro F1 (3 classes)</span></div><div class="two"><span class="d">78.7%</span><span class="m">English macro F1 (unseen SemEval tweets)</span></div></div></div>
 <div class="cell"><span class="d big">4</span><h3 class="d">What are people talking about?</h3>
 <div class="bd"><div><div class="m">How</div>Each message becomes a vector from word embeddings, and K-Means groups similar messages into 20 themes per language. If a message is too far from every theme, it says &ldquo;No clear theme&rdquo; instead of guessing.</div><div><div class="m">Learned from</div>English: CLINC150, Banking77, product and movie reviews, tweets and SMS. Hinglish: Hinglish-TOP, YouTube comments, tweets and 540 everyday messages written by us.</div><div><div class="m">What changed</div>Themes grew from 6 to 20 per language. Agreement with held-out topic labels (NMI) rose from 0.10 to 0.48 in English and from 0.09 to 0.61 in Hinglish. The off-topic check is weak: it catches 55% of off-topic English messages and almost none in Hinglish.</div><div><div class="m">CodeChef idea</div>Clustering and Dimensionality Reduction</div></div>
@@ -544,7 +545,7 @@ hTick++;
 
 var timer = null, cur = W[0];
 function showWalk(r) {
-cur = r;
+cur = r; setStale(false);
 $('w-title').textContent = r.title; $('w-msg').textContent = r.message; $('w-x').hidden = true;
 if (r.translit) { $('w-x').hidden = false; $('w-x').textContent = 'Read as Roman letters by the models: ' + r.translit; }
 explainRow(r);
@@ -613,17 +614,20 @@ return { id: '__own', title: 'Your message', message: text, language: lang, spam
 p: a.spam_prob == null ? '' : a.spam_prob.toFixed(3), translit: a.transliterated || '', sentiment: cap(a.sentiment || ''), theme: a.cluster_label || (a.cluster != null ? '#' + a.cluster : '') };
 }
 var NOTE = $('own-note').textContent;
+function setStale(on) { var a = document.querySelector('.slip.w'), b = $('tl'); if (a) a.classList.toggle('stale', on); if (b) b.classList.toggle('stale', on); }
 function runOwn() {
 var t = $('own-t').value.trim(), note = $('own-note'), go = $('own-go');
 if (!t) { note.textContent = 'Type a message first.'; return; }
+setStale(true); $('w-title').textContent = 'Analyzing your message…';
 go.disabled = true; note.textContent = 'Loading the models (about 11 MB, first time only)…';
 loadEngine().then(function (E) {
 var a = window.MIEngine.analyze(E, t);
 showWalk(toRow(a, t)); renderChips(null);
 note.textContent = NOTE; go.disabled = false;
 $('w-msg').scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' });
-})['catch'](function () { note.textContent = 'Could not load the models. Check your connection and try again.'; go.disabled = false; });
+})['catch'](function () { note.textContent = 'Could not load the models. Check your connection and try again.'; go.disabled = false; setStale(false); if (cur) $('w-title').textContent = cur.title; });
 }
+$('own-t').addEventListener('input', function () { if (cur && this.value.trim() !== cur.message) { setStale(true); $('own-note').textContent = 'Press Analyze to see the result for this message. The result shown on the right is for the previous one.'; } else if (cur) { setStale(false); $('own-note').textContent = NOTE; } });
 $('own-go').addEventListener('click', runOwn);
 $('own-t').addEventListener('focus', function () { loadEngine()['catch'](function () {}); }, { once: true });
 $('own-t').addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) runOwn(); });

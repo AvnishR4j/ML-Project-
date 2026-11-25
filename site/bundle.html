@@ -143,6 +143,7 @@ summary{cursor:pointer;font-size:18px;font-weight:600;color:#e8ecf5}
 footer{font-size:13px;color:#8794ad;max-width:48rem;line-height:1.6;border-top:1px solid #25324d;padding-top:24px}
 @media (max-width:640px){.hero h1{font-size:46px}.h2{font-size:34px}.hero{padding-top:48px}.db{grid-template-columns:110px 1fr 84px}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}.rv{opacity:1;transform:none}}
+.slip.w.stale,#tl.stale{opacity:.32;transition:opacity .15s}
 </style>
 </head>
 <body>
@@ -572,7 +573,7 @@ hTick++;
 /* ---------- demo timeline ---------- */
 var timer = null, cur = W[0];
 function showWalk(r) {
-cur = r;
+cur = r; setStale(false);
 $('w-title').textContent = r.title; $('w-msg').textContent = r.message;
 var S = stagesFor(r);
 $('tl').innerHTML = S.map(function (s, i) {
@@ -625,17 +626,20 @@ return { id: '__own', title: 'Your message', message: text, language: lang, spam
 p: a.spam_prob == null ? '' : a.spam_prob.toFixed(3), sentiment: cap(a.sentiment || ''), theme: a.cluster_label || (a.cluster != null ? '#' + a.cluster : '') };
 }
 var NOTE = 'Runs in your browser with the same trained models. Nothing you type is sent anywhere.';
+function setStale(on) { var a = document.querySelector('.slip.w'), b = $('tl'); if (a) a.classList.toggle('stale', on); if (b) b.classList.toggle('stale', on); }
 function runOwn() {
 var t = $('own-t').value.trim(), note = $('own-note'), go = $('own-go');
 if (!t) { note.textContent = 'Type a message first.'; return; }
+setStale(true); $('w-title').textContent = 'Analyzing your message…';
 go.disabled = true; note.textContent = 'Loading the models (about 11 MB, first time only)…';
 loadEngine().then(function (E) {
 var a = window.MIEngine.analyze(E, t);
 showWalk(toRow(a, t)); renderChips();
 $('chips').querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
 note.textContent = NOTE; go.disabled = false;
-})['catch'](function () { note.textContent = 'Could not load the models. Check your connection and try again.'; go.disabled = false; });
+})['catch'](function () { note.textContent = 'Could not load the models. Check your connection and try again.'; go.disabled = false; setStale(false); if (cur) $('w-title').textContent = cur.title; });
 }
+$('own-t').addEventListener('input', function () { if (cur && this.value.trim() !== cur.message) { setStale(true); $('own-note').textContent = 'Press Analyze to see the result for this message. The result shown on the right is for the previous one.'; } else if (cur) { setStale(false); $('own-note').textContent = NOTE; } });
 $('own-go').addEventListener('click', runOwn);
 $('own-t').addEventListener('focus', function () { loadEngine()['catch'](function () {}); }, { once: true });
 $('own-t').addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) runOwn(); });

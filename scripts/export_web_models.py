@@ -9,6 +9,7 @@ from data import LANG_NAMES
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "web" / "models"
+ONLY = set(sys.argv[2].split(",")) if len(sys.argv) > 2 else None   # e.g. sent_en : export just that model
 OUT.mkdir(parents=True, exist_ok=True)
 b64 = lambda a: base64.b64encode(np.ascontiguousarray(a).tobytes()).decode()
 
@@ -37,24 +38,26 @@ def dump(name, obj):
 def main():
     M = ROOT / "models"
     # ---- language: char_wb 1-4 tfidf + 3 calibrated LinearSVC folds (17 classes)
-    L = joblib.load(M / "language_final.joblib"); pipe = L["model"]; v = pipe.named_steps["f"]; cal = pipe.named_steps["m"]
-    W = np.vstack([cc.estimator.coef_ for cc in cal.calibrated_classifiers_])             # (3*17, F)
-    sc, q = quant(W, 16)
-    dump("language", {"vec": vec(v, "lower"), "classes": [str(c) for c in pipe.classes_], "folds": len(cal.calibrated_classifiers_),
-                      "scale": b64(sc), "w": b64(q), "bits": 16,
-                      "b": [float(x) for cc in cal.calibrated_classifiers_ for x in cc.estimator.intercept_],
-                      "a": [float(c.a_) for cc in cal.calibrated_classifiers_ for c in cc.calibrators],
-                      "c": [float(c.b_) for cc in cal.calibrated_classifiers_ for c in cc.calibrators], "threshold": float(L["threshold"])})
-    # ---- spam: 5 calibrated pipelines (word 1-2 + char_wb 2-4 tfidf + 9 structural features)
-    S = joblib.load(M / "spam_final.joblib"); folds = []
-    for cc in S["model"].calibrated_classifiers_:
-        est = cc.estimator; tl = dict(est.named_steps["f"].transformer_list); m = est.named_steps["m"]
-        coef = m.coef_[0]; sc, q = quant(coef[None, :], 16)
-        folds.append({"w": vec(tl["w"], "lower"), "c": vec(tl["c"], "lower"), "scale": float(sc[0]), "coef": b64(q), "b": float(m.intercept_[0]),
-                      "a": float(cc.calibrators[0].a_), "cb": float(cc.calibrators[0].b_)})
-    dump("spam", {"folds": folds, "thresholds": S["thresholds"], "n_struct": 9})
+    if ONLY is None:
+        L = joblib.load(M / "language_final.joblib"); pipe = L["model"]; v = pipe.named_steps["f"]; cal = pipe.named_steps["m"]
+        W = np.vstack([cc.estimator.coef_ for cc in cal.calibrated_classifiers_])             # (3*17, F)
+        sc, q = quant(W, 16)
+        dump("language", {"vec": vec(v, "lower"), "classes": [str(c) for c in pipe.classes_], "folds": len(cal.calibrated_classifiers_),
+                          "scale": b64(sc), "w": b64(q), "bits": 16,
+                          "b": [float(x) for cc in cal.calibrated_classifiers_ for x in cc.estimator.intercept_],
+                          "a": [float(c.a_) for cc in cal.calibrated_classifiers_ for c in cc.calibrators],
+                          "c": [float(c.b_) for cc in cal.calibrated_classifiers_ for c in cc.calibrators], "threshold": float(L["threshold"])})
+        # ---- spam: 5 calibrated pipelines (word 1-2 + char_wb 2-4 tfidf + 9 structural features)
+        S = joblib.load(M / "spam_final.joblib"); folds = []
+        for cc in S["model"].calibrated_classifiers_:
+            est = cc.estimator; tl = dict(est.named_steps["f"].transformer_list); m = est.named_steps["m"]
+            coef = m.coef_[0]; sc, q = quant(coef[None, :], 16)
+            folds.append({"w": vec(tl["w"], "lower"), "c": vec(tl["c"], "lower"), "scale": float(sc[0]), "coef": b64(q), "b": float(m.intercept_[0]),
+                          "a": float(cc.calibrators[0].a_), "cb": float(cc.calibrators[0].b_)})
+        dump("spam", {"folds": folds, "thresholds": S["thresholds"], "n_struct": 9})
     # ---- Hinglish sentiment (3 classes) and English sentiment (2 classes)
     for name, fn in (("sent_hi", "hinglish_sentiment.joblib"), ("sent_en", "sentiment.joblib")):
+        if ONLY and name not in ONLY: continue
         P = joblib.load(M / fn); steps = dict(P.named_steps); f, m = steps["f"], steps["m"]
         pp = getattr(f if hasattr(f, "preprocessor") else f.transformer_list[0][1], "preprocessor", None)
         prep = "prep" if pp is not None else "lower"; neg = pp if pp.__class__.__name__ == "NegPrep" else None
@@ -65,18 +68,19 @@ def main():
         coef = np.atleast_2d(m.coef_); sc, q = quant(coef, 16)
         dump(name, {"vecs": vs, "classes": [str(c) for c in m.classes_], "scale": b64(sc), "w": b64(q), "b": [float(x) for x in np.atleast_1d(m.intercept_)]})
     # ---- themes (v2: word2vec-SIF + K-Means with prototype-distance reject option)
-    labels = json.loads((ROOT / "results" / "theme_labels.json").read_text())
-    for name, fn, key in (("theme_en", "theme_en.joblib", "en"), ("theme_hi", "theme_hinglish.joblib", "hinglish")):
-        T = joblib.load(M / fn); e = T["emb"]; words = list(e.w2v.wv.index_to_key)
-        V = np.vstack([e.w2v.wv[w] for w in words]); sc, q = quant(V, 8)
-        wts = np.array([e.sif.get(w, 1.0) for w in words], dtype="<f4")
-        rs = T["reject_score"]; protos = T.get("protos")
-        dump(name, {"words": words, "scale": b64(sc), "vecs": b64(np.rint(V / sc[:, None]).astype("<i1")), "dim": V.shape[1],
-                    "idf": b64(wts), "pc": [float(x) for x in e.pc], "centers": b64(T["km"].cluster_centers_.astype("<f4")),
-                    "rs": rs, "thr": float(T["reject_threshold"]), "cscale": b64(np.asarray(T["scale"], dtype="<f4")),
-                    "protos": b64(np.asarray(protos, dtype="<f4")) if protos is not None else None, "np": int(len(protos)) if protos is not None else 0,
-                    "k": int(T["k"]), "names": list(T["names"].values()) if isinstance(T["names"], dict) else list(T["names"]), "labels": labels.get(key, {})})
-    dump("meta", {"lang_names": LANG_NAMES})
+    if ONLY is None:
+        labels = json.loads((ROOT / "results" / "theme_labels.json").read_text())
+        for name, fn, key in (("theme_en", "theme_en.joblib", "en"), ("theme_hi", "theme_hinglish.joblib", "hinglish")):
+            T = joblib.load(M / fn); e = T["emb"]; words = list(e.w2v.wv.index_to_key)
+            V = np.vstack([e.w2v.wv[w] for w in words]); sc, q = quant(V, 8)
+            wts = np.array([e.sif.get(w, 1.0) for w in words], dtype="<f4")
+            rs = T["reject_score"]; protos = T.get("protos")
+            dump(name, {"words": words, "scale": b64(sc), "vecs": b64(np.rint(V / sc[:, None]).astype("<i1")), "dim": V.shape[1],
+                        "idf": b64(wts), "pc": [float(x) for x in e.pc], "centers": b64(T["km"].cluster_centers_.astype("<f4")),
+                        "rs": rs, "thr": float(T["reject_threshold"]), "cscale": b64(np.asarray(T["scale"], dtype="<f4")),
+                        "protos": b64(np.asarray(protos, dtype="<f4")) if protos is not None else None, "np": int(len(protos)) if protos is not None else 0,
+                        "k": int(T["k"]), "names": list(T["names"].values()) if isinstance(T["names"], dict) else list(T["names"]), "labels": labels.get(key, {})})
+        dump("meta", {"lang_names": LANG_NAMES})
 
 
 if __name__ == "__main__":
