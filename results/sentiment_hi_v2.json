@@ -1,0 +1,129 @@
+{
+ "variants": [
+  {
+   "variant": "A deployed recipe",
+   "everyday_dev": {
+    "macroF1": 0.8668,
+    "acc": 0.8667,
+    "recall": [
+     0.8,
+     0.95,
+     0.85
+    ]
+   },
+   "iiith_test": {
+    "macroF1": 0.6683,
+    "acc": 0.7049,
+    "recall": [
+     0.55,
+     0.78,
+     0.66
+    ]
+   }
+  },
+  {
+   "variant": "B + templates w0.3",
+   "everyday_dev": {
+    "macroF1": 0.9662,
+    "acc": 0.9667,
+    "recall": [
+     1.0,
+     1.0,
+     0.9
+    ]
+   },
+   "iiith_test": {
+    "macroF1": 0.6711,
+    "acc": 0.7075,
+    "recall": [
+     0.55,
+     0.8,
+     0.64
+    ]
+   }
+  },
+  {
+   "variant": "C + templates w0.6",
+   "everyday_dev": {
+    "macroF1": 0.9662,
+    "acc": 0.9667,
+    "recall": [
+     1.0,
+     1.0,
+     0.9
+    ]
+   },
+   "iiith_test": {
+    "macroF1": 0.6536,
+    "acc": 0.6972,
+    "recall": [
+     0.5,
+     0.81,
+     0.61
+    ]
+   }
+  },
+  {
+   "variant": "D + templates w1.0",
+   "everyday_dev": {
+    "macroF1": 0.9662,
+    "acc": 0.9667,
+    "recall": [
+     1.0,
+     1.0,
+     0.9
+    ]
+   },
+   "iiith_test": {
+    "macroF1": 0.6434,
+    "acc": 0.6959,
+    "recall": [
+     0.45,
+     0.83,
+     0.6
+    ]
+   }
+  },
+  {
+   "variant": "E templates w0.6, C=0.3",
+   "everyday_dev": {
+    "macroF1": 0.9662,
+    "acc": 0.9667,
+    "recall": [
+     1.0,
+     1.0,
+     0.9
+    ]
+   },
+   "iiith_test": {
+    "macroF1": 0.6793,
+    "acc": 0.7113,
+    "recall": [
+     0.57,
+     0.81,
+     0.63
+    ]
+   }
+  }
+ ],
+ "chosen": "E templates w0.6, C=0.3",
+ "everyday_test_chosen": {
+  "macroF1": 0.9562,
+  "acc": 0.9556,
+  "recall": [
+   0.93,
+   1.0,
+   0.93
+  ]
+ },
+ "everyday_test_deployed": {
+  "macroF1": 0.7984,
+  "acc": 0.8,
+  "recall": [
+   0.67,
+   0.87,
+   0.87
+  ]
+ },
+ "templates": 2400
+}
