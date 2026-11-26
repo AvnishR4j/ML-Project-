@@ -38,7 +38,7 @@ def dump(name, obj):
 def main():
     M = ROOT / "models"
     # ---- language: char_wb 1-4 tfidf + 3 calibrated LinearSVC folds (17 classes)
-    if ONLY is None:
+    if ONLY is None or "language" in ONLY:
         L = joblib.load(M / "language_final.joblib"); pipe = L["model"]; v = pipe.named_steps["f"]; cal = pipe.named_steps["m"]
         W = np.vstack([cc.estimator.coef_ for cc in cal.calibrated_classifiers_])             # (3*17, F)
         sc, q = quant(W, 16)
@@ -47,6 +47,7 @@ def main():
                           "b": [float(x) for cc in cal.calibrated_classifiers_ for x in cc.estimator.intercept_],
                           "a": [float(c.a_) for cc in cal.calibrated_classifiers_ for c in cc.calibrators],
                           "c": [float(c.b_) for cc in cal.calibrated_classifiers_ for c in cc.calibrators], "threshold": float(L["threshold"])})
+    if ONLY is None or "spam" in ONLY:
         # ---- spam: 5 calibrated pipelines (word 1-2 + char_wb 2-4 tfidf + 9 structural features)
         S = joblib.load(M / "spam_final.joblib"); folds = []
         for cc in S["model"].calibrated_classifiers_:

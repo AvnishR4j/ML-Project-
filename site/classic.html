@@ -375,7 +375,7 @@ footer::before{content:"sources \2014";display:block;color:var(--red);font-size:
 <div class="sc"><div class="d">97.5%</div><div class="m">on real Hinglish tweets</div></div></div>
 <div class="cell"><span class="d big">2</span><h3 class="d">Is it spam or a scam?</h3>
 <div class="bd"><div><div class="m">How</div>Words, letter chunks and scam cues (links, phone numbers, money symbols) feed a classifier. The score is a true probability, and each language has its own cut-off so genuine messages are rarely blocked.</div><div><div class="m">Learned from</div>The UCI SMS Spam Collection, with duplicate messages removed.</div><div><div class="m">CodeChef idea</div>Email Spam Classifier</div></div>
-<div class="sc"><div class="d">96.3%</div><div class="m">spam F1 on English SMS</div></div></div>
+<div class="sc"><div class="d">93.9%</div><div class="m">spam F1 on English SMS</div></div></div>
 <div class="cell"><span class="d big">3</span><h3 class="d">Is the sender happy or upset?</h3>
 <div class="bd"><div><div class="m">How</div>Word and letter patterns feed a linear classifier. One model for English (negative, neutral or positive) and one for Hinglish (negative, neutral or positive).</div><div><div class="m">Learned from</div>English: about 48,000 real tweets and short reviews, plus a human-rated word list for rarer words like &ldquo;handsome&rdquo; and everyday customer-service sentences (delivery, staff, support). Hinglish: IIIT-H comments, 120 everyday sentences written by us, and generated everyday sentences using several common spellings of each word (bahut / bohot / bhot).</div><div><div class="m">What changed</div>English rose from 63% to 81% macro F1 on 6,339 unseen tweets, and the model now has a neutral class: on 70 unseen everyday messages (including 30 neutral ones) it is right 87% of the time. Plain neutral wording is its weak spot on tweets: it catches only about 1 in 5 neutral tweets in the SemEval test. Hinglish scores about 67% macro F1 on its comment test (a small dip from 69.4, within the margin of error) but rose from 80% to 96% on 45 unseen everyday sentences written by us, which a native speaker should still check.</div><div><div class="m">CodeChef idea</div>Movie Review Sentiment Analyzer</div></div>
 <div class="sc"><div class="two"><span class="d">67.5%</span><span class="m">Hinglish macro F1 (3 classes)</span></div><div class="two"><span class="d">78.7%</span><span class="m">English macro F1 (unseen SemEval tweets)</span></div></div></div>
@@ -488,7 +488,7 @@ var W = [
 ];
 var CMP = {
 lang: [['UN texts (other languages)', 'accuracy %', 99.8, 98.8, 97.1], ['Informal English (SMS incl. spam)', 'accuracy %', 100.0, 99.8, 98.2], ['English tweets (unfiltered; some are not English)', 'accuracy %', 97.8, 97.5, 94.5], ['Real Hinglish (HingLID test)', 'accuracy %', 97.2, 97.5, 96.8], ['Hand-written Hinglish (OOD)', 'accuracy %', 100.0, 100.0, 93.6]],
-spam: [['Spam detection · UCI SMS test', 'spam F1 %', 96.3, 95.9, 94.2]],
+spam: [['Spam detection · UCI SMS test', 'spam F1 %', 93.9, 95.9, 94.2]],
 sent: [['Sentiment (Hinglish) · IIIT-H comments, 3 classes', 'macro F1 %', 69.2, 69.4, 62.6], ['Sentiment (English) · tweets, 2 classes', 'macro F1 %', 75.4, 75.9, 71.6]]
 };
 var TABS = [['lang', 'Language detection'], ['spam', 'Spam detection'], ['sent', 'Sentiment']];
