@@ -133,7 +133,7 @@ def analyze(text: str, force_language: str = None) -> dict:
     out["spam"] = "spam" if is_spam else "ham"
     out["spam_prob"] = p
     out["spam_threshold"] = thr
-    how = "<=0.5% of genuine English messages flagged on validation" if mlang == "en" else "Hinglish threshold 0.25 catches scams far more often (scam recall about 90% on a third-party challenge set) but still false-alarms on some genuine bank or OTP alerts; flagged messages go to review"
+    how = "<=0.5% of genuine English messages flagged on validation" if mlang == "en" else "Hinglish threshold 0.25 catches scams far more often (scam recall about 70% on a hard third-party Hinglish challenge set); genuine bank and OTP alerts are flagged far less often after training on real Indian SMS; flagged messages go to review"
     out["steps"].append(("Spam filter", out["spam"].upper(), f"P(spam)={p:.2f}, threshold {thr:.2f} ({how})."))
     if is_spam:
         out["steps"].append(("Sentiment", "skipped", "Message filtered as spam."))
