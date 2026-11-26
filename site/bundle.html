@@ -201,7 +201,7 @@ footer{font-size:13px;color:#8794ad;max-width:48rem;line-height:1.6;border-top:1
 <div class="body"><div><div class="lab">How</div>Words, letter chunks and scam cues (links, phone numbers, money symbols) feed a classifier. The score is a true probability, and each language has its own cut-off so genuine messages are rarely blocked.</div><div><div class="lab">Learned from</div>The UCI SMS Spam Collection, with duplicate messages removed.</div><div><div class="lab">CodeChef idea</div>Email Spam Classifier</div></div>
 <div class="score"><b>96.3%</b>spam F1 on English SMS</div></div>
 <div class="panel card"><span class="k">STAGE 3</span><span class="ask">Is the sender happy or upset?</span>
-<div class="body"><div><div class="lab">How</div>Word and letter patterns feed a linear classifier. One model for English (positive or negative) and one for Hinglish (negative, neutral or positive).</div><div><div class="lab">Learned from</div>English tweets and short reviews, and real Hinglish comments (IIIT-H).</div><div><div class="lab">CodeChef idea</div>Movie Review Sentiment Analyzer</div></div>
+<div class="body"><div><div class="lab">How</div>Word and letter patterns feed a linear classifier. One model for English (negative, neutral or positive) and one for Hinglish (negative, neutral or positive).</div><div><div class="lab">Learned from</div>English tweets and short reviews, and real Hinglish comments (IIIT-H).</div><div><div class="lab">CodeChef idea</div>Movie Review Sentiment Analyzer</div></div>
 <div class="score"><b>69.4%</b>Hinglish macro F1 (3 classes)<br><b>75.9%</b>English macro F1 (tweets)</div></div>
 <div class="panel card"><span class="k">STAGE 4</span><span class="ask">What are people talking about?</span>
 <div class="body"><div><div class="lab">How</div>Each message becomes a vector of numbers from word embeddings, and K-Means groups similar messages into 6 themes per language. No labels needed.</div><div><div class="lab">Learned from</div>Genuine English SMS and real Hinglish comments.</div><div><div class="lab">CodeChef idea</div>Clustering and Dimensionality Reduction</div></div>
@@ -544,7 +544,7 @@ if (isSpam) {
 S.push({ name: 'Sentiment', res: 'Skipped', skip: 1, why: 'Spam is removed before sentiment.' });
 S.push({ name: 'Theme', res: 'Skipped', skip: 1, why: 'Spam is removed before grouping.' });
 } else {
-S.push({ name: 'Sentiment', res: cur.sentiment, why: cur.language === 'Hinglish' ? 'Hinglish model: negative, neutral or positive.' : 'English model: positive or negative.' });
+S.push({ name: 'Sentiment', res: cur.sentiment, why: cur.language === 'Hinglish' ? 'Hinglish model: negative, neutral or positive.' : 'English model: negative, neutral or positive.' });
 S.push({ name: 'Theme', res: cur.theme, why: 'Closest of 6 themes learned for ' + cur.language + ' messages.' });
 }
 }
@@ -631,7 +631,7 @@ function runOwn() {
 var t = $('own-t').value.trim(), note = $('own-note'), go = $('own-go');
 if (!t) { note.textContent = 'Type a message first.'; return; }
 setStale(true); $('w-title').textContent = 'Analyzing your message…';
-go.disabled = true; note.textContent = 'Loading the models (about 11 MB, first time only)…';
+go.disabled = true; note.textContent = 'Loading the models (about 15 MB, first time only)…';
 loadEngine().then(function (E) {
 var a = window.MIEngine.analyze(E, t);
 showWalk(toRow(a, t)); renderChips();

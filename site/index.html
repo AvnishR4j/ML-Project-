@@ -379,7 +379,7 @@ footer::before{content:"sources \2014";display:block;color:var(--red);font-size:
 <div class="bd"><div><div class="m">How</div>Words, letter chunks and scam cues (links, phone numbers, money symbols) feed a classifier. The score is a true probability, and each language has its own cut-off so genuine messages are rarely blocked.</div><div><div class="m">Learned from</div>The UCI SMS Spam Collection, with duplicate messages removed.</div><div><div class="m">CodeChef idea</div>Email Spam Classifier</div></div>
 <div class="sc"><div class="d">96.3%</div><div class="m">spam F1 on English SMS</div></div></div>
 <div class="cell"><span class="d big">3</span><h3 class="d">Is the sender happy or upset?</h3>
-<div class="bd"><div><div class="m">How</div>Word and letter patterns feed a linear classifier. One model for English (positive or negative) and one for Hinglish (negative, neutral or positive).</div><div><div class="m">Learned from</div>English: about 48,000 real tweets and short reviews, plus a human-rated word list for rarer words like &ldquo;handsome&rdquo; and everyday customer-service sentences (delivery, staff, support). Hinglish: IIIT-H comments plus 120 everyday sentences written by us.</div><div><div class="m">What changed</div>English rose from 63% to 81% macro F1 on 6,339 unseen tweets, and from 90% to 92.5% on 40 unseen customer messages. Hinglish dipped from 69.4 to 67.5 on its comment test (within the margin of error) but rose from 70% to 95% on 20 new everyday sentences.</div><div><div class="m">CodeChef idea</div>Movie Review Sentiment Analyzer</div></div>
+<div class="bd"><div><div class="m">How</div>Word and letter patterns feed a linear classifier. One model for English (negative, neutral or positive) and one for Hinglish (negative, neutral or positive).</div><div><div class="m">Learned from</div>English: about 48,000 real tweets and short reviews, plus a human-rated word list for rarer words like &ldquo;handsome&rdquo; and everyday customer-service sentences (delivery, staff, support). Hinglish: IIIT-H comments plus 120 everyday sentences written by us.</div><div><div class="m">What changed</div>English rose from 63% to 81% macro F1 on 6,339 unseen tweets, and the model now has a neutral class: on 70 unseen everyday messages (including 30 neutral ones) it is right 87% of the time. Plain neutral wording is its weak spot on tweets: it catches only about 1 in 5 neutral tweets in the SemEval test. Hinglish dipped from 69.4 to 67.5 on its comment test (within the margin of error) but rose from 70% to 95% on 20 new everyday sentences.</div><div><div class="m">CodeChef idea</div>Movie Review Sentiment Analyzer</div></div>
 <div class="sc"><div class="two"><span class="d">67.5%</span><span class="m">Hinglish macro F1 (3 classes)</span></div><div class="two"><span class="d">78.7%</span><span class="m">English macro F1 (unseen SemEval tweets)</span></div></div></div>
 <div class="cell"><span class="d big">4</span><h3 class="d">What are people talking about?</h3>
 <div class="bd"><div><div class="m">How</div>Each message becomes a vector from word embeddings, and K-Means groups similar messages into 20 themes per language. If a message is too far from every theme, it says &ldquo;No clear theme&rdquo; instead of guessing.</div><div><div class="m">Learned from</div>English: CLINC150, Banking77, product and movie reviews, tweets and SMS. Hinglish: Hinglish-TOP, YouTube comments, tweets and 540 everyday messages written by us.</div><div><div class="m">What changed</div>Themes grew from 6 to 20 per language. Agreement with held-out topic labels (NMI) rose from 0.10 to 0.48 in English and from 0.09 to 0.61 in Hinglish. The off-topic check is weak: it catches 55% of off-topic English messages and almost none in Hinglish.</div><div><div class="m">CodeChef idea</div>Clustering and Dimensionality Reduction</div></div>
@@ -515,7 +515,7 @@ if (isSpam) {
 S.push({ name: 'Sentiment', res: 'Skipped', skip: 1, why: 'Spam is removed before sentiment.' });
 S.push({ name: 'Theme', res: 'Skipped', skip: 1, why: 'Spam is removed before grouping.' });
 } else {
-S.push({ name: 'Sentiment', res: c.sentiment, why: c.language !== 'English' ? 'Hinglish model: negative, neutral or positive.' + (c.language === 'Hindi' ? ' Hindi script was converted to Roman letters first.' : '') : 'English model: positive or negative.' });
+S.push({ name: 'Sentiment', res: c.sentiment, why: c.language !== 'English' ? 'Hinglish model: negative, neutral or positive.' + (c.language === 'Hindi' ? ' Hindi script was converted to Roman letters first.' : '') : 'English model: negative, neutral or positive.' });
 S.push({ name: 'Theme', res: c.theme, why: c.theme === 'No clear theme' ? 'Too far from every theme learned for ' + c.language + ' messages, so none is named.' : 'Closest of 20 themes learned for ' + c.language + ' messages.' });
 }
 }
@@ -598,7 +598,7 @@ $('replay').addEventListener('click', replay);
 
 var engineP = null, engineReady = false;
 function unpack(name) {
-return fetch(RAW + 'mdl/' + name + '.json').then(function (r) { if (!r.ok) throw new Error('download'); return r.json(); }).then(function (j) {
+return fetch('mdl/' + name + '.json').then(function (r) { return r.ok ? r : fetch(RAW + 'mdl/' + name + '.json'); }).then(function (r) { if (!r.ok) throw new Error('download'); return r.json(); }).then(function (j) {
 var bin = Uint8Array.from(atob(j.gz), function (c) { return c.charCodeAt(0); });
 return new Response(new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
 }).then(function (t) { return JSON.parse(t); });
@@ -622,7 +622,7 @@ function runOwn() {
 var t = $('own-t').value.trim(), note = $('own-note'), go = $('own-go');
 if (!t) { note.textContent = 'Type a message first.'; return; }
 setStale(true); $('w-title').textContent = 'Analyzing your message…';
-go.disabled = true; note.textContent = 'Loading the models (about 11 MB, first time only)…';
+go.disabled = true; note.textContent = 'Loading the models (about 15 MB, first time only)…';
 loadEngine().then(function (E) {
 var a = window.MIEngine.analyze(E, t);
 showWalk(toRow(a, t)); renderChips(null);
@@ -638,7 +638,7 @@ $('own-t').addEventListener('keydown', function (e) { if (e.key === 'Enter' && (
 
 /* ---- batch mode + review queue ---- */
 var BATCH = [], BCOR = {};
-var MARGIN_CUT = { hinglish: 0.159, en: 0.175 };      // 15th percentile of sentiment margins on held-out test data (accuracy there: Hinglish 40% vs 76% above, English 61% vs 81%)
+var MARGIN_CUT = { hinglish: 0.159, en: 0.205 };      // 15th percentile of sentiment margins on held-out test data (accuracy there: Hinglish 40% vs 76% above; English 3-class 46% vs 71% above)
 function parseCSV(txt) {
 var rows = [], row = [], f = '', q = false, i = 0, c;
 txt = txt.replace(/^﻿/, '');
@@ -673,7 +673,7 @@ runBatch(data, cut ? 'Only the first ' + cap + ' messages were analyzed.' : '');
 }
 function runBatch(msgs, extra) {
 var note = $('b-note'), pr = $('b-prog'); $('b-out').hidden = true; BATCH = []; BCOR = {}; pr.hidden = false; pr.firstChild.style.width = '0';
-note.textContent = 'Loading the models (about 11 MB, first time only)…';
+note.textContent = 'Loading the models (about 15 MB, first time only)…';
 loadEngine().then(function (E) {
 var i = 0, t0 = performance.now();
 (function step() {

@@ -1,0 +1,4 @@
+variant,dev_macroF1,dev_rec_neg,dev_rec_neu,dev_rec_pos,tweetval_macroF1,tweetval_rec_neg,tweetval_rec_neu,tweetval_rec_pos
+"C2 broader neutral templates, tweet-neutral w0.5",0.8871,0.966,0.8,0.9,0.639,0.593,0.563,0.791
+"C3 same, tpl w0.5",0.9103,0.966,0.867,0.9,0.6395,0.593,0.563,0.792
+"C4 tweet-neutral w0.3, tpl w0.5",0.8984,0.966,0.8,0.933,0.6251,0.673,0.448,0.842
