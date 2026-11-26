@@ -120,6 +120,8 @@ background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
 background:rgba(255,253,240,.55) repeating-linear-gradient(180deg,transparent 0 31px,var(--line) 31px 32px);background-attachment:local}
 
 .batch{margin-top:0}.batch .row2{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:12px 0}.batch input[type=file]{font:inherit;font-size:15px;max-width:100%}
+.own .lk2{background:none;border:0;border-bottom:1px dashed currentColor;font:inherit;cursor:pointer;color:var(--blue);padding:0;margin-left:14px}
+.own .lk2[hidden]{display:none}
 .batch .lk2{background:none;border:0;border-bottom:1px dashed currentColor;font:inherit;cursor:pointer;color:var(--blue);padding:0}
 .batch .prog{height:8px;background:rgba(0,0,0,.08);border-radius:4px;overflow:hidden;margin:8px 0}.batch .prog i{display:block;height:100%;width:0;background:var(--blue);transition:width .15s}
 .batch .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:22px;margin:22px 0}
@@ -338,7 +340,7 @@ footer::before{content:"sources \2014";display:block;color:var(--red);font-size:
 <div class="own">
 <label class="m" for="own-t">Your own message</label>
 <textarea id="own-t" maxlength="600" placeholder="For example: Congratulations! You have won a free prize, click the link to claim"></textarea>
-<div class="row"><button class="go" id="own-go" type="button">Analyze</button><span class="note" id="own-note">Works for English, Hinglish, Hindi in Devanagari script and 13 other languages. It runs in your browser with the same trained models, and nothing you type is sent anywhere.</span></div>
+<div class="row"><button class="go" id="own-go" type="button">Analyze</button><button class="lk2" id="own-mic" type="button" hidden title="Speak a message (needs Chrome or Edge and an internet connection)">🎤 Speak</button><button class="lk2" id="own-lines" type="button" hidden>Analyze each line as a separate message</button><span class="note" id="own-note">Works for English, Hinglish, Hindi in Devanagari script and 13 other languages. It runs in your browser with the same trained models, and nothing you type is sent anywhere.</span></div>
 </div>
 <p class="m exh">Or pick an example</p>
 <div class="exl" role="group" aria-label="Example messages" id="chips"></div>
@@ -629,6 +631,37 @@ $('w-msg').scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smoo
 }
 $('own-t').addEventListener('input', function () { if (cur && this.value.trim() !== cur.message) { setStale(true); $('own-note').textContent = 'Press Analyze to see the result for this message. The result shown on the right is for the previous one.'; } else if (cur) { setStale(false); $('own-note').textContent = NOTE; } });
 $('own-go').addEventListener('click', runOwn);
+/* extras: live analysis while typing, voice input, multi-line paste */
+(function () {
+var ta = $('own-t'), timer = null, lastRun = '';
+ta.addEventListener('input', function () {
+var lines = this.value.split(/\n+/).filter(function (l) { return l.trim(); });
+$('own-lines').hidden = lines.length < 2;
+clearTimeout(timer);
+var v = this.value.trim();
+if (v.length < 4 || lines.length > 1 || v === lastRun) return;
+timer = setTimeout(function () { lastRun = v; runOwn(); }, 700);
+});
+$('own-lines').addEventListener('click', function () {
+var lines = ta.value.split(/\n+/).map(function (l) { return l.trim(); }).filter(Boolean).slice(0, 500);
+loadBatchText('message\n' + lines.map(function (l) { return '"' + l.replace(/"/g, '""') + '"'; }).join('\n'));
+var b = $('s3b'); if (b) b.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+});
+var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SR) {
+var mic = $('own-mic'), rec = null, on = false; mic.hidden = false;
+mic.addEventListener('click', function () {
+if (on && rec) { rec.stop(); return; }
+rec = new SR(); rec.lang = 'en-IN'; rec.interimResults = false; rec.maxAlternatives = 1;
+rec.onstart = function () { on = true; mic.textContent = '● Listening… (tap to stop)'; };
+rec.onend = function () { on = false; mic.textContent = '🎤 Speak'; };
+rec.onerror = function () { on = false; mic.textContent = '🎤 Speak'; $('own-note').textContent = 'Voice input did not work here. Type the message instead.'; };
+rec.onresult = function (e) { var t = e.results[0][0].transcript; ta.value = t; lastRun = t.trim(); runOwn(); };
+try { rec.start(); } catch (x) {}
+});
+}
+})();
+
 $('own-t').addEventListener('focus', function () { loadEngine()['catch'](function () {}); }, { once: true });
 $('own-t').addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) runOwn(); });
 
