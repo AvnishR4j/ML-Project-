@@ -1,0 +1,80 @@
+[
+ {
+  "variant": "A current",
+  "hi_thr": 0.13,
+  "real_genuine_hi_flag_rate": 0.0115,
+  "gupta": {
+   "AUC": 0.966,
+   "spam_recall": 0.529,
+   "genuine_flagged": "0/50"
+  },
+  "mine": {
+   "AUC": 0.829,
+   "spam_recall": 0.825,
+   "genuine_flagged": "13/41"
+  },
+  "fresh2": {
+   "AUC": 0.695,
+   "spam_recall": 0.742,
+   "genuine_flagged": "14/31"
+  },
+  "pjbrav430": {
+   "AUC": 0.933,
+   "spam_recall": 0.92,
+   "genuine_flagged": "73/205"
+  },
+  "en_F1": 0.96
+ },
+ {
+  "variant": "C ext + Indian SMS 172",
+  "hi_thr": 0.13,
+  "real_genuine_hi_flag_rate": 0.013,
+  "gupta": {
+   "AUC": 0.991,
+   "spam_recall": 0.902,
+   "genuine_flagged": "0/50"
+  },
+  "mine": {
+   "AUC": 0.92,
+   "spam_recall": 1.0,
+   "genuine_flagged": "14/41"
+  },
+  "fresh2": {
+   "AUC": 0.839,
+   "spam_recall": 1.0,
+   "genuine_flagged": "17/31"
+  },
+  "pjbrav430": {
+   "AUC": 1.0,
+   "spam_recall": 1.0,
+   "genuine_flagged": "9/205"
+  },
+  "en_F1": 0.944
+ },
+ {
+  "variant": "D C + templates (genuine bank/OTP + scams)",
+  "hi_thr": 0.162,
+  "real_genuine_hi_flag_rate": 0.0165,
+  "gupta": {
+   "AUC": 0.994,
+   "spam_recall": 0.902,
+   "genuine_flagged": "2/50"
+  },
+  "mine": {
+   "AUC": 0.996,
+   "spam_recall": 0.975,
+   "genuine_flagged": "3/41"
+  },
+  "fresh2": {
+   "AUC": 0.97,
+   "spam_recall": 1.0,
+   "genuine_flagged": "9/31"
+  },
+  "pjbrav430": {
+   "AUC": 1.0,
+   "spam_recall": 1.0,
+   "genuine_flagged": "0/205"
+  },
+  "en_F1": 0.939
+ }
+]

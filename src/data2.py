@@ -104,3 +104,17 @@ def load_scam_challenge():
 def prep(t: str) -> str:
     """Shared, picklable text preprocessor for the sentiment models."""
     return squeeze(t.lower())
+
+
+# ------------------------------------------------------------------ TweetEval / SemEval-2017 Task 4 (English tweets, larger)
+def load_tweeteval(split: str):
+    """SemEval-2017 sentiment tweets (cardiffnlp/tweeteval). Keeps positive/negative only (neutral is not used by the 2-class model).
+    split in {'train','val','test'}; the official test split is never used for training or model selection."""
+    d = RAW / "tweeteval"
+    txt = (d / f"{split}_text.txt").read_text(encoding="utf-8").splitlines()
+    lab = (d / f"{split}_labels.txt").read_text(encoding="utf-8").split()
+    rows = [(clean_social(t), {"0": "negative", "2": "positive"}[l]) for t, l in zip(txt, lab) if l in ("0", "2")]
+    df = pd.DataFrame(rows, columns=["text", "label"])
+    df = df[df.text.str.len() > 0]
+    df["key"] = df.text.str.lower().str.replace(r"\W+", "", regex=True)
+    return df.drop_duplicates("key").drop(columns="key").reset_index(drop=True)

@@ -1,0 +1,4 @@
+{"what":"sentiment margin = winning class score minus runner-up (LinearSVC decision values); low margin is used as a review flag",
+ "hinglish":{"n":776,"p15_cut":0.159,"accuracy_margin_le_p15":0.402,"accuracy_above":0.760,"overall":0.706},
+ "english":{"n":1800,"p15_cut":0.175,"accuracy_margin_le_p15":0.607,"accuracy_above":0.813,"overall":0.782},
+ "note":"held-out test splits (English pooled: tweets, short reviews, movie reviews, first 700 of each)"}

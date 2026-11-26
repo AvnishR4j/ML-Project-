@@ -1,0 +1,4 @@
+{"set":"data/raw/hindi_scam_challenge_raw.csv (random 1500, seed 0; 1050 genuine, 450 spam; Devanagari with some Latin words)",
+ "before":{"genuine":{"uncertain":0.548,"flagged_spam":0.0},"spam":{"uncertain":0.529,"flagged_spam":0.400}},
+ "after":{"genuine":{"uncertain":0.104,"flagged_spam":0.0},"spam":{"uncertain":0.222,"flagged_spam":0.544}},
+ "note":"Labels come from the challenge file. No labelled Hindi-script sentiment data exists, so sentiment on transliterated text is not measured."}

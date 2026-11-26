@@ -1,0 +1,53 @@
+{
+  "language": "en",
+  "k": 20,
+  "n_fit": 17550,
+  "n_calib": 1950,
+  "n_test": 5200,
+  "NMI": 0.47612575746572267,
+  "ARI": 0.33107758060851095,
+  "purity": 0.6069230769230769,
+  "reject_score_candidates_AUROC_validation": {
+    "centroid": 0.7504948717948717,
+    "centroid_scaled": 0.7963153846153846,
+    "prototype10": 0.8156589743589744,
+    "prototype30": 0.8211820512820514,
+    "prototype60": 0.8152974358974359
+  },
+  "reject_score_chosen": "prototype30",
+  "operating_points_by_calibration_quantile": {
+    "0.8": {
+      "threshold": 0.6808596614436837,
+      "in_topic_accepted": 0.7813461538461538,
+      "out_of_topic_rejected": 0.751
+    },
+    "0.9": {
+      "threshold": 0.7575391618547491,
+      "in_topic_accepted": 0.8919230769230769,
+      "out_of_topic_rejected": 0.546
+    },
+    "0.95": {
+      "threshold": 0.823437029159673,
+      "in_topic_accepted": 0.9494230769230769,
+      "out_of_topic_rejected": 0.336
+    },
+    "0.98": {
+      "threshold": 0.8802513802811848,
+      "in_topic_accepted": 0.979423076923077,
+      "out_of_topic_rejected": 0.181
+    }
+  },
+  "reject_threshold": 0.7575391618547491,
+  "calibration_quantile": 0.9,
+  "in_topic_accepted": 0.8919230769230769,
+  "out_of_topic_rejected": 0.546,
+  "n_ood_test": 1000,
+  "n_ood_validation": 200,
+  "AUROC_test": {
+    "centroid": 0.7652077884615385,
+    "centroid_scaled": 0.7833814423076924,
+    "prototype10": 0.8410677884615384,
+    "prototype30": 0.8425333653846153,
+    "prototype60": 0.8373097115384616
+  }
+}

@@ -1,0 +1,43 @@
+{
+ "variant": "D",
+ "hi_thr": 0.16193895235383068,
+ "en_thr": 0.3446177322613362,
+ "independent_test3_40": {
+  "AUC": 0.993,
+  "spam_recall": 1.0,
+  "genuine_flagged": "9/20"
+ },
+ "english_sms_test": {
+  "precision": 0.958,
+  "recall": 0.92,
+  "F1": 0.939,
+  "genuine_flagged": 5,
+  "genuine_total": 900
+ },
+ "variants": {
+  "variant": "D final",
+  "hi_thr": 0.162,
+  "real_genuine_hi_flag_rate": 0.0165,
+  "gupta": {
+   "AUC": 0.994,
+   "spam_recall": 0.902,
+   "genuine_flagged": "2/50"
+  },
+  "mine": {
+   "AUC": 0.996,
+   "spam_recall": 0.975,
+   "genuine_flagged": "3/41"
+  },
+  "fresh2": {
+   "AUC": 0.97,
+   "spam_recall": 1.0,
+   "genuine_flagged": "9/31"
+  },
+  "pjbrav430": {
+   "AUC": 1.0,
+   "spam_recall": 1.0,
+   "genuine_flagged": "0/205"
+  },
+  "en_F1": 0.939
+ }
+}

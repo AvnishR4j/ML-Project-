@@ -1,0 +1,13 @@
+language,model,test,n,macro_F1,accuracy
+English,baseline (no negation handling),tweets,1854,0.7593465665545895,
+English,baseline (no negation handling),short reviews,2132,0.7804251992901609,
+English,baseline (no negation handling),movie reviews,400,0.7439726904203114,
+English,baseline (no negation handling),negation challenge,45,0.5852534562211982,0.6444444444444445
+English,negation handling,tweets,1854,0.761129274480906,
+English,negation handling,short reviews,2132,0.7832257587441767,
+English,negation handling,movie reviews,400,0.7962873367115684,
+English,negation handling,negation challenge,45,0.708994708994709,0.7555555555555555
+Hinglish,baseline (no negation handling),IIIT-H test,776,0.6748730179202073,
+Hinglish,baseline (no negation handling),negation challenge,14,0.5185185185185185,0.7857142857142857
+Hinglish,negation handling,IIIT-H test,776,0.6810023214354879,
+Hinglish,negation handling,negation challenge,14,0.49673202614379086,0.7142857142857143
