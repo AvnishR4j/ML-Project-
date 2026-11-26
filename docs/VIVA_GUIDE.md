@@ -21,6 +21,31 @@ It runs **entirely in the browser**: the trained models are exported as files, a
 
 ---
 
+## 1b. Purpose: the problem, the users, the motivation
+
+**Problem in one line (say this first):** "Businesses get thousands of mixed English, Hindi and Hinglish messages that no one can read by hand, and our system sorts them automatically by language, spam, sentiment and topic, sending anything it's unsure about to a human."
+
+**Why it is needed**
+- **Volume:** banks, e-commerce, telecom and helpdesks receive thousands of messages a day (SMS, WhatsApp, reviews, complaints).
+- **Hinglish gap:** many Indian users write "mera order abhi tak nahi aaya". English tools can't read it and Hindi tools can't read Roman script.
+- **Fraud:** KYC, subsidy and lottery scam messages are everywhere in India, and customers need warning before they click.
+
+**Who would use it, and for what**
+| User | Use |
+|---|---|
+| Customer support teams | Sort the inbox by sentiment and theme so angry delivery complaints reach a person first |
+| Product / brand teams | See what customers talk about and how they feel, without reading every review |
+| Banks and apps | Flag scam messages; tell a real bank alert from a fake KYC link |
+| Moderators | Filter spam and see which messages need a human look |
+
+**Why it works for them:** it admits uncertainty (unsure messages go to review instead of getting a confident wrong label), it runs in the browser (private, no server cost), and it shows why a message was flagged.
+
+**Why you worked on it (honest framing):** it is a lab project that combines five ML ideas (language detection, spam, sentiment, clustering, and the KNN / SVM / Naive Bayes comparison) into one system that does something useful. Hinglish was chosen because few tools handle it, which makes the problem harder and more worth solving.
+
+**Be ready to add:** it is a working prototype, not a finished product. Hinglish scam detection is the weakest part and needs more real labelled data before a company could rely on it.
+
+---
+
 ## 2. Architecture
 
 ### 2.1 Pipeline
@@ -257,6 +282,9 @@ A viva usually probes four things. Know which one the question is aiming at.
 Pattern that always works: **what, why, evidence, limitation**. Never say "100% accurate".
 
 ### A. Ownership and understanding
+
+**Q0. What is the use of your project, and who would use it?**
+Give the one-line problem from section 1b, then two users (support teams, banks) and one reason it suits them (it admits uncertainty and runs privately).
 
 **Q1. Explain your project in one minute.**
 Use section 1, then the pipeline diagram. End with: "and uncertain messages go to a human review queue."

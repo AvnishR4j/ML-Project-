@@ -4,6 +4,15 @@ Read this the night before and again just before the viva. Full detail is in `VI
 
 ---
 
+## 0. Problem in one line (say it first)
+
+"Businesses get thousands of mixed English, Hindi and Hinglish messages that no one can read by hand, and our system sorts them automatically by language, spam, sentiment and topic, sending anything it's unsure about to a human."
+
+**Users:** support teams (prioritise angry messages), product teams (see topics and mood), banks and apps (catch scams), moderators (filter spam).
+**Why you built it:** lab project combining five ML ideas into something useful; Hinglish chosen because few tools handle it.
+
+---
+
 ## 1. The whole project in 4 lines
 
 - **Input:** a short message in English, Hindi, or **Hinglish** (Hindi in English letters).
