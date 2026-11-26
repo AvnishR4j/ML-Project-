@@ -4,7 +4,7 @@ Read this the night before and again just before the viva. Full detail is in `VI
 
 ---
 
-## 0. Problem in one line (say it first)
+## 1. Problem in one line (say it first)
 
 "Businesses get thousands of mixed English, Hindi and Hinglish messages that no one can read by hand, and our system sorts them automatically by language, spam, sentiment and topic, sending anything it's unsure about to a human."
 
@@ -13,7 +13,7 @@ Read this the night before and again just before the viva. Full detail is in `VI
 
 ---
 
-## 1. The whole project in 4 lines
+## 2. The whole project in 4 lines
 
 - **Input:** a short message in English, Hindi, or **Hinglish** (Hindi in English letters).
 - **Output:** language, spam or genuine, sentiment, theme.
@@ -32,7 +32,7 @@ Memory hook: **L-S-S-T** = Language, Spam, Sentiment, Theme.
 
 ---
 
-## 2. Each stage on one card
+## 3. Each stage on one card
 
 | Stage | Features | Model | Special trick | Key number |
 |---|---|---|---|---|
@@ -44,7 +44,7 @@ Memory hook: **L-S-S-T** = Language, Spam, Sentiment, Theme.
 
 ---
 
-## 3. Concepts to know cold (one line each)
+## 4. Concepts to know cold (one line each)
 
 - **TF-IDF:** word weight = how often in this message x how rare overall.
 - **n-gram:** run of n words or letters. Letter n-grams survive spelling changes (*achha / acha*).
@@ -65,7 +65,7 @@ Memory hook: **L-S-S-T** = Language, Spam, Sentiment, Theme.
 
 ---
 
-## 4. Why we chose it (the 8 justifications)
+## 5. Why we chose it (the 8 justifications)
 
 1. **SVM, not transformer:** best transformer 0.726 vs SVM 0.694, a small gain; SVM runs in the browser, is small and explainable.
 2. **Character n-grams:** Hinglish has no fixed spelling.
@@ -78,7 +78,7 @@ Memory hook: **L-S-S-T** = Language, Spam, Sentiment, Theme.
 
 ---
 
-## 5. Problems we hit, and the fix (great for "what challenges did you face?")
+## 6. Problems we hit, and the fix (great for "what challenges did you face?")
 
 | Problem | Fix |
 |---|---|
@@ -93,7 +93,7 @@ Memory hook: **L-S-S-T** = Language, Spam, Sentiment, Theme.
 
 ---
 
-## 6. Numbers to remember
+## 7. Numbers to remember
 
 | Item | Number |
 |---|---|
@@ -113,7 +113,7 @@ Memory hook: **L-S-S-T** = Language, Spam, Sentiment, Theme.
 
 ---
 
-## 7. Weak spots (say them first)
+## 8. Weak spots (say them first)
 
 1. Hinglish scams: about 1 in 10 still missed; some genuine bank/OTP alerts flagged.
 2. Several test sets written by us, so optimistic.
@@ -125,7 +125,7 @@ Memory hook: **L-S-S-T** = Language, Spam, Sentiment, Theme.
 
 ---
 
-## 8. Rapid-fire answers
+## 9. Rapid-fire answers
 
 - **Why Hinglish is hard?** No fixed spelling, mixes two languages, little labelled data.
 - **Overfitting?** Cross-validation on training only; test set touched once; leakage tests.
@@ -138,14 +138,14 @@ Memory hook: **L-S-S-T** = Language, Spam, Sentiment, Theme.
 
 ---
 
-## 9. Answer formula
+## 10. Answer formula
 
 **What -> Why -> Evidence -> Limitation.**
 Example: "Spam uses an SVM with TF-IDF and structural cues (what), because it is fast and explainable in the browser (why). English F1 is 0.963 on held-out data (evidence). Hinglish scams are still the weakest part (limitation)."
 
 ---
 
-## 10. Demo cheat line-up
+## 11. Demo cheat line-up
 
 | Type | Expect |
 |---|---|
@@ -160,7 +160,7 @@ Example: "Spam uses an SVM with TF-IDF and structural cues (what), because it is
 
 ---
 
-## 11. Last-minute checklist
+## 12. Last-minute checklist
 
 - [ ] Site loaded once, models cached
 - [ ] Repo link: github.com/AvnishR4j/ML-Project-
