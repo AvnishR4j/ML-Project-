@@ -227,7 +227,7 @@ Language Detection, Email/SMS Spam Classifier, Movie Review Sentiment, Clusterin
 | Sentiment, English, TweetEval | macro-F1 0.48 | public benchmark; neutral recall only about 20% because that dataset defines "neutral" differently |
 | Sentiment, Hinglish | macro-F1 about 0.67 (IIIT-H test); 96% on 45 unseen everyday lines | test set touched once |
 | Themes | NMI 0.48 English / 0.61 Hinglish | held-out topic labels |
-| Whole pipeline | 63 messages/sec on one CPU core (3,921 real held-out messages) | Python version |
+| Whole pipeline | 42 messages/sec on one CPU core (3,921 real held-out messages) | Python version |
 
 ---
 
@@ -404,7 +404,7 @@ Be ready to answer for your own part. The data cleaning, feature design, thresho
 Messages never leave the device (browser-only). In a company setting you would need consent and a clear policy. Low-confidence cases go to a human instead of being auto-actioned.
 
 **Q32. Can it scale?**
-The Python pipeline did 63 messages/sec on one CPU core. The browser version is per user, so scaling is free. For millions of messages you would run the Python version in a batch job.
+The Python pipeline did 42 messages/sec on one CPU core. The browser version is per user, so scaling is free. For millions of messages you would run the Python version in a batch job.
 
 **Q33. How would you improve it with more time?**
 Labelled real Hinglish scam data (in our experiment, 10 real Hinglish examples gave spam F1 about 0.77 and 50 gave about 0.97, on repetitive data so optimistic), a Hinglish-specific transformer on a server, per-class threshold tuning, and active learning from the review queue.

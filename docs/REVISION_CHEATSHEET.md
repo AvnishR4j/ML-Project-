@@ -107,7 +107,7 @@ Memory hook: **L-S-S-T** = Language, Spam, Sentiment, Theme.
 | Sentiment Hinglish, IIIT-H | macro-F1 about **0.67** (majority baseline 0.22) |
 | Best transformer (HingRoBERTa) | **0.726** |
 | Themes NMI | **0.48** EN, **0.61** HI (first version about 0.10) |
-| Speed (Python, one CPU core) | **63** messages/sec |
+| Speed (Python, one CPU core) | **42** messages/sec |
 | Browser download | about **18 MB**, once |
 | Datasets | about **15** public + our templates |
 
