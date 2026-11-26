@@ -503,9 +503,9 @@ var vis = {}, rows = [], colorOf = {}, langCount = {}, order = [];
 
 function stagesFor(c) {
 var unsure = c.language === 'Uncertain', supported = c.language === 'English' || c.language === 'Hinglish' || (c.language === 'Hindi' && c.spam !== 'none'), isSpam = c.spam === 'spam', S = [];
-S.push({ name: 'Language', res: unsure ? 'Not sure' : c.language, tag: unsure ? 'sent to review' : '', tagK: '', why: unsure ? 'Confidence is below the threshold, so a person reviews it instead of the system guessing.' : 'Identified from character patterns.' });
+S.push({ name: 'Language', res: unsure ? (c.note ? 'Unclear text' : 'Not sure') : c.language, tag: unsure ? 'sent to review' : '', tagK: '', why: unsure ? (c.note || 'Confidence is below the threshold, so a person reviews it instead of the system guessing.') : 'Identified from character patterns.' });
 if (!supported) {
-var why = unsure ? 'Waits for the language to be confirmed.' : 'Spam filtering applies to English and Hinglish.', word = unsure ? 'Waiting' : 'Not applied';
+var why = unsure ? (c.note ? 'Waits until the message is clear.' : 'Waits for the language to be confirmed.') : 'Spam filtering applies to English and Hinglish.', word = unsure ? 'Waiting' : 'Not applied';
 S.push({ name: 'Spam check', res: word, skip: 1, why: why });
 S.push({ name: 'Sentiment', res: word, skip: 1, why: unsure ? why : 'Sentiment applies to English and Hinglish.' });
 S.push({ name: 'Theme', res: word, skip: 1, why: unsure ? why : 'Themes apply to English and Hinglish.' });
@@ -614,7 +614,7 @@ function toRow(a, text) {
 var cap = function (x) { return x ? x.charAt(0).toUpperCase() + x.slice(1) : x; };
 var lang = a.language === 'uncertain' ? 'Uncertain' : (a.language === 'hinglish' ? 'Hinglish' : a.language_name);
 return { id: '__own', title: 'Your message', message: text, language: lang, spam: a.spam === 'spam' ? 'spam' : (a.spam === 'ham' ? 'ham' : 'none'),
-p: a.spam_prob == null ? '' : a.spam_prob.toFixed(3), translit: a.transliterated || '', sentiment: cap(a.sentiment || ''), theme: a.cluster_label || (a.cluster != null ? '#' + a.cluster : '') };
+p: a.spam_prob == null ? '' : a.spam_prob.toFixed(3), translit: a.transliterated || '', note: a.unclear_note || '', sentiment: cap(a.sentiment || ''), theme: a.cluster_label || (a.cluster != null ? '#' + a.cluster : '') };
 }
 var NOTE = $('own-note').textContent;
 function setStale(on) { var a = document.querySelector('.slip.w'), b = $('tl'); if (a) a.classList.toggle('stale', on); if (b) b.classList.toggle('stale', on); }
@@ -654,7 +654,7 @@ function csvOut(rows) { return '﻿' + rows.map(function (r) { return r.map(func
 function saveFile(name, txt) { var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/csv;charset=utf-8' })); a.download = name; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
 function flagsFor(a) {
 var f = [];
-if (a.language === 'uncertain') f.push('language unsure');
+if (a.language === 'uncertain') f.push(a.unclear_note ? 'unclear text' : 'language unsure');
 if (a.spam_prob != null && a.spam_threshold) { var r = a.spam_prob / a.spam_threshold; if (r >= 0.6 && r <= 1.5) f.push('spam score near the line'); }
 if (a.sentiment_margin != null) { var cut = MARGIN_CUT[a.language === 'en' ? 'en' : 'hinglish']; if (a.sentiment_margin <= cut) f.push('sentiment unsure'); }
 if (a.theme_rejected) f.push('no clear theme');

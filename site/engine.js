@@ -282,6 +282,13 @@
     out.language = lang; out.language_name = names[lang] || lang;
     const mlang = lang === "hi" ? "hinglish" : lang;
     if (mlang !== "en" && mlang !== "hinglish") { out.spam = null; return out; }
+    if (!roman) {   // unclear-text gate: most words unknown to the sentiment vocabulary (typos, random letters) -> send to review instead of guessing
+      const vi = E[mlang === "en" ? "sent_en" : "sent_hi"].vs[0].idx, toks = (text.toLowerCase().match(/[\p{L}\p{N}]+/gu) || []).filter((t) => t.length >= 2), unk = toks.filter((t) => !vi.has(t));
+      if (unk.length >= 2 && unk.length / toks.length >= (mlang === "en" ? 0.5 : 0.6)) {
+        out.language = "uncertain"; out.language_name = `Unclear text (${unk.length} of ${toks.length} words not recognized)`; out.unclear_note = `${unk.length} of ${toks.length} words are not recognized, so a person reviews it instead of the system guessing.`;
+        out.needs_review = true; out.spam = null; return out;
+      }
+    }
     const s = spamScore(E, modelText, mlang);
     out.spam = s.isSpam ? "spam" : "ham"; out.spam_prob = s.p; out.spam_threshold = s.thr;
     if (s.isSpam) return out;
